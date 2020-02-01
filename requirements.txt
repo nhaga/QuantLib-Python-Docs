@@ -1,0 +1,5 @@
+ipykernel
+nbsphinx
+jupyter_client
+QuantLib
+sphinx-copybutton
