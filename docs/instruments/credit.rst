@@ -18,3 +18,12 @@ CreditDefaultSwap
 
 CdsOption
 *********
+
+.. function:: ql.CdsOption(CreditDefaultSwap, exercise, knocksOut=true)
+
+..code-block:: python
+
+  expiry = ql.Date(15,6,2020)
+  exercise = ql.EuropeanExercise(expiry)
+  ql.CdsOption(cds, exercise, True)
+
