@@ -172,6 +172,58 @@ Schedule
 ########
 
 .. function:: Schedule(effectiveDate , terminationDate , tenor, calendar, convention, terminationDateConvention, rule, endOfMonth, firstDate = Date (), nextToLastDate = Date ())
+
+
+The types and explanations of these variables are as follows:
+
+- **effectiveDate**, terminationDate : Date, the start and end date of the calendar list, such as the value date and expiration date of the bond.
+- **tenor**: Period object, the interval between two adjacent dates, such as the bond frequency (1 year or 6 months) or interest rate swap rate (3 months).
+- **calendar**: A calendar table that generates a specific calendar of dates to follow.
+- **convention**: integer, how to adjust the non-working day (except the last date), the value range is some reserved variables of quantlib-python.
+- **terminationDateConvention**: Integer, if the last date is a non-working day, how to adjust it, the value range is some reserved variables of quantlib-python.
+- **Rule**: A member of DateGeneration that generates the rules for the date.
+- **endOfMonth**: If the start date is at the end of the month, whether other dates are required to be scheduled at the end of the month (except the last date).
+- **firstDate**, nextToLastDate (optional): Date, the start and end date (not commonly used) provided for the generated method rule .
+
+
+.. code-block:: python
+
+    effectiveDate = ql.Date(15,6,2020)
+    terminationDate = ql.Date(15,6,2022)
+    frequency = ql.Period('6M')
+    calendar = ql.TARGET()
+    convention = ql.ModifiedFollowing
+    terminationDateConvention = ql.ModifiedFollowing
+    rule = ql.DateGeneration.Backward
+    endOfMonth = False
+    schedule = ql.Schedule(effectiveDate, terminationDate, frequency, calendar, convention, terminationDateConvention, rule, endOfMonth)
+
+
+MakeSchedule
+############
+
+.. function:: ql.MakeSchedule(effectiveDate, terminationDate, frequency)
+
+Optional params:
+
+- calendar=None
+- convention=None
+- terminalDateConvention=None,
+- rule=None
+- forwards=False
+- backwards=False,
+- endOfMonth=None
+- firstDate=None
+- nextToLastDate=None
+
+.. code-block:: python
+
+    effectiveDate = ql.Date(15,6,2020)
+    terminationDate = ql.Date(15,6,2022)
+    frequency = ql.Period('6M')
+    schedule = ql.MakeSchedule(effectiveDate, terminationDate, frequency)
+
+
 ----
 
 
@@ -213,3 +265,10 @@ Monthly periods with start date is 07-05-2020 and the end date is 15-08-2020:
 
 TimeGrid
 ########
+
+.. function:: ql.TimeGrid(end, steps)
+
+.. code-block:: python
+
+    t = ql.TimeGrid(10, 5)
+    t.dt(4)
