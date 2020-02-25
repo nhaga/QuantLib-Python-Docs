@@ -149,11 +149,11 @@ GarmanKohlagenProcess
 
 .. code-block:: python
 
-initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-domesticRiskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.03, ql.Actual365Fixed()))
-foreignRiskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), sigma, ql.Actual365Fixed()))
-process = ql.GarmanKohlagenProcess(initialValue, foreignRiskFreeTS, domesticRiskFreeTS, volTS)
+  initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+  domesticRiskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.03, ql.Actual365Fixed()))
+  foreignRiskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+  volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), sigma, ql.Actual365Fixed()))
+  process = ql.GarmanKohlagenProcess(initialValue, foreignRiskFreeTS, domesticRiskFreeTS, volTS)
 
 
 HestonProcess
@@ -182,10 +182,10 @@ HullWhiteForwardProcess
 
 .. code-block:: python
 
-riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
-a = 0.001
-sigma = 0.1
-process = ql.HullWhiteForwardProcess(riskFreeTS, a, sigma)
+  riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+  a = 0.001
+  sigma = 0.1
+  process = ql.HullWhiteForwardProcess(riskFreeTS, a, sigma)
 
 
 GSR Process
