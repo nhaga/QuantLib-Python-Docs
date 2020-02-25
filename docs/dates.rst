@@ -113,6 +113,139 @@ Period
 Calendar
 ########
 
+The class `ql.Calendar` provides the interface for determining whether a date is a business day or a holiday for a given exchange or a given country, and for incrementing/decrementing a date of a given number of business days.
+
+.. function:: ql.UnitedKingdom()
+
+.. function:: ql.TARGET()
+
+
+Some commonly used member functions:
+
+- **isBusinessDay(d)**: A Boolean value that determines whether d is a business day.
+- **isHoliday(d)**: A boolean value that determines whether d is a holiday.
+- **isWeekend(w)**: A Boolean value that determines whether w is a weekend (in some countries, weekends are not scheduled on Saturdays and Sundays).
+- **isEndOfMonth(d)**: A boolean value that determines whether d is the last working day at the end of the month.
+- **endOfMonth(d)**: date, returns the last working day of the month in which d is located.
+
+.. code-block:: python
+
+    cal = ql.TARGET()
+    mydate = ql.Date(1, ql.May, 2017)
+
+    print('Is BD :', cal.isBusinessDay(mydate))
+    print('Is Holiday :', cal.isHoliday(mydate))
+    print('Is Weekend :', cal.isWeekend(ql.Friday))
+    print('Is Last BD :', cal.isEndOfMonth(ql.Date(5, ql.April, 2018)))
+    print('Last BD :', cal.endOfMonth(mydate))
+
+
+**Custom Holiday List**
+
+The Calendar object in QuantLib can conveniently implement custom holidays. Generally, only the following two functions are needed:
+
+- **addHoliday(d)**: add d as a holiday.
+- **removeHoliday(d)**: remove d from the holiday table.
+
+
+.. code-block:: python
+
+
+    cal = ql.TARGET()
+
+    day1 = ql.Date(26, 2, 2020)
+    day2 = ql.Date(10, 4, 2020)
+
+    print('Is Business Day : ', cal.isBusinessDay(day1))
+    print('Is Business Day : ', cal.isBusinessDay(day2))
+
+    cal.addHoliday(day1)
+    cal.removeHoliday(day2)
+
+    print('Is Business Day : ', cal.isBusinessDay(day1))
+    print('Is Business Day : ', cal.isBusinessDay(day2))
+
+
+
+
+.. code-block:: python
+
+    myCalendar = ql.WeekendsOnly()
+    days = [1,14,15,1,21,26,2,16,15,18,19,9,27,1,19,8,17,25,31]
+    months = [1,4,4,5,5,6,8,9,9,10,10,11,12,12,12,12]
+    name = ['Año Nuevo','Viernes Santo','Sabado Santo','Dia del Trabajo','Dia de las Glorias Navales','San Pedro y San Pablo','Elecciones Primarias','Dia de la Virgen del Carmen','Asuncion de la Virgen','Independencia Nacional','Glorias del Ejercito','Encuentro de dos mundos','Día de las Iglesias Evangélicas y Protestantes','Día de todos los Santos','Elecciones Presidenciales y Parlamentarias','Inmaculada Concepción','Segunda vuelta Presidenciales','Navidad','Feriado Bancario']
+    start_year = 2018
+    n_years = 10
+    for i in range(n_years+1):
+        for x,y in zip(days,months):
+            date = ql.Date(x,y,start_year+i)
+            myCalendar.addHoliday(date)
+
+
+
+**Holiday List**
+
+Returns the holidays between two dates.
+
+.. function:: ql.Calendar.holidayList (calendar, from, to, includeWeekEnds=False)
+
+.. code-block:: python
+
+    ql.Calendar.holidayList(ql.TARGET(), ql.Date(1,12,2019), ql.Date(31,12,2019))
+
+
+**Weekday correction**
+
+Correcting a date to a working day is a necessary task, and the following working day conversion modes are supported in QuantLib:
+
+- **Following**: The date is corrected to the first working day that follows.
+- **ModifiedFollowing**: The date is corrected to the first working day after that, unless this working day is in the next month; if the modified working day is in the next month, the date is corrected to the last working day that appears before, to ensure the original The date and the revised date are in the same month.
+- **Preceding**: Correct the date to the last business day that Preceding before.
+- **ModifiedPreceding**: modify the date to the last working day that appeared before, unless the working sunrise is now the previous month; if the modified working sunrise is now the previous month, the date is modified to the first working day after that The original date and the revised date are guaranteed to be in the same month.
+- **Unadjusted**: No adjustment.
+
+Calendar object uses the following two functions to modify the date:
+
+- **adjust(d, convention)**: Date, modify d according to the convention conversion mode.
+- **advance(d, period, convention, endOfMonth)**: date, the date is moved backward by time interval period and then modified according to the conversion mode convention ; the parameter endOfMonth indicates that if d is the end of the month, the date after the correction is also at the end of the month.
+
+Finally, the following function can be used to calculate the number of working days during the two days:
+- **businessDaysBetween(from, to, includeFirst, includeLast)**: Calculate the number of working days between the dates from and to (whether or not the dates are included).
+
+
+
+.. code-block:: python
+
+    cal = ql.TARGET()
+
+    firstDate = ql.Date(31, ql.January, 2018)
+    secondDate = ql.Date(1, ql.April, 2018)
+
+    print('Date 2 Adj :', cal.adjust(secondDate, ql.Preceding))
+    print('Date 2 Adj :', cal.adjust(secondDate, ql.ModifiedPreceding))
+
+    mat = ql.Period(2, ql.Months)
+
+    print('Date 1 Month Adv :',
+        cal.advance(firstDate, mat, ql.Following, False))
+    print('Date 1 Month Adv :',
+        cal.advance(firstDate, mat, ql.ModifiedFollowing, False))
+
+    print('Business Days Between :',
+        cal.businessDaysBetween(
+            ql.Date(5, ql.March, 2018), ql.Date(30, ql.March, 2018),
+            True, True))
+
+
+
+**JointCalenar**
+
+.. function:: ql.JointCalendar(calendar1, calendar2, calendar3, calendar4, JointCalendarRule=JoinHolidays)
+
+.. code-block:: python
+
+    joint_calendar = ql.JointCalendar(ql.TARGET(), ql.Poland())
+
 ----
 
 
