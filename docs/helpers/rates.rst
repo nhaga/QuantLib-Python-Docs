@@ -71,7 +71,17 @@ DatedOISRateHelper
 FxSwapRateHelper
 ****************
 
-.. function:: ql.FxSwapRateHelper()
+
+.. function:: ql.FxSwapRateHelper (fwdPoint, spotFx, tenor, fixingDays, calendar, convention, endOfMonth, isFxBaseCurrencyCollateralCurrency, collateralCurve)
+
+.. function:: ql.FxSwapRateHelper (fwdPoint, spotFx, tenor, fixingDays, calendar, convention, endOfMonth, isFxBaseCurrencyCollateralCurrency, collateralCurve, tradingCalendar=Calendar())
+
+.. code-block:: python
+
+  yts = ql.YieldTermStructureHandle(ql.FlatForward(2, ql.TARGET(), 0.02, ql.Actual360()))
+  spot = ql.QuoteHandle(ql.SimpleQuote(1.10))
+  fwdPoints = ql.QuoteHandle(ql.SimpleQuote(122.29))
+  ql.FxSwapRateHelper(fwdPoints, spot, ql.Period('6M'), 2, ql.TARGET(), ql.Following, False, True, yts)
 
 
 FixedRateBondHelper
