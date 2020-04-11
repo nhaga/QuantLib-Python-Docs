@@ -20,4 +20,63 @@ CapHelper
 SwaptionHelper
 **************
 
-.. function:: ql.SwaptionHelper()
+.. function:: ql.SwaptionHelper(maturity, length, volatility, index, fixedLegTenor, fixedLegDayCounter, floatingLegDayCounter, termStructure, errorType=ql.BlackCalibrationHelper.RelativePriceError, strike=Null< Real >(), nominal=1.0, type=ql.ShiftedLognormal, shift=0.0)
+
+.. code-block:: python
+
+  maturity = ql.Period('5Y')
+  length = ql.Period('5Y')
+  volatility = ql.QuoteHandle(ql.SimpleQuote(0.0055))
+  index = ql.Euribor6M()
+  fixedLegTenor = ql.Period('1Y')
+  fixedLegDayCounter = ql.Thirty360()
+  floatingLegDayCounter = ql.Actual360()
+
+  crv = ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360())
+  yts = ql.YieldTermStructureHandle(crv)
+
+  ql.SwaptionHelper(
+    maturity, length, volatility, index, fixedLegTenor,
+    fixedLegDayCounter, floatingLegDayCounter, yts
+  )
+
+.. function:: ql.SwaptionHelper (exerciseDate, length, volatility, index, fixedLegTenor, fixedLegDayCounter, floatingLegDayCounter, termStructure, errorType=ql.BlackCalibrationHelper.RelativePriceError, strike=Null< Real >(), nominal=1.0, type=ql.ShiftedLognormal, shift=0.0)
+
+.. code-block:: python
+
+  exerciseDate = ql.Date(15,6,2020)
+  length = ql.Period('5Y')
+  volatility = ql.QuoteHandle(ql.SimpleQuote(0.0055))
+  index = ql.Euribor6M()
+  fixedLegTenor = ql.Period('1Y')
+  fixedLegDayCounter = ql.Thirty360()
+  floatingLegDayCounter = ql.Actual360()
+
+  crv = ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360())
+  yts = ql.YieldTermStructureHandle(crv)
+
+  ql.SwaptionHelper(
+    exerciseDate, length, volatility, index, fixedLegTenor,
+    fixedLegDayCounter, floatingLegDayCounter, yts
+  )
+
+
+.. function:: ql.SwaptionHelper (exerciseDate, endDate, volatility, index, fixedLegTenor, fixedLegDayCounter, floatingLegDayCounter, termStructure, errorType=ql.BlackCalibrationHelper.RelativePriceError, strike=Null< Real >(), nominal=1.0, type=ql.ShiftedLognormal, shift=0.0)
+
+.. code-block:: python
+
+  exerciseDate = ql.Date(15,6,2020)
+  endDate = ql.Date(15,6,2025)
+  volatility = ql.QuoteHandle(ql.SimpleQuote(0.0055))
+  index = ql.Euribor6M()
+  fixedLegTenor = ql.Period('1Y')
+  fixedLegDayCounter = ql.Thirty360()
+  floatingLegDayCounter = ql.Actual360()
+
+  crv = ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360())
+  yts = ql.YieldTermStructureHandle(crv)
+
+  ql.SwaptionHelper(
+    exerciseDate, endDate, volatility, index, fixedLegTenor,
+    fixedLegDayCounter, floatingLegDayCounter, yts
+  )
