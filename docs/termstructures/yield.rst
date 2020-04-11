@@ -113,6 +113,7 @@ Piecewise
 * PiecewiseLinearForward
 * PiecewiseSplineCubicDiscount
 
+.. function:: ql.Pir
 
 
 ImpliedTermStructure
