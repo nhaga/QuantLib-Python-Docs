@@ -5,8 +5,11 @@ Indexes
 -----
 
 
+Interest Rate
+#############
+
 IborIndex
-#########
+*********
 
 .. function:: ql.IborIndex(familyName, tenor, settlementDays, currency, fixingCalendar, convention, endOfMonth, dayCounter, =Handleql.YieldTermStructure())
 
@@ -26,20 +29,29 @@ Derived Classes:
 
 .. function:: ql.Euribor(period, yts)
 
-- ql.Euribor6M()
-
-.. function:: ql.Euribor()
-
-.. function:: ql.Euribor(yts)
 
 
+OvernightIndex
+**************
+
+.. function:: ql.OvernightIndex(name, fixingDays, currency, calendar, dayCounter, =ql.YieldTermStructureHandle())
+
+
+.. code-block:: python
+
+    name = 'CNYRepo7D'
+    fixingDays = 1
+    currency = ql.CNYCurrency()
+    calendar = ql.China()
+    dayCounter = ql.Actual365Fixed()
+    overnight_index = ql.OvernightIndex(name, fixingDays, currency, calendar, dayCounter)
 
 
 -----
 
 
 SwapIndex
-#########
+*********
 
 .. function:: ql.SwapIndex(familyName, tenor, settlementDays, currency, fixingCalendar, fixedLegTenor, convention, dayCounter, index, =Handleql.YieldTermStructure())
 
@@ -73,9 +85,37 @@ Constructors for derived classes:
 
 
 SwapSpreadIndex
-###############
+***************
 
 .. function:: SwapSpreadIndex (familyName, swapIndex1, swapIndex2, gearing1=1.0, gearing2=-1.0)
+
+
+
+Inflation
+#########
+
+Zero Inflation
+**************
+
+.. function:: ql.{InflationIndex}(interpolated=bool)
+
+.. function:: ql.{InflationIndex}(bool, ZeroInflationTermStructure)
+
+- ql.UKRPI
+- ql.USCPI
+- ql.EUHICP
+- ql.EUHICPXT
+
+
+YoY inflation
+*************
+
+- ql.YYEUHICP
+- ql.YYEUHICPXT
+- ql.YYFRHICP
+- ql.YYUKRPI
+- ql.YYUSCPI
+- ql.YYZACPI
 
 
 -----
