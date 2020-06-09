@@ -76,6 +76,7 @@ CPISwap
 ZeroCouponInflationSwap
 ***********************
 
+.. function:: ql.ZeroCouponInflationSwap(swapType, notional, start, maturity, calendar, BusinessDayConvention, DayCounter, fixedRate, ZeroInflationIndex, observationLag)
 
 
 YearOnYearInflationSwap
