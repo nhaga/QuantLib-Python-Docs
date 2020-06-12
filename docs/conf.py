@@ -307,7 +307,7 @@ latex_elements = {
             \centering
 
             \vspace*{40mm} %%% * is used to give space from top
-            \textbf{\Huge {Sphinx format for Latex and HTML}}
+            \textbf{\Huge {QuantLib-Python Module Reference}}
 
             \vspace{0mm}
             \begin{figure}[!h]
@@ -316,9 +316,9 @@ latex_elements = {
             \end{figure}
 
             \vspace{0mm}
-            \Large \textbf{{Meher Krishna Patel}}
+            \Large \textbf{{David Duarte}}
 
-            \small Created on : Octorber, 2017
+            \small Created on : December, 2018
 
             \vspace*{0mm}
             \small  Last updated : \MonthYearFormat\today
