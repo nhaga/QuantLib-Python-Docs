@@ -159,22 +159,44 @@ FixedRateLeg
 
 helper class building a sequence of fixed rate coupons
 
+.. function:: ql.FixedRateLeg(schedule, dayCount, nominals, fixedRate, BusinessDayConvention, FirstPeriodDayCounter, ExCouponPeriod, PaymentCalendar)
+
 .. code-block:: python
 
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('6M'))
     dayCount = ql.Actual360()
     leg = ql.FixedRateLeg(schedule, dayCount, [100.], [0.05])
+    leg = ql.FixedRateLeg(schedule, ql.Actual360(), [100.], [0.05], ql.Following, ql.Actual360(), ql.Period('3M'), ql.TARGET())
 
 IborLeg
 *******
 
 helper class building a sequence of capped/floored ibor-rate coupon
 
+.. function:: ql.IborLeg(nominals, schedule, index, paymentDayCounter = DayCounter(), paymentConvention = Following, fixingDays = 0, gearings = 1, spreads, caps, floors, isInArrears, exCouponPeriod, exCouponCalendar, exCouponConvention = Unadjusted, exCouponEndOfMonth = False)
+
 .. code-block:: python
 
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('6M'))
     index = ql.Euribor3M()
     leg = ql.IborLeg([100], schedule, index)
+
+
+OvernightLeg
+************
+
+helper class building a sequence of overnight coupons
+
+.. function:: ql.OvernightLeg(nominals, schedule, overnightIndex, dayCount, BusinessDayConvention, gearing, spread, TelescopicValueDates)
+
+.. code-block:: python
+
+    nominal = 100
+    schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('3M'))
+    overnightIndex = ql.OvernightIndex('CNYRepo7D', 1, ql.CNYCurrency(), ql.China(), ql.Actual365Fixed())
+    ql.OvernightLeg([nominal], schedule, overnightIndex, ql.Actual360(), ql.Following, [1],[0], True)
+
+
 
 ---------
 
