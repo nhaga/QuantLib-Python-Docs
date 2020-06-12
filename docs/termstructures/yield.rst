@@ -106,6 +106,10 @@ Term structure based on flat interpolation of forward rates.
 Piecewise
 *********
 
+Piecewise yield term structure. This term structure is bootstrapped on a number of interest rate instruments which are passed as a vector of RateHelper instances. Their maturities mark the boundaries of the interpolated segments.
+
+Each segment is determined sequentially starting from the earliest period to the latest and is chosen so that the instrument whose maturity marks the end of such segment is correctly repriced on the curve.
+
 * PiecewiseLogLinearDiscount
 * PiecewiseLogCubicDiscount
 * PiecewiseLinearZero
@@ -113,7 +117,91 @@ Piecewise
 * PiecewiseLinearForward
 * PiecewiseSplineCubicDiscount
 
-.. function:: ql.Pir
+.. function:: ql.Piecewise(referenceDate, helpers, dayCounter)
+
+.. code-block:: python
+
+  helpers = []
+  helpers.append( ql.DepositRateHelper(0.05, ql.Euribor6M()) )
+  helpers.append(
+      ql.SwapRateHelper(0.06, ql.EuriborSwapIsdaFixA(ql.Period('1y')))
+  )
+  curve = ql.PiecewiseLogLinearDiscount(ql.Date(15,6,2020), helpers, ql.Actual360())
+
+.. function:: ql.PiecewiseYieldCurve(referenceDate, instruments, dayCounter, jumps, jumpDate, i=Interpolator(), bootstrap=bootstrap_type() )
+
+.. code-block:: python
+
+  referenceDate = ql.Date(15,6,2020)
+  ql.PiecewiseLogLinearDiscount(referenceDate, helpers, ql.ActualActual())
+
+  jumps = [ql.QuoteHandle(ql.SimpleQuote(0.01))]
+  ql.PiecewiseLogLinearDiscount(referenceDate, helpers, ql.ActualActual(), jumps)
+
+  jumpDates = [ql.Date(15,9,2020)]
+  ql.PiecewiseLogLinearDiscount(referenceDate, helpers, ql.ActualActual(), jumps, jumpDates)
+
+.. code-block:: python
+
+  import pandas as pd
+  pgbs = pd.DataFrame(
+      {'maturity': ['15-06-2020', '15-04-2021', '17-10-2022', '25-10-2023',
+                    '15-02-2024', '15-10-2025', '21-07-2026', '14-04-2027',
+                    '17-10-2028', '15-06-2029', '15-02-2030', '18-04-2034',
+                    '15-04-2037', '15-02-2045'],
+      'coupon': [4.8, 3.85, 2.2, 4.95,  5.65, 2.875, 2.875, 4.125,
+                  2.125, 1.95, 3.875, 2.25, 4.1, 4.1],
+      'px': [102.532, 105.839, 107.247, 119.824, 124.005, 116.215, 117.708,
+              128.027, 115.301, 114.261, 133.621, 119.879, 149.427, 159.177]})
+
+  calendar = ql.TARGET()
+  today = calendar.adjust(ql.Date(19, 12, 2019))
+  ql.Settings.instance().evaluationDate = today
+
+  bondSettlementDays = 2
+  bondSettlementDate = calendar.advance(
+      today,
+      ql.Period(bondSettlementDays, ql.Days))
+  frequency = ql.Annual
+  dc = ql.ActualActual(ql.ActualActual.ISMA)
+  accrualConvention = ql.ModifiedFollowing
+  convention = ql.ModifiedFollowing
+  redemption = 100.0
+
+  instruments = []
+  for idx, row in pgbs.iterrows():
+      maturity = ql.Date(row.maturity, '%d-%m-%Y')
+      schedule = ql.Schedule(
+          bondSettlementDate,
+          maturity,
+          ql.Period(frequency),
+          calendar,
+          accrualConvention,
+          accrualConvention,
+          ql.DateGeneration.Backward,
+          False)
+      helper = ql.FixedRateBondHelper(
+              ql.QuoteHandle(ql.SimpleQuote(row.px)),
+              bondSettlementDays,
+              100.0,
+              schedule,
+              [row.coupon / 100],
+              dc,
+              convention,
+              redemption)
+
+      instruments.append(helper)
+
+  params = [bondSettlementDate, instruments, dc]
+
+  piecewiseMethods = {
+      'logLinearDiscount': ql.PiecewiseLogLinearDiscount(*params),
+      'logCubicDiscount': ql.PiecewiseLogCubicDiscount(*params),
+      'linearZero': ql.PiecewiseLinearZero(*params),
+      'cubicZero': ql.PiecewiseCubicZero(*params),
+      'linearForward': ql.PiecewiseLinearForward(*params),
+      'splineCubicDiscount': ql.PiecewiseSplineCubicDiscount(*params),
+  }
 
 
 ImpliedTermStructure
