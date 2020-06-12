@@ -37,6 +37,7 @@ There are two ways to call the solver's member function:
     mySolv.solve(f, accuracy, guess, xMin, xMax)
 
 
+
 .. list-table:: 
     :widths: 10 60
 
@@ -50,6 +51,31 @@ There are two ways to call the solver's member function:
       - Floating point number. In the first calling method, there is no limit to the range of the root. The algorithm needs to search by itself to determine a range. step specifies the step size of the search algorithm.
     * - **xMin, xMax**
       - floating point numbers, left and right interval range
+
+
+.. code-block:: python
+
+    ql.Settings.instance().evaluationDate = ql.Date(15,6,2020)
+    crv = ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360())
+    yts = ql.YieldTermStructureHandle(crv)
+    engine = ql.DiscountingSwapEngine(yts)
+
+    schedule = ql.MakeSchedule(ql.Date(15,9,2020), ql.Date(15,9,2021), ql.Period('6M'))
+    index = ql.Euribor3M(yts)
+    floatingLeg = ql.IborLeg([100], schedule, index)
+
+    def swapFairRate(rate):
+        fixedLeg = ql.FixedRateLeg(schedule, ql.Actual360(), [100.], [rate])
+        swap = ql.Swap(fixedLeg, floatingLeg)
+        swap.setPricingEngine(engine)
+        return swap.NPV()
+
+    solver = ql.Brent()
+
+    accuracy = 1e-5
+    guess = 0.0
+    step = 0.001
+    solver.solve(swapFairRate, accuracy, guess, step)
 
 
 -------
