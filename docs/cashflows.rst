@@ -10,7 +10,67 @@ Interest Rates
 
 Concrete interest rate class
 
-.. function:: ql.InterestRate(r, dc, comp, freq)
+.. function:: ql.InterestRate(rate, dayCount, compounding, frequency)
+
+.. code-block:: python
+
+    rate = ql.InterestRate(0.05, ql.Actual360(), ql.Compounded, ql.Annual)
+
+
+**Compounding**
+
+- Simple
+- Compounded
+- Continuous
+
+**Frequencies**
+
+- NoFrequency , no interest;
+- Once , pay interest once, common in zero-coupon bonds;
+- Annual , paying interest once a year;
+- Semiannual , Semiannual interest semi-annually;
+- EveryFourthMonth every 4 months;
+- Quarterly , Quarterly quarterly;
+- Bimonthly , paying interest every two months;
+- Monthly , monthly interest payment;
+- EveryFourthWeek every 4 weeks;
+- Biweekly , Biweekly interest every two weeks;
+- Weekly , paying once a week;
+- Daily , pay interest once a day.
+
+Here are some common member functions:
+
+- **rate()**: a floating point number that returns the value of the rate of return
+- **dayCounter()**: DayCounter object, which returns the member variable that controls the day calculation rule;
+- **compounding()**: an integer that returns the interest rate method;
+- **frequency()**: Integer, returns the frequency of interest payments.
+- **discountFactor(d1, d2)**: float, d1 and d2 are both Date objects ( d1 < d2 ), returning the discount factor size from d1 to d2 ;
+- **compoundFactor(d1, d2)**: float, d1 and d2 are both Date objects ( d1 < d2 ), returning the size of the interest factor from d1 to d2 ;
+- **equivalentRate(resultDC, comp, freq, d1, d2)**: The InterestRate object returns an InterestRate object equivalent to the current object. The configuration parameters of the object include resultDC , comp , freq :
+  - Both d1 and d2 are Date objects ( d1 < d2 )
+  - **resultDC**, DayCounter object, configure the number of days calculation rules;
+  - **comp**, integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
+  - **Freq**, integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
+
+In some cases, it is necessary to recalculate the rate of return based on the size of the interest factor. The InterestRate class provides the function impliedRate implement this function:
+
+- **impliedRate(compound, resultDC, comp, freq, d1, d2)**: The InterestRate object returns the inverse calculated InterestRate object whose configuration parameters include resultDC , comp , freq :
+  - Both d1 and d2 are Date objects ( d1 < d2 )
+  - **resultDC**, DayCounter object, configure the number of days calculation rules;
+  - **comp**, integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
+  - **Freq**, integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
+
+.. code-block:: python
+
+    print("Rate: ", rate.rate())
+    print("DayCount: ", rate.dayCounter())
+    print("DiscountFactor: ", rate.discountFactor(1))
+    print("DiscountFactor: ", rate.discountFactor(ql.Date(15,6,2020), ql.Date(15,6,2021)))
+    print("CompoundFactor: ", rate.compoundFactor(ql.Date(15,6,2020), ql.Date(15,6,2021)))
+    print("EquivalentRate: ", rate.equivalentRate(ql.Actual360(), ql.Compounded, ql.Semiannual, ql.Date(15,6,2020), ql.Date(15,6,2021)))
+
+    factor = rate.compoundFactor(ql.Date(15,6,2020), ql.Date(15,6,2021))
+    print("ImpliedRate: ", rate.impliedRate(factor, ql.Actual360(), ql.Continuous, ql.Annual, ql.Date(15,6,2020), ql.Date(15,6,2021)))
 
 ------
 
@@ -207,8 +267,48 @@ Pricers
 BlackIborCouponPricer
 *********************
 
+.. function:: ql.BlackIborCouponPricer(OptionletVolatilityStructureHandle)
+
+.. code-block:: python
+
+    volatility = 0.10;
+    vol = ql.ConstantOptionletVolatility(2, ql.TARGET(), ql.Following, volatility, ql.Actual360())
+    pricer = ql.BlackIborCouponPricer(ql.OptionletVolatilityStructureHandle(vol))
+
+**Example:** In arrears coupon
+
+.. code-block:: python
+
+    crv = ql.FlatForward(0, ql.TARGET(), -0.01, ql.Actual360())
+    yts = ql.YieldTermStructureHandle(crv)
+    index = ql.Euribor3M(yts)
+
+    schedule = ql.MakeSchedule(ql.Date(15,6,2021), ql.Date(15,6,2023), ql.Period('6M'))
+
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, isInArrears=True)
+        
+    volatility = 0.10;
+    vol = ql.ConstantOptionletVolatility(2, ql.TARGET(), ql.Following, volatility, ql.Actual360())
+    pricer = ql.BlackIborCouponPricer(ql.OptionletVolatilityStructureHandle(vol))
+    ql.setCouponPricer(leg, pricer)
+
+    npv = ql.CashFlows.npv(leg, yts, True)    
+    print(f"LEG NPV: {npv:,.2f}")
+
+
 LinearTsrPricer
 ***************
+
+.. function:: ql.LinearTsrPricer(swaptionVolatilityStructure, meanReversion)
+
+.. code-block:: python
+
+    volQuote = ql.QuoteHandle(ql.SimpleQuote(0.2))
+    swaptionVol = ql.ConstantSwaptionVolatility(0, ql.TARGET(), ql.ModifiedFollowing, volQuote, ql.Actual365Fixed())
+    swvol_handle = ql.SwaptionVolatilityStructureHandle(swaptionVol)
+
+    mean_reversion = ql.QuoteHandle(ql.SimpleQuote(0.01))
+    cms_pricer = ql.LinearTsrPricer(swvol_handle, mean_reversion)
 
 LognormalCmsSpreadPricer
 ************************
