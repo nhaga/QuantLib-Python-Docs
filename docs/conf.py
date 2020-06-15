@@ -310,10 +310,6 @@ latex_elements = {
             \textbf{\Huge {QuantLib-Python Module Reference}}
 
             \vspace{0mm}
-            \begin{figure}[!h]
-                \centering
-                \includegraphics[scale=0.3]{logo.jpg}
-            \end{figure}
 
             \vspace{0mm}
             \Large \textbf{{David Duarte}}
