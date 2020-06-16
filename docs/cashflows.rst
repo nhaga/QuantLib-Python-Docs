@@ -241,6 +241,17 @@ helper class building a sequence of capped/floored ibor-rate coupon
     index = ql.Euribor3M()
     leg = ql.IborLeg([100], schedule, index)
 
+.. code-block:: python
+
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360())
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing)
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, [2])
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=[2], gearings=[1])
+
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=[2], gearings=[1], spreads=[0])
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=[2], gearings=[1], spreads=[0], caps=[0])
+    leg = ql.IborLeg([100], schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=[2], gearings=[1], spreads=[0], floors=[0])
+
 
 OvernightLeg
 ************
@@ -327,21 +338,153 @@ Cashflow Analysis Functions
 ###########################
 
 
-- 'atmRate',
-- 'basisPointValue',
-- 'bps',
-- 'convexity',
-- 'duration',
-- 'maturityDate',
-- 'nextCashFlowDate',
-- 'npv',
-- 'previousCashFlowDate',
-- 'startDate',
-- 'yieldRate',
-- 'zSpread'
+Date Inspectors
+***************
+
+.. function:: ql.CashFlows.startDate(leg)
+
+.. function:: ql.CashFlows.maturityDate(leg)
+
+Cashflow Inspectors
+*******************
+
+the last cashflow paying before or at the given date
+
+.. function:: ql.CashFlows.previousCashFlowDate(leg, includeSettlementDateFlows, settlementDate=ql.Date())
+
+.. code-block:: python
+
+    ql.CashFlows.previousCashFlowDate(leg, True)
+    ql.CashFlows.previousCashFlowDate(leg, True, ql.Date(15,12,2020))
+
+the first cashflow paying after the given date
+
+.. function:: ql.CashFlows.nextCashFlowDate(leg, includeSettlementDateFlows, settlementDate=ql.Date())
 
 
+YieldTermstructure
+******************
 
+NPV of the cash flows
+
+.. function:: ql.CashFlows.npv(leg, discountCurve, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    yts = ql.YieldTermStructureHandle(ql.FlatForward(ql.Date(15,1,2020), 0.04, ql.Actual360()))
+    ql.CashFlows.npv(leg, yts, True)
+    ql.CashFlows.npv(leg, yts, True, ql.Date(15,6,2020))
+    ql.CashFlows.npv(leg, yts, True, ql.Date(15,6,2020), ql.Date(15,12,2020))
+
+
+Basis-point sensitivity of the cash flows
+
+.. function:: ql.CashFlows.bps(leg, discountCurve, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    yts = ql.YieldTermStructureHandle(ql.FlatForward(ql.Date(15,1,2020), 0.04, ql.Actual360()))
+    ql.CashFlows.bps(leg, yts, True)
+
+
+At-the-money rate of the cash flows
+
+.. function:: ql.CashFlows.atmRate(leg, discountCurve, includeSettlementDateFlows, settlementDate=ql.Date(), ql.npvDate=Date(), npv=Null< Real >())
+
+.. code-block:: python
+
+    crv = ql.FlatForward(ql.Date(15,1,2020), 0.04, ql.Actual360())
+    ql.CashFlows.atmRate(leg, crv, True, ql.Date(15,6,2020))
+
+
+Yield (a.k.a. Internal Rate of Return, i.e. IRR)
+************************************************
+
+.. function:: ql.CashFlows.npv(leg, rate, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = ql.InterestRate(.03, ql.ActualActual(), ql.Compounded, ql.Annual)
+    ql.CashFlows.npv(leg, rate, True)
+
+
+.. function:: ql.CashFlows.bps(leg, rate, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = ql.InterestRate(.03, ql.ActualActual(), ql.Compounded, ql.Annual)
+    ql.CashFlows.bps(leg, rate, True)
+
+
+.. function:: ql.CashFlows.basisPointValue(leg, InterestRate, includeSettlementDateFlows, settlementDate=ql.Date(), ql.npvDate=Date())
+
+.. code-block:: python
+
+    rate = ql.InterestRate(.03, ql.ActualActual(), ql.Compounded, ql.Annual)
+    ql.CashFlows.basisPointValue(leg, rate, True)
+
+.. function:: ql.CashFlows.basisPointValue(leg, rate, dayCounter, compounding, frequency, includeSettlementDateFlows,, settlementDate=ql.Date(), ql.npvDate=Date())
+
+.. code-block:: python
+
+    ql.CashFlows.basisPointValue(leg, 0.05, ql.Actual360(), ql.Compounded, ql.Annual, True)
+
+
+.. function:: ql.CashFlows.duration(leg, InterestRate, ql.Duration.Type, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = ql.InterestRate(.03, ql.ActualActual(), ql.Compounded, ql.Annual)
+
+    ql.CashFlows.duration(leg, rate, ql.Duration.Simple, False)
+    ql.CashFlows.duration(leg, rate, ql.Duration.Macaulay, False)
+    ql.CashFlows.duration(leg, rate, ql.Duration.Modified, False)
+
+.. function:: ql.CashFlows.duration (leg, rate, dayCounter, compounding, frequency, ql.Duration.Type, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = 0.05
+    ql.CashFlows.duration(leg, rate, ql.Actual360(), ql.Compounded, ql.Annual, ql.Duration.Simple, False)
+
+.. function:: ql.CashFlows.convexity(leg, InterestRate, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = ql.InterestRate(.03, ql.ActualActual(), ql.Compounded, ql.Annual)
+    ql.CashFlows.convexity(leg, rate, False)
+
+.. function:: ql.CashFlows.convexity(leg, rate, dayCounter, compounding, frequency, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date())
+
+.. code-block:: python
+
+    rate = 0.05
+    ql.CashFlows.convexity(leg, rate, ql.Actual360(), ql.Compounded, ql.Annual, False)
+
+
+.. function:: ql.CashFlows.yieldRate(leg, rate, dayCounter, compounding, frequency, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date(), accuracy=1.0e-10, maxIterations=100, guess=0.0)
+
+.. code-block:: python
+
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True)
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True, ql.Date(15,6,2020))
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True, ql.Date(15,6,2020), ql.Date(15,12,2020))
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True, ql.Date(15,6,2020), ql.Date(15,12,2020), 1e-5)
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True, ql.Date(15,6,2020), ql.Date(15,12,2020), 1e-5, 100)
+    ql.CashFlows.yieldRate(leg, 5, ql.Actual360(), ql.Compounded, ql.Annual, True, ql.Date(15,6,2020), ql.Date(15,12,2020), 1e-5, 100, 0.04)
+
+
+Z-spread
+********
+
+implied Z-spread.
+
+.. function:: ql.CashFlows.zSpread (leg, npv, YieldTermStructure, dayCounter, compounding, frequency, includeSettlementDateFlows, settlementDate=ql.Date(), npvDate=ql.Date(), accuracy=1.0e-10, maxIterations=100, guess=0.0)
+
+.. code-block:: python
+
+    crv = ql.FlatForward(ql.Date(15,1,2020), 0.04, ql.Actual360())
+    ql.CashFlows.zSpread(leg, 5.5, crv, ql.Actual360(), ql.Compounded, ql.Annual, True)
 
 
 
