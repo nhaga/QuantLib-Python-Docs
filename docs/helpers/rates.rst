@@ -153,8 +153,11 @@ from quote, immOffsets and index
   ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date())
   ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
+Futures
+*******
+
 FuturesRateHelper
-*****************
+-----------------
 
 .. function:: ql.FuturesRateHelper(price, iborStartDate, iborIndex, convexityAdjustment=0.0, type=ql.Futures.IMM)
 
@@ -237,6 +240,137 @@ FuturesRateHelper
   ql.FuturesRateHelper (quote, iborStartDate, iborEndDate, dayCounter, convexityAdjustment)
   ql.FuturesRateHelper (quote, iborStartDate, iborEndDate, dayCounter, convexityAdjustment, ql.Futures.IMM)
 
+
+SofrFutureRateHelper
+--------------------
+
+.. function:: ql.SofrFutureRateHelper(price, month, year, frequency, index)
+
+.. function:: ql.SofrFutureRateHelper(priceQuote, month, year, frequency, index)
+
+.. code-block:: python
+
+  price = 99.915
+  ql.SofrFutureRateHelper(price, 3, 2020, ql.Quarterly, ql.Sofr())
+
+  priceQuote = ql.QuoteHandle(ql.SimpleQuote(price))
+  ql.SofrFutureRateHelper(priceQuote, 3, 2020, ql.Quarterly, ql.Sofr())
+
+.. function:: ql.SofrFutureRateHelper(price, month, year, frequency, index, convexityAdjustment=0)
+
+.. function:: ql.SofrFutureRateHelper(priceQuote, month, year, frequency, index, convexityAdjustmentQuote=ql.QuoteHandle())
+
+.. code-block:: python
+
+  price = 99.915
+  convexityAdjustment = 0.004
+  ql.SofrFutureRateHelper(price, 3, 2020, ql.Quarterly, ql.Sofr(), convexityAdjustment)
+
+  priceQuote = ql.QuoteHandle(ql.SimpleQuote(price))
+  convexityAdjustmentQuote = ql.QuoteHandle(ql.SimpleQuote(convexityAdjustment))
+  ql.SofrFutureRateHelper(priceQuote, 3, 2020, ql.Quarterly, ql.Sofr(), convexityAdjustmentQuote)
+
+
+.. function:: ql.SofrFutureRateHelper(price, month, year, frequency, index, convexityAdjustment=0, nettingType=ql.OvernightIndexFuture.Compounding)
+
+.. function:: ql.SofrFutureRateHelper(priceQuote, month, year, frequency, index, convexityAdjustment=0, nettingType=ql.OvernightIndexFuture.Compounding)
+
+Netting Types:
+
+- Averaging
+- Compounding
+
+.. code-block:: python
+
+  price = 99.915
+  convexityAdjustment = 0.004
+  ql.SofrFutureRateHelper(price, 3, 2020, ql.Quarterly, ql.Sofr(), 0.004, ql.OvernightIndexFuture.Averaging)
+
+  priceQuote = ql.QuoteHandle(ql.SimpleQuote(price))
+  convexityAdjustmentQuote = ql.QuoteHandle(ql.SimpleQuote(convexityAdjustment))
+
+  ql.SofrFutureRateHelper(priceQuote,3,2020,ql.Quarterly, ql.Sofr(), convexityAdjustmentQuote, ql.OvernightIndexFuture.Compounding)
+
+
+IMM 
+---
+
+(Not a helper)
+
+.. function:: ql.IMM.date(codeString, date=ql.Date())`
+
+.. code-block:: python
+
+  ql.IMM.date('M0')
+  ql.IMM.date('M0', ql.Date(20,6,2020))
+
+.. function:: ql.IMM.code(immDate)
+
+.. code-block:: python
+
+  immDate = ql.Date(16,12,2020)
+  ql.IMM.code(immDate)
+
+.. function:: ql.IMM.isIMMcode(codeString, mainCycle=True)
+
+.. code-block:: python
+
+  ql.IMM.isIMMcode('M0')
+  ql.IMM.isIMMcode('H0', True)
+
+.. function:: ql.IMM.isIMMdate(date, mainCycle=True)
+
+.. code-block:: python
+
+  dt = ql.Date(15,1,2020)
+  ql.IMM.isIMMdate(dt, True)
+
+.. code-block:: python
+
+  dates = ql.MakeSchedule(ql.Date(16,3,2020), ql.Date(16,12,2020), ql.Period('1M'))
+  list(map(ql.IMM.isIMMdate, dates))
+
+.. function:: ql.IMM.nextCode()
+
+.. function:: ql.IMM.nextCode(date)
+
+.. function:: ql.IMM.nextCode(date, mainCycle=True)
+
+.. function:: ql.IMM.nextCode(codeString)
+
+.. function:: ql.IMM.nextCode(codeString, mainCycle=True)
+
+.. function:: ql.IMM.nextCode(codeString, mainCycle=True, refDate)
+
+.. code-block:: python
+
+  ql.IMM.nextCode()
+  ql.IMM.nextCode(ql.Date(7,5,2020))
+  ql.IMM.nextCode(ql.Date(7,5,2020), False)
+  ql.IMM.nextCode('K0')
+  ql.IMM.nextCode('K0', False)
+  ql.IMM.nextCode('M9', False, ql.Date(16,8,2019))
+
+.. function:: ql.IMM.nextDate()
+
+.. function:: ql.IMM.nextDate(date)
+
+.. function:: ql.IMM.nextDate(date, mainCycle=True)
+
+.. function:: ql.IMM.nextDate(codeString)
+
+.. function:: ql.IMM.nextDate(codeString, mainCycle=True)
+
+.. function:: ql.IMM.nextDate(codeString, mainCycle=True, refDate)
+
+.. code-block:: python
+
+  ql.IMM.nextDate()
+  ql.IMM.nextDate(ql.Date(7,5,2020))
+  ql.IMM.nextDate(ql.Date(7,5,2020), False)
+  ql.IMM.nextDate('K0')
+  ql.IMM.nextDate('K0', False)
+  ql.IMM.nextDate('M9', False, ql.Date(16,8,2019))
 
 SwapRateHelper
 **************
