@@ -136,22 +136,6 @@ from quote, immOffsets and index
   ql.FraRateHelper(quote, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date())
   ql.FraRateHelper(quote, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
-from quote, immOffsets and index
---------------------------------
-
-
-.. function:: ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, pillar=ql.Pillar.LastRelevantDate, customPillarDate=ql.Date(), useIndexedCoupon=True)
-
-.. code-block:: python
-
-  rate = 0.05
-  immOffsetStart = 1
-  immOffsetEnd = 2
-  index = ql.Euribor6M()
-  ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index)
-  ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate)
-  ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date())
-  ql.FraRateHelper(rate, immOffsetStart, immOffsetEnd, index, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
 Futures
 *******
