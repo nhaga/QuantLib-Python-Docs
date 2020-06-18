@@ -305,3 +305,19 @@ DiscountingSwapEngine
     yts = ql.YieldTermStructureHandle(ql.FlatForward(2, ql.TARGET(), 0.5, ql.Actual360()))
     engine = ql.DiscountingSwapEngine(yts)
 
+
+------
+
+
+Credit Pricing Engines
+######################
+
+IsdaCdsEngine
+*************
+
+MidPointCdsEngine
+*****************
+
+IntegralCdsEngine
+*****************
+
