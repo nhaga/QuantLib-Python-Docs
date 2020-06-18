@@ -115,9 +115,50 @@ Calendar
 
 The class `ql.Calendar` provides the interface for determining whether a date is a business day or a holiday for a given exchange or a given country, and for incrementing/decrementing a date of a given number of business days.
 
-.. function:: ql.UnitedKingdom()
+**Available Calendars:**
 
-.. function:: ql.TARGET()
+Argentina, Australia, Austria, BespokeCalendar, Botswana, Brazil, Canada, China, CzechRepublic, Denmark, Finland, France, Germany, HongKong, Hungary, Iceland, India, Indonesia, Israel, Italy, Japan, JointCalendar, Mexico, NewZealand, Norway, NullCalendar, Poland, Romania, Russia, SaudiArabia, Singapore, Slovakia, SouthAfrica, SouthKorea, Sweden, Switzerland, Taiwan, TARGET, Thailand, Turkey, Ukraine, UnitedKingdom, UnitedStates, WeekendsOnly
+
+
+.. code-block:: python
+
+    calendar1 = ql.UnitedKingdom()
+    calendar2 = ql.TARGET()
+
+
+**Calendar Markets**
+
+| Argentina: ['Merval']
+| Brazil: ['Exchange', 'Settlement']
+| Canada: ['Settlement', 'TSX']
+| China: ['IB', 'SSE']
+| CzechRepublic: ['PSE']
+| France: ['Exchange', 'Settlement']
+| Germany: ['Eurex', 'FrankfurtStockExchange', 'Settlement', 'Xetra']
+| HongKong: ['HKEx']
+| Iceland: ['ICEX']
+| India: ['NSE']
+| Indonesia: ['BEJ', 'JSX']
+| Israel: ['Settlement', 'TASE']
+| Italy: ['Exchange', 'Settlement']
+| Mexico: ['BMV']
+| Russia: ['MOEX', 'Settlement']
+| SaudiArabia: ['Tadawul']
+| Singapore: ['SGX']
+| Slovakia: ['BSSE']
+| SouthKorea: ['KRX', 'Settlement']
+| Taiwan: ['TSEC']
+| Ukraine: ['USE']
+| UnitedKingdom: ['Exchange', 'Metals', 'Settlement']
+| UnitedStates: ['FederalReserve', 'GovernmentBond', 'LiborImpact', 'NERC', 'NYSE', 'Settlement']
+
+
+.. code-block:: python
+
+    calendar1 = ql.UnitedKingdom(ql.UnitedKingdom.Metals)
+    calendar2 = ql.UnitedStates(ql.UnitedStates.NYSE)
+
+
 
 
 Some commonly used member functions:
