@@ -224,6 +224,29 @@ FuturesRateHelper
   ql.FuturesRateHelper (quote, iborStartDate, iborEndDate, dayCounter, convexityAdjustment)
   ql.FuturesRateHelper (quote, iborStartDate, iborEndDate, dayCounter, convexityAdjustment, ql.Futures.IMM)
 
+OvernightIndexFutureRateHelper
+------------------------------
+
+.. function:: ql.OvernightIndexFutureRateHelper(quote, valueDate, maturityDate, overnightIndex, convexityAdjustmentQuote=ql.QuoteHandle(), nettingType=ql.OvernightIndexFuture.Compounding)
+
+Netting Types:
+
+- Averaging
+- Compounding
+
+.. code-block:: python
+
+  overnightIndex = ql.FedFunds()
+  priceQuote = ql.QuoteHandle(ql.SimpleQuote(99.92))
+  valueDate = ql.Date(3, 7, 2017)
+  maturityDate = ql.Date(30, 6, 2020 )
+  convexityAdjustment = ql.QuoteHandle()
+  netting = ql.OvernightIndexFuture.Averaging
+  future = ql.OvernightIndexFutureRateHelper(priceQuote, valueDate, maturityDate, overnightIndex)
+  future = ql.OvernightIndexFutureRateHelper(priceQuote, valueDate, maturityDate, overnightIndex, convexityAdjustment, netting)
+
+
+
 
 SofrFutureRateHelper
 --------------------
