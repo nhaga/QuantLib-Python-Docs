@@ -2,8 +2,6 @@
 Basics
 ******
 
-
-
 Settings
 ########
 
@@ -134,19 +132,21 @@ SimpleQuote
 
 .. function:: ql.SimpleQuote(value)
 
+.. code-block:: python
+
+    s = ql.SimpleQuote(0.01)
+
 **Functions**
 
 - value
 - setValue
 - isValid
 
+.. code-block:: python
 
-CompositeQuote
-**************
-
-.. function:: ql.CompositeQuote(quoteHandle, quoteHandle, function)
-
-
+    s.value()
+    s.setValue(0.05)
+    s.isValid()
 
 
 DerivedQuote
@@ -154,7 +154,30 @@ DerivedQuote
 
 .. function:: ql.DerivedQuote(quoteHandle, function)
 
+.. code-block:: python
 
+    d1 = ql.SimpleQuote(0.06)
+    d2 = ql.DerivedQuote(ql.QuoteHandle(d1),lambda x: 10*x)
+
+
+CompositeQuote
+**************
+
+.. function:: ql.CompositeQuote(quoteHandle, quoteHandle, function)
+
+.. code-block:: python
+
+    c1 = ql.SimpleQuote(0.02) 
+    c2 = ql.SimpleQuote(0.03)
+
+    def f(x,y):
+        return x+y
+
+    c3 = ql.CompositeQuote(ql.QuoteHandle(c1),ql.QuoteHandle(c2), f)
+    c3.value()
+
+    c4 = ql.CompositeQuote(ql.QuoteHandle(c1),ql.QuoteHandle(c2), lambda x,y:x+y)
+    c4.value()    
 
 ----
 
