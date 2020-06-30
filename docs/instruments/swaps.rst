@@ -178,7 +178,7 @@ Types:
 
   swapType = ql.OvernightIndexedSwap.Receiver
   nominal = 100
-  schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('1d'), calendar=ql.TARGET())
+  schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('1Y'), calendar=ql.TARGET())
   fixedRate = 0.01
   fixedDC = ql.Actual360()
   overnightIndex = ql.Eonia()
