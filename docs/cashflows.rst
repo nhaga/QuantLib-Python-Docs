@@ -75,12 +75,14 @@ In some cases, it is necessary to recalculate the rate of return based on the si
 ------
 
 
+CashFlows
+#########
+
 SimpleCashFlow
-##############
+**************
+
 
 .. function:: ql.SimpleCashFlow (amount, date)
-
-    Update the global evaluation date
 
 
 .. code-block:: python
@@ -90,11 +92,28 @@ SimpleCashFlow
     cf = ql.SimpleCashFlow(amount, date)
 
 
-**Functions**
+Redemption
+**********
 
-.. function:: .amount()
+.. function:: ql.Redemption(amount, date)
 
-.. function:: .date()
+.. code-block:: python
+
+    amount = 100
+    date = ql.Date(15,6,2020)
+    redemption = ql.Redemption(amount, date)
+
+
+AmortizingPaymnent
+******************
+
+.. function:: ql.AmortizingPayment(amount, date)
+
+.. code-block:: python
+
+    amount = 100
+    date = ql.Date(15,6,2020)
+    ql.AmortizingPayment(amount, date)
 
 
 ------
@@ -134,6 +153,21 @@ IborCoupon
     dayCounter = ql.Actual360()
     index = ql.Euribor6M()
     coupon = ql.IborCoupon(endDate, nominal, startDate, endDate, 2, index)
+
+
+OvernightIndexedCoupon
+**********************
+
+.. function:: ql.OvernightIndexedCoupon(paymentDate, nominal, startDate, endDate, overnightIndex, gearing=1.0, spread=0.0, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), telescopicValueDates=False)
+
+.. code-block:: python
+
+    paymentDate = ql.Date(15, 9, 2020)
+    nominal = 100
+    startDate = ql.Date(15, 6, 2002)
+    endDate = ql.Date(15,9,2020)
+    overnightIndex = ql.Eonia()
+    ql.OvernightIndexedCoupon(paymentDate, nominal, startDate, endDate, overnightIndex)
 
 
 CappedFlooredCoupon
@@ -184,17 +218,41 @@ CmsSpreadCoupon
     nominal = 100.
     startDate = ql.Date(15,12,2020)
     endDate = ql.Date(15,6,2021)
-    rate = .05
-    dayCounter = ql.Actual360()
-    index = ql.Euribor6M()
     fixingDays = 2
     swapIndex1 = ql.EuriborSwapIsdaFixA(ql.Period("10Y"))
     swapIndex2 = ql.EuriborSwapIsdaFixA(ql.Period("2Y"))
     spreadIndex = ql.SwapSpreadIndex("CMS 10Y-2Y", swapIndex1, swapIndex2)
-    spread = ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex)
+    ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex)
 
+CappedFlooredCmsSpreadCoupon
+****************************
 
+.. function:: ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing=1, spread=0, cap=Null, floor=Null, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), isInArrears=False, exCouponDate=ql.Date())
 
+.. code-block:: python
+
+    nominal = 100.
+    startDate = ql.Date(15,12,2020)
+    endDate = ql.Date(15,6,2021)
+    fixingDays = 2
+    swapIndex1 = ql.EuriborSwapIsdaFixA(ql.Period("10Y"))
+    swapIndex2 = ql.EuriborSwapIsdaFixA(ql.Period("2Y"))
+    spreadIndex = ql.SwapSpreadIndex("CMS 10Y-2Y", swapIndex1, swapIndex2)
+    ql.CappedFlooredCmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex)
+
+    gearing = 1
+    spread = 0
+    cap=0
+    floor=0
+
+    ql.CappedFlooredCmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing, spread, cap, floor)
+
+    refPeriodStart = ql.Date()
+    refPeriodEnd = ql.Date()
+    dayCounter = ql.Actual360()
+    isInArrears = False
+    exCouponDate = ql.Date()
+    ql.CappedFlooredCmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing, spread, cap, floor, refPeriodStart, refPeriodEnd, dayCounter, isInArrears, exCouponDate)
 
 
 
