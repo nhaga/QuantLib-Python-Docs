@@ -343,7 +343,7 @@ The “Day Count Convention” is critical for the valuation of financial produc
 
 ----
 
-git@github.com:martinbrose/QuantLib-Python-Docs.git
+
 Schedule
 ########
 
@@ -382,7 +382,7 @@ MakeSchedule
 
 Optional params:
 
-- calendar=NoneSobol
+- calendar=None
 - convention=None
 - terminalDateConvention=None,
 - rule=None
