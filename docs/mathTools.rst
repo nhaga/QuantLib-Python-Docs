@@ -9,9 +9,11 @@ Solvers
 
 QuantLib provides several types of one-dimensional solvers to solve the roots of single-parameter functions,
 
-$f(x) = 0$
+.. math::
 
-Where $f: R \to R$ is a function over a real number field.
+    f(x) = 0
+
+Where :math:`f: R \to R` is a function over a real number field.
 
 The types of solvers provided by QuantLib are:
 
@@ -103,7 +105,7 @@ The interpolation class defines the __call__ method. The usage of an interpolati
     i(x, allowExtrapolation)
  
 - x : floating point number, the point to be interpolated
-- allowExtrapolation : boolean. allowExtrapolation to True means extrapolation is allowed. The default value is False .
+- allowExtrapolation : boolean. Setting allowExtrapolation to True means extrapolation is allowed. The default value is False.
 
 
 1D interpolation method
@@ -202,7 +204,7 @@ where seed is an integer, with a default value of 0, used as a seed to initializ
 
 Member functions of the random number generator:
 
-- next(): Returns a SampleNumber object as the result of the simulation.
+- next() : Returns a SampleNumber object as the result of the simulation.
 
 .. code-block:: python
 
@@ -266,8 +268,8 @@ Quasi-random number
 
 Compared with the "pseudo" random numbers described earlier, another important type of random numbers in random simulations becomes "quasi" random numbers, also known as low-bias sequences. Because of better convergence, quasi-random numbers are often used in the simulation of high-dimensional random variables. There are two types of quasi-random numbers provided by quantlib-python,
 
-- **HaltonRsg**: Halton sequence
-- **SobolRsg**: Sobol sequence
+- **HaltonRsg** : Halton sequence
+- **SobolRsg** : Sobol sequence
 
 HaltonRsg
 ---------
@@ -277,16 +279,16 @@ HaltonRsg
 where,
 
 - dimensionality : integer, set the dimension;
-- seed , an integer, with a default value of 0, used as a seed to initialize the corresponding deterministic sequence;
+- seed : an integer, with a default value of 0, used as a seed to initialize the corresponding deterministic sequence;
 - randomStart : boolean, the default is True , whether to start randomly;
 - randomShift : Boolean, default is False , whether to shift randomly.
 
 
 Member function of `HaltonRsg`,
 
-- **nextSequence()**: returns a SampleRealVector object as the result of the simulation;
-- **lastSequence()**: returns a SampleRealVector object as the result of the previous simulation;
-- **dimension()**: Returns the dimension.
+- **nextSequence()** : returns a SampleRealVector object as the result of the simulation;
+- **lastSequence()** : returns a SampleRealVector object as the result of the previous simulation;
+- **dimension()** : Returns the dimension.
 
 SobolRsg
 --------
@@ -296,15 +298,16 @@ SobolRsg
 where, 
 
 - dimensionality : integer, set the dimension;
-- seed , an integer, with a default value of 0, used as a seed to initialize the corresponding deterministic sequence;
-- directionIntegers , a built-in variable of quantlib-python. The default value is SobolRsg.Jaeckel , which is used to initialize Sobol sequences.
+- seed : an integer, with a default value of 0, used as a seed to initialize the corresponding deterministic sequence;
+- directionIntegers : a built-in variable of quantlib-python. The default value is SobolRsg.Jaeckel , which is used to initialize Sobol sequences.
 
 Member functions of `SobolRsg`,
-- **nextSequence()**: returns a SampleRealVector object as the result of the simulation;
-- **lastSequence()**: returns a SampleRealVector object as the result of the previous simulation;
-- **dimension()**: Returns the dimension.
-- **skipTo(n)**: n is an integer, skip to the nth dimension of the sampling result;
-- **nextInt32Sequence()**: Returns an IntVector object.
+
+- **nextSequence()** : returns a SampleRealVector object as the result of the simulation;
+- **lastSequence()** : returns a SampleRealVector object as the result of the previous simulation;
+- **dimension()** : Returns the dimension.
+- **skipTo(n)** : n is an integer, skip to the nth dimension of the sampling result;
+- **nextInt32Sequence()** : Returns an IntVector object.
 
 -------
 

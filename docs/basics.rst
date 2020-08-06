@@ -46,16 +46,18 @@ Changes evaluation date of calculation:
 Array
 #####
 
+creates an empty array
+
 .. function:: ql.Array()
- 
+
+creates the array and fills it with value 
+
 .. function:: ql.Array(size, value)
 
- creates the array and fills it with value
- 
+creates the array and fills it according to a0=value,ai=ai−1+increment
+
 .. function:: ql.Array(size, value, increment)
 
-    creates the array and fills it according to a0=value,ai=ai−1+increment
- 
 
 -----
 

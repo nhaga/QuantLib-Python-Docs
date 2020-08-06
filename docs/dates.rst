@@ -59,14 +59,14 @@ where day and year are integers; month can be an integer or a special object res
 
 **Static functions**
 
-- **Date.todaysDate()**: Date object, which returns the current date of the system.
-- **Date.minDate()**: Date object, which returns the minimum date that QuantLib can represent.
-- **Date.maxDate()**: Date object, which returns the maximum date that QuantLib can represent.
-- **Date.isLeap(y)**: Boolean value to determine whether y is a leap year
-- **Date.endOfMonth(d)**: Date object, which returns the date corresponding to the end of the month where the date d is located
-- **Date.isEndOfMonth(d)**: Boolean value to determine whether d is at the end of the month
-- **Date.nextWeekday(d, w)**: Date object, which returns the date corresponding to the first week w after date d (for example, the first Friday after 2018-03-12)
-- **Date.nthWeekday(n, w, m, y)**: Date object, which returns the date corresponding to the n week w in the given month m and year y (for example, the third Wednesday of July 2010)
+- **Date.todaysDate()** : Date object, which returns the current date of the system.
+- **Date.minDate()** : Date object, which returns the minimum date that QuantLib can represent.
+- **Date.maxDate()** : Date object, which returns the maximum date that QuantLib can represent.
+- **Date.isLeap(y)** : Boolean value to determine whether y is a leap year
+- **Date.endOfMonth(d)** : Date object, which returns the date corresponding to the end of the month where the date d is located
+- **Date.isEndOfMonth(d)** : Boolean value to determine whether d is at the end of the month
+- **Date.nextWeekday(d, w)** : Date object, which returns the date corresponding to the first week w after date d (for example, the first Friday after 2018-03-12)
+- **Date.nthWeekday(n, w, m, y)** : Date object, which returns the date corresponding to the n week w in the given month m and year y (for example, the third Wednesday of July 2010)
 
 .. code-block:: python
 
@@ -115,7 +115,7 @@ Calendar
 
 The class `ql.Calendar` provides the interface for determining whether a date is a business day or a holiday for a given exchange or a given country, and for incrementing/decrementing a date of a given number of business days.
 
-**Available Calendars:**
+**Available Calendars**
 
 Argentina, Australia, Austria, BespokeCalendar, Botswana, Brazil, Canada, China, CzechRepublic, Denmark, Finland, France, Germany, HongKong, Hungary, Iceland, India, Indonesia, Israel, Italy, Japan, JointCalendar, Mexico, NewZealand, Norway, NullCalendar, Poland, Romania, Russia, SaudiArabia, Singapore, Slovakia, SouthAfrica, SouthKorea, Sweden, Switzerland, Taiwan, TARGET, Thailand, Turkey, Ukraine, UnitedKingdom, UnitedStates, WeekendsOnly
 
@@ -128,29 +128,29 @@ Argentina, Australia, Austria, BespokeCalendar, Botswana, Brazil, Canada, China,
 
 **Calendar Markets**
 
-| Argentina: ['Merval']
-| Brazil: ['Exchange', 'Settlement']
-| Canada: ['Settlement', 'TSX']
-| China: ['IB', 'SSE']
-| CzechRepublic: ['PSE']
-| France: ['Exchange', 'Settlement']
-| Germany: ['Eurex', 'FrankfurtStockExchange', 'Settlement', 'Xetra']
-| HongKong: ['HKEx']
-| Iceland: ['ICEX']
-| India: ['NSE']
-| Indonesia: ['BEJ', 'JSX']
-| Israel: ['Settlement', 'TASE']
-| Italy: ['Exchange', 'Settlement']
-| Mexico: ['BMV']
-| Russia: ['MOEX', 'Settlement']
-| SaudiArabia: ['Tadawul']
-| Singapore: ['SGX']
-| Slovakia: ['BSSE']
-| SouthKorea: ['KRX', 'Settlement']
-| Taiwan: ['TSEC']
-| Ukraine: ['USE']
-| UnitedKingdom: ['Exchange', 'Metals', 'Settlement']
-| UnitedStates: ['FederalReserve', 'GovernmentBond', 'LiborImpact', 'NERC', 'NYSE', 'Settlement']
+| Argentina : ['Merval']
+| Brazil : ['Exchange', 'Settlement']
+| Canada : ['Settlement', 'TSX']
+| China : ['IB', 'SSE']
+| CzechRepublic : ['PSE']
+| France : ['Exchange', 'Settlement']
+| Germany : ['Eurex', 'FrankfurtStockExchange', 'Settlement', 'Xetra']
+| HongKong : ['HKEx']
+| Iceland : ['ICEX']
+| India : ['NSE']
+| Indonesia : ['BEJ', 'JSX']
+| Israel : ['Settlement', 'TASE']
+| Italy : ['Exchange', 'Settlement']
+| Mexico : ['BMV']
+| Russia : ['MOEX', 'Settlement']
+| SaudiArabia : ['Tadawul']
+| Singapore : ['SGX']
+| Slovakia : ['BSSE']
+| SouthKorea : ['KRX', 'Settlement']
+| Taiwan : ['TSEC']
+| Ukraine : ['USE']
+| UnitedKingdom : ['Exchange', 'Metals', 'Settlement']
+| UnitedStates : ['FederalReserve', 'GovernmentBond', 'LiborImpact', 'NERC', 'NYSE', 'Settlement']
 
 
 .. code-block:: python
@@ -163,11 +163,11 @@ Argentina, Australia, Austria, BespokeCalendar, Botswana, Brazil, Canada, China,
 
 Some commonly used member functions:
 
-- **isBusinessDay(d)**: A Boolean value that determines whether d is a business day.
-- **isHoliday(d)**: A boolean value that determines whether d is a holiday.
-- **isWeekend(w)**: A Boolean value that determines whether w is a weekend (in some countries, weekends are not scheduled on Saturdays and Sundays).
-- **isEndOfMonth(d)**: A boolean value that determines whether d is the last working day at the end of the month.
-- **endOfMonth(d)**: date, returns the last working day of the month in which d is located.
+- **isBusinessDay(d)** : A Boolean value that determines whether d is a business day.
+- **isHoliday(d)** : A boolean value that determines whether d is a holiday.
+- **isWeekend(w)** : A Boolean value that determines whether w is a weekend (in some countries, weekends are not scheduled on Saturdays and Sundays).
+- **isEndOfMonth(d)** : A boolean value that determines whether d is the last working day at the end of the month.
+- **endOfMonth(d)** : date, returns the last working day of the month in which d is located.
 
 .. code-block:: python
 
@@ -185,8 +185,8 @@ Some commonly used member functions:
 
 The Calendar object in QuantLib can conveniently implement custom holidays. Generally, only the following two functions are needed:
 
-- **addHoliday(d)**: add d as a holiday.
-- **removeHoliday(d)**: remove d from the holiday table.
+- **addHoliday(d)** : add d as a holiday.
+- **removeHoliday(d)** : remove d from the holiday table.
 
 
 .. code-block:: python
@@ -239,19 +239,20 @@ Returns the holidays between two dates.
 
 Correcting a date to a working day is a necessary task, and the following working day conversion modes are supported in QuantLib:
 
-- **Following**: The date is corrected to the first working day that follows.
-- **ModifiedFollowing**: The date is corrected to the first working day after that, unless this working day is in the next month; if the modified working day is in the next month, the date is corrected to the last working day that appears before, to ensure the original The date and the revised date are in the same month.
-- **Preceding**: Correct the date to the last business day that Preceding before.
-- **ModifiedPreceding**: modify the date to the last working day that appeared before, unless the working sunrise is now the previous month; if the modified working sunrise is now the previous month, the date is modified to the first working day after that The original date and the revised date are guaranteed to be in the same month.
-- **Unadjusted**: No adjustment.
+- **Following** : The date is corrected to the first working day that follows.
+- **ModifiedFollowing** : The date is corrected to the first working day after that, unless this working day is in the next month; if the modified working day is in the next month, the date is corrected to the last working day that appears before, to ensure the original The date and the revised date are in the same month.
+- **Preceding** : Correct the date to the last business day that Preceding before.
+- **ModifiedPreceding** : modify the date to the last working day that appeared before, unless the working sunrise is now the previous month; if the modified working sunrise is now the previous month, the date is modified to the first working day after that The original date and the revised date are guaranteed to be in the same month.
+- **Unadjusted** : No adjustment.
 
 Calendar object uses the following two functions to modify the date:
 
-- **adjust(d, convention)**: Date, modify d according to the convention conversion mode.
-- **advance(d, period, convention, endOfMonth)**: date, the date is moved backward by time interval period and then modified according to the conversion mode convention ; the parameter endOfMonth indicates that if d is the end of the month, the date after the correction is also at the end of the month.
+- **adjust(d, convention)** : Date, modify d according to the convention conversion mode.
+- **advance(d, period, convention, endOfMonth)** : date, the date is moved backward by time interval period and then modified according to the conversion mode convention ; the parameter endOfMonth indicates that if d is the end of the month, the date after the correction is also at the end of the month.
 
 Finally, the following function can be used to calculate the number of working days during the two days:
-- **businessDaysBetween(from, to, includeFirst, includeLast)**: Calculate the number of working days between the dates from and to (whether or not the dates are included).
+
+- **businessDaysBetween(from, to, includeFirst, includeLast)** : Calculate the number of working days between the dates from and to (whether or not the dates are included).
 
 
 
@@ -297,13 +298,14 @@ DayCounter
 https://www.isda.org/a/pIJEE/The-Actual-Actual-Day-Count-Fraction-1999.pdf
 
 The “Day Count Convention” is critical for the valuation of financial products, especially for fixed-income products. QuantLib provides the following common rules:
-- **Actual360**: Actual / 360
 
-- **Actual365Fixed**: Actual / 365(Fixed)
+- **Actual360** : Actual / 360
+
+- **Actual365Fixed** : Actual / 365(Fixed)
  - Standard
  - Canadian
  - NoLeap
-- **ActualActual**: Actual / Actual
+- **ActualActual** : Actual / Actual
  - ISMA
  - Bond
  - ISDA
@@ -311,8 +313,8 @@ The “Day Count Convention” is critical for the valuation of financial produc
  - Actual365
  - AFB
  - Euro
-- **Business252**: Business / 252
-- **Thirty360**: 30 / 360
+- **Business252** : Business / 252
+- **Thirty360** : 30 / 360
 - **SimpleDayCounter**
 
 .. code-block:: python
@@ -341,7 +343,7 @@ The “Day Count Convention” is critical for the valuation of financial produc
 
 ----
 
-
+git@github.com:martinbrose/QuantLib-Python-Docs.git
 Schedule
 ########
 
@@ -350,14 +352,14 @@ Schedule
 
 The types and explanations of these variables are as follows:
 
-- **effectiveDate**, terminationDate : Date, the start and end date of the calendar list, such as the value date and expiration date of the bond.
-- **tenor**: Period object, the interval between two adjacent dates, such as the bond frequency (1 year or 6 months) or interest rate swap rate (3 months).
-- **calendar**: A calendar table that generates a specific calendar of dates to follow.
-- **convention**: integer, how to adjust the non-working day (except the last date), the value range is some reserved variables of quantlib-python.
-- **terminationDateConvention**: Integer, if the last date is a non-working day, how to adjust it, the value range is some reserved variables of quantlib-python.
-- **Rule**: A member of DateGeneration that generates the rules for the date.
-- **endOfMonth**: If the start date is at the end of the month, whether other dates are required to be scheduled at the end of the month (except the last date).
-- **firstDate**, nextToLastDate (optional): Date, the start and end date (not commonly used) provided for the generated method rule .
+- **effectiveDate**, **terminationDate** : Date, the start and end date of the calendar list, such as the value date and expiration date of the bond.
+- **tenor** : Period object, the interval between two adjacent dates, such as the bond frequency (1 year or 6 months) or interest rate swap rate (3 months).
+- **calendar** : A calendar table that generates a specific calendar of dates to follow.
+- **convention** : integer, how to adjust the non-working day (except the last date), the value range is some reserved variables of quantlib-python.
+- **terminationDateConvention** : Integer, if the last date is a non-working day, how to adjust it, the value range is some reserved variables of quantlib-python.
+- **Rule** : A member of DateGeneration that generates the rules for the date.
+- **endOfMonth** : If the start date is at the end of the month, whether other dates are required to be scheduled at the end of the month (except the last date).
+- **firstDate** : nextToLastDate (optional): Date, the start and end date (not commonly used) provided for the generated method rule .
 
 
 .. code-block:: python
@@ -380,7 +382,7 @@ MakeSchedule
 
 Optional params:
 
-- calendar=None
+- calendar=NoneSobol
 - convention=None
 - terminalDateConvention=None,
 - rule=None

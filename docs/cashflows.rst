@@ -25,40 +25,40 @@ Concrete interest rate class
 
 **Frequencies**
 
-- NoFrequency , no interest;
-- Once , pay interest once, common in zero-coupon bonds;
-- Annual , paying interest once a year;
-- Semiannual , Semiannual interest semi-annually;
-- EveryFourthMonth every 4 months;
-- Quarterly , Quarterly quarterly;
-- Bimonthly , paying interest every two months;
-- Monthly , monthly interest payment;
-- EveryFourthWeek every 4 weeks;
-- Biweekly , Biweekly interest every two weeks;
-- Weekly , paying once a week;
-- Daily , pay interest once a day.
+- NoFrequency : no interest;
+- Once : pay interest once, common in zero-coupon bonds;
+- Annual : paying interest once a year;
+- Semiannual : Semiannual interest semi-annually;
+- EveryFourthMonth : every 4 months;
+- Quarterly : Quarterly quarterly;
+- Bimonthly : paying interest every two months;
+- Monthly : monthly interest payment;
+- EveryFourthWeek : every 4 weeks;
+- Biweekly : Biweekly interest every two weeks;
+- Weekly : paying once a week;
+- Daily : pay interest once a day.
 
 Here are some common member functions:
 
-- **rate()**: a floating point number that returns the value of the rate of return
-- **dayCounter()**: DayCounter object, which returns the member variable that controls the day calculation rule;
-- **compounding()**: an integer that returns the interest rate method;
-- **frequency()**: Integer, returns the frequency of interest payments.
-- **discountFactor(d1, d2)**: float, d1 and d2 are both Date objects ( d1 < d2 ), returning the discount factor size from d1 to d2 ;
-- **compoundFactor(d1, d2)**: float, d1 and d2 are both Date objects ( d1 < d2 ), returning the size of the interest factor from d1 to d2 ;
-- **equivalentRate(resultDC, comp, freq, d1, d2)**: The InterestRate object returns an InterestRate object equivalent to the current object. The configuration parameters of the object include resultDC , comp , freq :
-  - Both d1 and d2 are Date objects ( d1 < d2 )
-  - **resultDC**, DayCounter object, configure the number of days calculation rules;
-  - **comp**, integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
-  - **Freq**, integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
+- **rate()** : a floating point number that returns the value of the rate of return;
+- **dayCounter()** : DayCounter object, which returns the member variable that controls the day calculation rule;
+- **compounding()** : an integer that returns the interest rate method;
+- **frequency()** : Integer, returns the frequency of interest payments;
+- **discountFactor(d1, d2)** : float, d1 and d2 are both Date objects ( d1 < d2 ), returning the discount factor size from d1 to d2;
+- **compoundFactor(d1, d2)** : float, d1 and d2 are both Date objects ( d1 < d2 ), returning the size of the interest factor from d1 to d2;
+- **equivalentRate(resultDC, comp, freq, d1, d2)** : The InterestRate object returns an InterestRate object equivalent to the current object. The configuration parameters of the object include resultDC , comp , freq :
+ - Both d1 and d2 are Date objects ( d1 < d2 )
+ - **resultDC** : DayCounter object, configure the number of days calculation rules;
+ - **comp** : integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
+ - **freq** : integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
 
 In some cases, it is necessary to recalculate the rate of return based on the size of the interest factor. The InterestRate class provides the function impliedRate implement this function:
 
-- **impliedRate(compound, resultDC, comp, freq, d1, d2)**: The InterestRate object returns the inverse calculated InterestRate object whose configuration parameters include resultDC , comp , freq :
-  - Both d1 and d2 are Date objects ( d1 < d2 )
-  - **resultDC**, DayCounter object, configure the number of days calculation rules;
-  - **comp**, integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
-  - **Freq**, integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
+- **impliedRate(compound, resultDC, comp, freq, d1, d2)** : The InterestRate object returns the inverse calculated InterestRate object whose configuration parameters include resultDC , comp , freq :
+ - Both d1 and d2 are Date objects ( d1 < d2 )
+ - **resultDC** : DayCounter object, configure the number of days calculation rules;
+ - **comp** : integer, configuration interest rate, the value range is some reserved variables of quantlib-python;
+ - **freq** : integer, configuration payoff frequency, the range of values ​​is some reserved variables of quantlib-python.
 
 .. code-block:: python
 
