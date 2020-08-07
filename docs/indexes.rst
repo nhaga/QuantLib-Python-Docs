@@ -25,6 +25,9 @@ Derived Classes:
 
 - ql.Euribor()
 
+
+Constructors for derived classes:
+
 .. function:: ql.Euribor(period)
 
 .. function:: ql.Euribor(period, yts)

@@ -116,8 +116,8 @@ AnalyticCapFloorEngine
 
 OneFactorAffineModel
 
-- HullWhite: (termStructure, a=0.1, sigma=0.01)
-- Vasicek: (r0=0.05, a=0.1, b=0.05, sigma=0.01, lambda=0.0)
+- HullWhite : (termStructure, a=0.1, sigma=0.01)
+- Vasicek : (r0=0.05, a=0.1, b=0.05, sigma=0.01, lambda=0.0)
 - CoxIngersollRoss [NOT IMPLEMENTED]
 - GeneralizedHullWhite [NOT IMPLEMENTED]
 
@@ -149,10 +149,10 @@ TreeCapFloorEngine
 
 Models
 
-- HullWhite: (YieldTermStructure, a=0.1, sigma=0.01)
-- BlackKarasinski: (YieldTermStructure, a=0.1, sigma=0.1)
-- Vasicek: (r0=0.05, a=0.1, b=0.05, sigma=0.01, lambda=0.0)
-- G2: (termStructure, a=0.1, sigma=0.01, b=0.1, eta=0.01, rho=-0.75)
+- HullWhite : (YieldTermStructure, a=0.1, sigma=0.01)
+- BlackKarasinski : (YieldTermStructure, a=0.1, sigma=0.1)
+- Vasicek : (r0=0.05, a=0.1, b=0.05, sigma=0.01, lambda=0.0)
+- G2 : (termStructure, a=0.1, sigma=0.01, b=0.1, eta=0.01, rho=-0.75)
 - GeneralizedHullWhite [NOT IMPLEMENTED]
 - CoxIngersollRoss [NOT IMPLEMENTED]
 - ExtendedCoxIngersollRoss [NOT IMPLEMENTED]
