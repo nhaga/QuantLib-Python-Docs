@@ -113,26 +113,36 @@ The interpolation class defines the __call__ method. The usage of an interpolati
 
 - **LinearInterpolation** (1-D)
 - **LogLinearInterpolation** (1-D)
-- **BackwardFlatInterpolation** (1-D)
+- **CubicInterpolation** (1-D)
+- **LogCubicInterpolation** (1-D)
 - **ForwardFlatInterpolation** (1-D)
+- **BackwardFlatInterpolation** (1-D)
+- **LogParabolicInterpolation** (1-D)
 
 .. code-block:: python
 
+    import QuantLib as ql
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    X = [1., 2., 3., 4., 5.]
+    Y = [0.5, 0.6, 0.7, 0.8, 0.9]
+
     methods = {
         'Linear Interpolation': ql.LinearInterpolation(X, Y),
-        'BackwardFlatInterpolation': ql.BackwardFlatInterpolation(X, Y),
-        'ForwardFlatInterpolation': ql.ForwardFlatInterpolation(X, Y),
         'LogLinearInterpolation': ql.LogLinearInterpolation(X, Y),
         'CubicNaturalSpline': ql.CubicNaturalSpline(X, Y),
         'LogCubicNaturalSpline': ql.LogCubicNaturalSpline(X, Y),
+        'ForwardFlatInterpolation': ql.ForwardFlatInterpolation(X, Y),
+        'BackwardFlatInterpolation': ql.BackwardFlatInterpolation(X, Y),
         'LogParabolic': ql.LogParabolic(X, Y)
     }
 
-    xx = np.linspace(1, 21)
+    xx = np.linspace(1, 10)
     fig = plt.figure(figsize=(15,4))
     plt.scatter(X, Y, label='Original Data')
     for name, i in methods.items():
-        yy = [i(x) for x in xx]
+        yy = [i(x, allowExtrapolation=True) for x in xx]
         plt.plot(xx, yy, label=name);
     plt.legend();
 
