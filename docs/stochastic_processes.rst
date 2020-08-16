@@ -159,6 +159,24 @@ GarmanKohlagenProcess
 HestonProcess
 #############
 
+.. function:: ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+  dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+  initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+  v0 = 0.005
+  kappa = 0.8
+  theta = 0.008
+  rho = 0.2
+  sigma = 0.1
+
+  process = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+
 BatesProcess
 ############
 
