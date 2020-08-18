@@ -177,6 +177,52 @@ HestonProcess
   process = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
 
 
+HestonSLVProcess
+################
+
+.. function:: ql.HestonSLVProcess(hestonProcess, leverageFct)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    endDate = today + ql.Period("2Y")
+
+    # Set up a Heston process
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    v0 = 0.005
+    kappa = 0.8
+    theta = 0.008
+    rho = 0.2
+    sigma = 0.1
+
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+    # Set up a local vol surface
+    periods = [ql.Period("3M"), ql.Period("6M"), ql.Period("12M"), ql.Period("24M")]
+    expirationDates = [today + period for period in periods]
+    strikes = [90, 95, 100, 105, 110]
+
+    data = [[0.075, 0.076, 0.078, 0.080], [0.071, 0.072, 0.074, 0.078], [0.071, 0.072, 0.073, 0.077], [0.075, 0.075, 0.075, 0.077], [0.081, 0.080, 0.078, 0.078]]
+    impliedVols = ql.Matrix(data)
+
+    localVolSurface = ql.BlackVarianceSurface(today, ql.NullCalendar(), expirationDates, strikes, impliedVols, ql.Actual365Fixed())
+    localVolHandle = ql.BlackVolTermStructureHandle(localVolSurface)
+    localVol = ql.LocalVolSurface(localVolHandle, riskFreeTS, dividendTS, initialValue)
+    localVol.enableExtrapolation()
+
+    # Calibrate Leverage Function to the Local Vol and Heston Model via Monte-Carlo
+    generatorFactory = ql.MTBrownianGeneratorFactory()
+
+    hestonModel = ql.HestonModel(hestonProcess)
+    stochLocalMcModel = ql.HestonSLVMCModel(localVol, hestonModel, generatorFactory, endDate)
+    leverageFct = stochLocalMcModel.leverageFunction()
+
+    process = ql.HestonSLVProcess(hestonProcess, leverageFct)
+
+
 BatesProcess
 ############
 
