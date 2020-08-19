@@ -397,10 +397,10 @@ MCDiscreteGeometricAPEngine
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
     process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
 
-    traits = 'pr'
+    rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
 
-    engine = ql.MCDiscreteGeometricAPEngine(process, traits, requiredSamples=numPaths)
+    engine = ql.MCDiscreteGeometricAPEngine(process, rng, requiredSamples=numPaths)
 
 
 MCDiscreteArithmeticAPEngine
@@ -417,10 +417,10 @@ MCDiscreteArithmeticAPEngine
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
     process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
 
-    traits = 'pr'
+    rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
 
-    engine = ql.MCDiscreteArithmeticAPEngine(process, traits, requiredSamples=numPaths)
+    engine = ql.MCDiscreteArithmeticAPEngine(process, rng, requiredSamples=numPaths)
 
 
 AnalyticHestonEngine
