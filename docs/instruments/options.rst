@@ -42,6 +42,11 @@ Asian Options
 
 Averaging Types:
 
+- `ql.ContinuousAveragingAsianOption(arithmeticAverage, vanillaPayoff, europeanExercise)`
+- `ql.DiscreteAveragingAsianOption(arithmeticAverage, arithmeticRunningAccumulator, pastFixings, asianFutureFixingDates, vanillaPayoff, europeanExercise)`
+
+Average Definitions:
+
 - `ql.Average().Arithmetic`
 - `ql.Average().Geometric`
 
@@ -60,11 +65,13 @@ Averaging Types:
 
   arithmeticAverage = ql.Average().Arithmetic
   arithmeticRunningAccumulator = 0.0
-  arithmeticAsianOption = ql.DiscreteAveragingAsianOption(arithmeticAverage, arithmeticRunningAccumulator, pastFixings, asianFutureFixingDates, vanillaPayoff, europeanExercise)
+  discreteArithmeticAsianOption = ql.DiscreteAveragingAsianOption(arithmeticAverage, arithmeticRunningAccumulator, pastFixings, asianFutureFixingDates, vanillaPayoff, europeanExercise)
 
   geometricAverage = ql.Average().Geometric
   geometricRunningAccumulator = 1.0
-  geometricAsianOption = ql.DiscreteAveragingAsianOption(geometricAverage, geometricRunningAccumulator, pastFixings, asianFutureFixingDates, vanillaPayoff, europeanExercise)
+  discreteGeometricAsianOption = ql.DiscreteAveragingAsianOption(geometricAverage, geometricRunningAccumulator, pastFixings, asianFutureFixingDates, vanillaPayoff, europeanExercise)
+
+  continuousGeometricAsianOption = ql.ContinuousAveragingAsianOption(geometricAverage, vanillaPayoff, europeanExercise)
 
  
 Barrier Options
