@@ -80,6 +80,34 @@ Barrier Options
 Basket Options
 **************
 
+.. function:: ql.BasketOption(payoff, exercise)
+
+Payoff Types:
+
+- `ql.MinBasketPayoff(payoff)`
+- `ql.AverageBasketPayoff(payoff, numInstruments)`
+- `ql.MaxBasketPayoff(payoff)`
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  exp_date = today + ql.Period(1, ql.Years)
+  strike = 100
+  number_of_underlyings = 5
+
+  exercise = ql.EuropeanExercise(exp_date)
+  vanillaPayoff = ql.PlainVanillaPayoff(ql.Option.Call, strike)
+
+  payoffMin = ql.MinBasketPayoff(vanillaPayoff)
+  basketOptionMin = ql.BasketOption(payoffMin, exercise)
+
+  payoffAverage = ql.AverageBasketPayoff(vanillaPayoff, number_of_underlyings)
+  basketOptionAverage = ql.BasketOption(payoffAverage, exercise)
+
+  payoffMax = ql.MaxBasketPayoff(vanillaPayoff)
+  basketOptionMax = ql.BasketOption(payoffMax, exercise)
+
+
 Cliquet Options
 ***************
 
