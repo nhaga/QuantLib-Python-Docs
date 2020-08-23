@@ -383,6 +383,23 @@ AnalyticDiscreteGeometricAveragePriceAsianEngine
     engine = ql.AnalyticDiscreteGeometricAveragePriceAsianEngine(process)
 
 
+AnalyticContinuousGeometricAveragePriceAsianEngine
+**************************************************
+
+.. function:: ql.AnalyticContinuousGeometricAveragePriceAsianEngine(GeneralizedBlackScholesProcess)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+
+    engine = ql.AnalyticContinuousGeometricAveragePriceAsianEngine(process)
+
+
 MCDiscreteGeometricAPEngine
 ***************************
 
@@ -397,10 +414,10 @@ MCDiscreteGeometricAPEngine
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
     process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
 
-    traits = 'pr'
+    rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
 
-    engine = ql.MCDiscreteGeometricAPEngine(process, traits, requiredSamples=numPaths)
+    engine = ql.MCDiscreteGeometricAPEngine(process, rng, requiredSamples=numPaths)
 
 
 MCDiscreteArithmeticAPEngine
@@ -417,10 +434,10 @@ MCDiscreteArithmeticAPEngine
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
     process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
 
-    traits = 'pr'
+    rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
 
-    engine = ql.MCDiscreteArithmeticAPEngine(process, traits, requiredSamples=numPaths)
+    engine = ql.MCDiscreteArithmeticAPEngine(process, rng, requiredSamples=numPaths)
 
 
 AnalyticHestonEngine
