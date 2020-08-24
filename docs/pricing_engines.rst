@@ -440,6 +440,42 @@ MCDiscreteArithmeticAPEngine
     engine = ql.MCDiscreteArithmeticAPEngine(process, rng, requiredSamples=numPaths)
 
 
+MCEuropeanBasketEngine
+**********************
+
+.. function:: ql.MCEuropeanBasketEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
+
+.. code-block:: python
+
+  # Create a StochasticProcessArray for the various underlyings
+  underlying_spots = [100., 100., 100., 100., 100.]
+  underlying_vols = [0.1, 0.12, 0.13, 0.09, 0.11]
+  underlying_corr_mat = [[1, 0.1, -0.1, 0, 0], [0.1, 1, 0, 0, 0.2], [-0.1, 0, 1, 0, 0], [0, 0, 0, 1, 0.15], [0, 0.2, 0, 0.15, 1]]
+
+  today = ql.Date().todaysDate()
+  day_count = ql.Actual365Fixed()
+  calendar = ql.NullCalendar()
+
+  riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.0, day_count))
+  dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.0, day_count))
+
+  processes = [ql.BlackScholesMertonProcess(ql.QuoteHandle(ql.SimpleQuote(x)),
+                                            dividendTS,
+                                            riskFreeTS,
+                                            ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, calendar, y, day_count)))
+               for x, y in zip(underlying_spots, underlying_vols)]
+
+  multiProcess = ql.StochasticProcessArray(processes, underlying_corr_mat)
+
+  # Create the pricing engine
+  rng = "pseudorandom"
+  numSteps = 500000
+  stepsPerYear = 1
+  seed = 43
+
+  engine = ql.MCEuropeanBasketEngine(multiProcess, rng, timeStepsPerYear=stepsPerYear, requiredSamples=numSteps, seed=seed)
+
+
 AnalyticHestonEngine
 ********************
 
