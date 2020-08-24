@@ -275,3 +275,26 @@ G2ForwardProcess
 Multiple Processes
 ##################
 
+.. function:: ql.StochasticProcessArray(processes, correlationMatrix)
+
+.. code-block:: python
+
+  underlyingSpots = [100., 100., 100., 100., 100.]
+  underlyingVols = [0.1, 0.12, 0.13, 0.09, 0.11]
+  underlyingCorrMatrix = [[1, 0.1, -0.1, 0, 0], [0.1, 1, 0, 0, 0.2], [-0.1, 0, 1, 0, 0], [0, 0, 0, 1, 0.15], [0, 0.2, 0, 0.15, 1]]
+
+  today = ql.Date().todaysDate()
+  dayCount = ql.Actual365Fixed()
+  calendar = ql.NullCalendar()
+
+  riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.0, dayCount))
+  dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.0, dayCount))
+
+  processes = [ql.BlackScholesMertonProcess(ql.QuoteHandle(ql.SimpleQuote(x)),
+                                            dividendTS,
+                                            riskFreeTS,
+                                            ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, calendar, y, dayCount)))
+               for x, y in zip(underlyingSpots, underlyingVols)]
+
+  multiProcess = ql.StochasticProcessArray(processes, underlyingCorrMatrix)
+
