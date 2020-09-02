@@ -481,6 +481,26 @@ MCDiscreteArithmeticAPEngine
     engine = ql.MCDiscreteArithmeticAPEngine(process, rng, requiredSamples=numPaths)
 
 
+FdBlackScholesAsianEngine
+*************************
+
+Note that this engine will throw an error if asked to price Geometric averaging options. It only prices Dsicrete Arithmetic Asians.
+
+.. function:: ql.FdBlackScholesAsianEngine(GeneralizedBlackScholesProcess, tGrid=100, xGrid=100, aGrid=50)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    tGrid, xGrid, aGrid = 100, 100, 50
+    engine = ql.FdBlackScholesAsianEngine(process, tGrid=tGrid, xGrid=xGrid, aGrid=aGrid)
+
+
 MCEuropeanBasketEngine
 **********************
 
