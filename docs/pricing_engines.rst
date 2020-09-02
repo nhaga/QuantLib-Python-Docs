@@ -366,6 +366,47 @@ MCEuropeanEngine
     engine = ql.MCEuropeanEngine(process, rng, steps, requiredSamples=numPaths)
 
 
+FdBlackScholesVanillaEngine
+***************************
+
+Note that this engine is capable of pricing both European and American payoffs!
+
+.. function:: ql.FdBlackScholesVanillaEngine(GeneralizedBlackScholesProcess, tGrid, xGrid, dampingSteps=0, schemeDesc=FdmSchemeDesc::Douglas(), localVol=False, illegalLocalVolOverwrite=None)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    tGrid, xGrid = 2000, 200
+    engine = ql.FdBlackScholesVanillaEngine(process, tGrid, xGrid)
+
+
+MCAmericanEngine
+****************
+
+.. function:: ql.MCAmericanEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, antitheticVariate=False, controlVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0, polynomOrder=2, polynomType=0, nCalibrationSamples=2048, antitheticVariateCalibration=None, seedCalibration=None)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    steps = 200
+    rng = "pseudorandom" # could use "lowdiscrepancy"
+    numPaths = 100000
+
+    engine = ql.MCAmericanEngine(process, rng, steps, requiredSamples=numPaths)
+
+
 AnalyticDiscreteGeometricAveragePriceAsianEngine
 ************************************************
 
