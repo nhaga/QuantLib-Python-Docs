@@ -6,14 +6,14 @@ Vanilla Options
 
 .. function:: ql.VanillaOption(payoff, europeanExercise)
 
-Payoffs:
+Exercise Types:
 
 - `ql.EuropeanExercise(date)`
 - `ql.AmericanExercise(earliestDate, latestDate)`
 - `ql.BermudanExercise(dates)`
 - `ql.RebatedExercise`
 
-Types:
+Payoffs:
 
 - `ql.Option.Call`
 - `ql.Option.Put`
@@ -21,9 +21,11 @@ Types:
 .. code-block:: python
 
   strike = 100.0
-  maturity= ql.Date(15,6,2025)
+  maturity = ql.Date(15,6,2025)
   option_type = ql.Option.Call
+
   payoff = ql.PlainVanillaPayoff(option_type, strike)
+  binaryPayoff = ql.CashOrNothingPayoff(option_type, strike, 1)
 
   europeanExercise = ql.EuropeanExercise(maturity)
   europeanOption = ql.VanillaOption(payoff, europeanExercise)
@@ -33,6 +35,8 @@ Types:
 
   bermudanExercise = ql.BermudanExercise([ql.Date(15,6,2024), ql.Date(15,6,2025)])
   bermudanOption = ql.VanillaOption(payoff, bermudanExercise)
+
+  binaryOption = ql.VanillaOption(binaryPayoff, european_exercise)
 
 
 Asian Options
