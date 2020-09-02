@@ -340,7 +340,7 @@ AnalyticEuropeanEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     engine = ql.AnalyticEuropeanEngine(process)
 
@@ -357,7 +357,7 @@ MCEuropeanEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     steps = 2
     rng = "pseudorandom" # could use "lowdiscrepancy"
@@ -378,7 +378,7 @@ AnalyticDiscreteGeometricAveragePriceAsianEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     engine = ql.AnalyticDiscreteGeometricAveragePriceAsianEngine(process)
 
@@ -395,7 +395,7 @@ AnalyticContinuousGeometricAveragePriceAsianEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     engine = ql.AnalyticContinuousGeometricAveragePriceAsianEngine(process)
 
@@ -412,7 +412,7 @@ MCDiscreteGeometricAPEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
@@ -432,7 +432,7 @@ MCDiscreteArithmeticAPEngine
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
     volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    process = ql.BlackScholesMertonProcess(initialValue, riskFreeTS, dividendTS, volatility)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     rng = "pseudorandom" # could use "lowdiscrepancy"
     numPaths = 100000
