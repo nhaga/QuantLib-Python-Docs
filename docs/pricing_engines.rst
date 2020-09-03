@@ -592,6 +592,23 @@ Note that this engine will throw an error if asked to price Geometric averaging 
 Barrier Options
 ***************
 
+BinomialBarrierEngine
+---------------------
+
+.. function:: ql.BinomialBarrierEngine(process, type, steps)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spot_handle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flat_ts = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flat_vol_ts = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spot_handle, flat_ts, flat_vol_ts)
+
+    engine = ql.BinomialBarrierEngine(bsm, 'crr', 200)
+
+
 Basket Options
 **************
 
