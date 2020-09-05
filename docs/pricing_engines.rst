@@ -349,6 +349,17 @@ IntegralCdsEngine
 
 .. function:: ql.IntegralCdsEngine(integrationStep, probability, recoveryRate, discountCurve, includeSettlementDateFlows=False)
 
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    defaultProbability = ql.DefaultProbabilityTermStructureHandle(
+        ql.FlatHazardRate(today, ql.QuoteHandle(ql.SimpleQuote(0.01)), ql.Actual360())
+    )
+    yieldTermStructure = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual360()))
+
+    integralStep = ql.Period('1d')
+    engine = ql.IntegralCdsEngine(integralStep, defaultProbability, 0.4, yieldTermStructure, includeSettlementDateFlows=False)
+
 BlackCdsOptionEngine
 ********************
 
