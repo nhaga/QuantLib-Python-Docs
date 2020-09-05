@@ -118,5 +118,20 @@ Cliquet Options
 Forward Options
 ***************
 
+.. function:: ql.ForwardVanillaOption(moneyness, resetDate, payoff, exercise)
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  resetDate = today + ql.Period(1, ql.Years)
+  expiryDate = today + ql.Period(2, ql.Years)
+  moneyness, strike = 1., 100 # nb. strike is required for the payoff, but ignored in pricing
+
+  exercise = ql.EuropeanExercise(expiryDate)
+  vanillaPayoff = ql.PlainVanillaPayoff(ql.Option.Call, strike)
+
+  forwardStartOption = ql.ForwardVanillaOption(moneyness, resetDate, vanillaPayoff, exercise)
+
+
 Quanto Options
 **************

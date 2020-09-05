@@ -537,6 +537,25 @@ MCEuropeanBasketEngine
   engine = ql.MCEuropeanBasketEngine(multiProcess, rng, timeStepsPerYear=stepsPerYear, requiredSamples=numSteps, seed=seed)
 
 
+ForwardEuropeanEngine
+*********************
+
+This engine in python implements the C++ engine QuantLib::ForwardVanillaEngine (notice the subtle name change)
+
+.. function:: ql.ForwardEuropeanEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    engine = ql.ForwardEuropeanEngine(process)
+
+
 AnalyticHestonEngine
 ********************
 
