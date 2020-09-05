@@ -2,7 +2,7 @@
 Pricing Engines
 ###############
 
-------
+---------------
 
 Bond Pricing Engines
 ####################
@@ -315,11 +315,56 @@ Credit Pricing Engines
 IsdaCdsEngine
 *************
 
+.. function:: ql.IsdaCdsEngine(defaultProbability, recoveryRate, yieldTermStructure, includeSettlementDateFlows=None, numericalFix=ql.IsdaCdsEngine.Taylor, AccrualBias accrualBias=ql.IsdaCdsEngine.HalfDayBias, forwardsInCouponPeriod=ql.IsdaCdsEngine.Piecewise)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    defaultProbability = ql.DefaultProbabilityTermStructureHandle(
+        ql.FlatHazardRate(today, ql.QuoteHandle(ql.SimpleQuote(0.01)), ql.Actual360())
+    )
+    yieldTermStructure = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual360()))
+
+    recoveryRate = 0.4
+    engine = ql.IsdaCdsEngine(defaultProbability, recoveryRate, yieldTermStructure)
+
 MidPointCdsEngine
 *****************
 
+.. function:: ql.MidPointCdsEngine(defaultProbability, recoveryRate, yieldTermStructure)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    defaultProbability = ql.DefaultProbabilityTermStructureHandle(
+        ql.FlatHazardRate(today, ql.QuoteHandle(ql.SimpleQuote(0.01)), ql.Actual360())
+    )
+    yieldTermStructure = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual360()))
+
+    recoveryRate = 0.4
+    engine = ql.MidPointCdsEngine(defaultProbability, recoveryRate, yieldTermStructure)
+
 IntegralCdsEngine
 *****************
+
+.. function:: ql.IntegralCdsEngine(integrationStep, probability, recoveryRate, discountCurve, includeSettlementDateFlows=False)
+
+BlackCdsOptionEngine
+********************
+
+.. function:: ql.BlackCdsOptionEngine(defaultProbability, recoveryRate, yieldTermStructure, vol)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    defaultProbability = ql.DefaultProbabilityTermStructureHandle(
+        ql.FlatHazardRate(today, ql.QuoteHandle(ql.SimpleQuote(0.01)), ql.Actual360())
+    )
+    yieldTermStructure = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual360()))
+
+
+    vol = ql.QuoteHandle(ql.SimpleQuote(0.2))
+    engine = ql.BlackCdsOptionEngine(defaultProbability, 0.4, yieldTermStructure, vol)
 
 
 ------
@@ -328,8 +373,12 @@ IntegralCdsEngine
 Option Pricing Engines
 ########################
 
+
+Vanilla Options
+***************
+
 AnalyticEuropeanEngine
-**********************
+----------------------
 
 .. function:: ql.AnalyticEuropeanEngine(GeneralizedBlackScholesProcess)
 
@@ -346,7 +395,7 @@ AnalyticEuropeanEngine
 
 
 MCEuropeanEngine
-****************
+----------------
 
 .. function:: ql.MCEuropeanEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
 
@@ -367,7 +416,7 @@ MCEuropeanEngine
 
 
 FdBlackScholesVanillaEngine
-***************************
+---------------------------
 
 Note that this engine is capable of pricing both European and American payoffs!
 
@@ -387,7 +436,7 @@ Note that this engine is capable of pricing both European and American payoffs!
 
 
 MCAmericanEngine
-****************
+----------------
 
 .. function:: ql.MCAmericanEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, antitheticVariate=False, controlVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0, polynomOrder=2, polynomType=0, nCalibrationSamples=2048, antitheticVariateCalibration=None, seedCalibration=None)
 
@@ -407,8 +456,90 @@ MCAmericanEngine
     engine = ql.MCAmericanEngine(process, rng, steps, requiredSamples=numPaths)
 
 
+AnalyticHestonEngine
+--------------------
+
+.. function:: ql.AnalyticHestonEngine(HestonModel)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    v0 = 0.005
+    kappa = 0.8
+    theta = 0.008
+    rho = 0.2
+    sigma = 0.1
+
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+    hestonModel = ql.HestonModel(hestonProcess)
+
+    engine = ql.AnalyticHestonEngine(hestonModel)
+
+
+MCEuropeanHestonEngine
+----------------------
+
+.. function:: ql.MCEuropeanHestonEngine(HestonProcess, traits, timeSteps=None, timeStepsPerYear=None, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    v0 = 0.005
+    kappa = 0.8
+    theta = 0.008
+    rho = 0.2
+    sigma = 0.1
+
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+    steps = 2
+    rng = "pseudorandom" # could use "lowdiscrepancy"
+    numPaths = 100000
+
+    engine = ql.MCEuropeanHestonEngine(hestonProcess, rng, steps, requiredSamples=numPaths)
+
+
+FdHestonVanillaEngine
+---------------------
+
+.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    v0 = 0.005
+    kappa = 0.8
+    theta = 0.008
+    rho = 0.2
+    sigma = 0.1
+
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+    hestonModel = ql.HestonModel(hestonProcess)
+
+    tGrid, xGrid, vGrid = 100, 100, 50
+    dampingSteps = 0
+    fdScheme = ql.FdmSchemeDesc.ModifiedCraigSneyd()
+
+    engine = ql.FdHestonVanillaEngine(hestonModel, tGrid, xGrid, vGrid, dampingSteps, fdScheme)
+
+
+Asian Options
+*************
+
 AnalyticDiscreteGeometricAveragePriceAsianEngine
-************************************************
+------------------------------------------------
 
 .. function:: ql.AnalyticDiscreteGeometricAveragePriceAsianEngine(GeneralizedBlackScholesProcess)
 
@@ -425,7 +556,7 @@ AnalyticDiscreteGeometricAveragePriceAsianEngine
 
 
 AnalyticContinuousGeometricAveragePriceAsianEngine
-**************************************************
+--------------------------------------------------
 
 .. function:: ql.AnalyticContinuousGeometricAveragePriceAsianEngine(GeneralizedBlackScholesProcess)
 
@@ -442,7 +573,7 @@ AnalyticContinuousGeometricAveragePriceAsianEngine
 
 
 MCDiscreteGeometricAPEngine
-***************************
+---------------------------
 
 .. function:: ql.MCDiscreteGeometricAPEngine(GeneralizedBlackScholesProcess, traits, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
 
@@ -462,7 +593,7 @@ MCDiscreteGeometricAPEngine
 
 
 MCDiscreteArithmeticAPEngine
-****************************
+----------------------------
 
 .. function:: ql.MCDiscreteArithmeticAPEngine(GeneralizedBlackScholesProcess, traits, brownianBridge=False, antitheticVariate=False, controlVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
 
@@ -482,7 +613,7 @@ MCDiscreteArithmeticAPEngine
 
 
 FdBlackScholesAsianEngine
-*************************
+-------------------------
 
 Note that this engine will throw an error if asked to price Geometric averaging options. It only prices Dsicrete Arithmetic Asians.
 
@@ -501,8 +632,32 @@ Note that this engine will throw an error if asked to price Geometric averaging 
     engine = ql.FdBlackScholesAsianEngine(process, tGrid=tGrid, xGrid=xGrid, aGrid=aGrid)
 
 
+
+Barrier Options
+***************
+
+BinomialBarrierEngine
+---------------------
+
+.. function:: ql.BinomialBarrierEngine(process, type, steps)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spot_handle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flat_ts = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flat_vol_ts = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spot_handle, flat_ts, flat_vol_ts)
+
+    engine = ql.BinomialBarrierEngine(bsm, 'crr', 200)
+
+
+Basket Options
+**************
+
 MCEuropeanBasketEngine
-**********************
+----------------------
 
 .. function:: ql.MCEuropeanBasketEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
 
@@ -537,8 +692,15 @@ MCEuropeanBasketEngine
   engine = ql.MCEuropeanBasketEngine(multiProcess, rng, timeStepsPerYear=stepsPerYear, requiredSamples=numSteps, seed=seed)
 
 
+Cliquet Options
+***************
+
+Forward Options
+***************
+
+
 ForwardEuropeanEngine
-*********************
+---------------------
 
 This engine in python implements the C++ engine QuantLib::ForwardVanillaEngine (notice the subtle name change)
 
@@ -556,81 +718,5 @@ This engine in python implements the C++ engine QuantLib::ForwardVanillaEngine (
     engine = ql.ForwardEuropeanEngine(process)
 
 
-AnalyticHestonEngine
-********************
-
-.. function:: ql.AnalyticHestonEngine(HestonModel)
-
-.. code-block:: python
-
-    today = ql.Date().todaysDate()
-    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
-    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-
-    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    v0 = 0.005
-    kappa = 0.8
-    theta = 0.008
-    rho = 0.2
-    sigma = 0.1
-
-    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
-    hestonModel = ql.HestonModel(hestonProcess)
-
-    engine = ql.AnalyticHestonEngine(hestonModel)
-
-
-MCEuropeanHestonEngine
-**********************
-
-.. function:: ql.MCEuropeanHestonEngine(HestonProcess, traits, timeSteps=None, timeStepsPerYear=None, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
-
-.. code-block:: python
-
-    today = ql.Date().todaysDate()
-    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
-    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-
-    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    v0 = 0.005
-    kappa = 0.8
-    theta = 0.008
-    rho = 0.2
-    sigma = 0.1
-
-    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
-
-    steps = 2
-    rng = "pseudorandom" # could use "lowdiscrepancy"
-    numPaths = 100000
-
-    engine = ql.MCEuropeanHestonEngine(hestonProcess, rng, steps, requiredSamples=numPaths)
-
-
-FdHestonVanillaEngine
-*********************
-
-.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
-
-.. code-block:: python
-
-    today = ql.Date().todaysDate()
-    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
-    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-
-    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
-    v0 = 0.005
-    kappa = 0.8
-    theta = 0.008
-    rho = 0.2
-    sigma = 0.1
-
-    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
-    hestonModel = ql.HestonModel(hestonProcess)
-
-    tGrid, xGrid, vGrid = 100, 100, 50
-    dampingSteps = 0
-    fdScheme = ql.FdmSchemeDesc.ModifiedCraigSneyd()
-
-    engine = ql.FdHestonVanillaEngine(hestonModel, tGrid, xGrid, vGrid, dampingSteps, fdScheme)
-
+Quanto Options
+**************

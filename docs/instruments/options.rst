@@ -81,6 +81,36 @@ Average Definitions:
 Barrier Options
 ***************
 
+.. function:: ql.BarrierOption(barrierType, barrier, rebate, payoff, exercise)
+
+Barrier Types:
+
+- `ql.Barrier.UpIn`
+- `ql.Barrier.UpOut`
+- `ql.Barrier.DownIn`
+- `ql.Barrier.DownOut`
+
+
+.. code-block:: python
+
+  T = 1
+  K = 50
+  S0 = 50
+  r = 0.05
+  sigma = 0.2
+  steps = 100
+
+  today = ql.Date().todaysDate()
+  maturity = today + ql.Period(int(T*365), ql.Days)
+
+  payoff = ql.PlainVanillaPayoff(ql.Option.Call, K)
+  am_exercise = ql.AmericanExercise(today, maturity)
+  eu_exercise = ql.EuropeanExercise(maturity)
+
+  barrier , rebate = 110.00 , 0.0
+  barrier_option = ql.BarrierOption(ql.Barrier.UpIn, barrier, rebate, payoff, eu_exercise)
+
+
 Basket Options
 **************
 
