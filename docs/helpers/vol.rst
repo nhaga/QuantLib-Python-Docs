@@ -80,3 +80,26 @@ SwaptionHelper
     exerciseDate, endDate, volatility, index, fixedLegTenor,
     fixedLegDayCounter, floatingLegDayCounter, yts
   )
+
+
+HestonModelHelper
+*****************
+
+.. function:: ql.HestonModelHelper(tenor, calendar, spot, strike, volQuote, riskFreeCurveHandle, dividendCurveHandle, errorType=ql.BlackCalibrationHelper.RelativePriceError)
+
+.. code-block:: python
+
+  spot, strike = 100, 110
+
+  tenor = ql.Period("3M")
+  calendar = ql.NullCalendar()
+  dayCount = ql.Actual365Fixed()
+  volQuote = ql.QuoteHandle(ql.SimpleQuote(0.22))
+
+  today = ql.Date().todaysDate()
+  riskFreeCurve = ql.FlatForward(today, 0.04, dayCount)
+  dividendCurve = ql.FlatForward(today, 0.0, dayCount)
+  riskFreeHandle = ql.YieldTermStructureHandle(riskFreeCurve)
+  dividendHandle = ql.YieldTermStructureHandle(dividendCurve)
+
+  ql.HestonModelHelper(tenor, calendar, spot, strike, volQuote, riskFreeHandle, dividendHandle)
