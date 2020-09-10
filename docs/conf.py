@@ -29,11 +29,11 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-  'nbsphinx',
-  'sphinx_copybutton',
-  'sphinx.ext.mathjax',
-  'sphinx.ext.imgmath' 
-  ]
+    'nbsphinx',
+    'sphinx_copybutton',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.imgmath'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -145,7 +145,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -204,13 +204,13 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     'papersize': 'a4paper',
-    'releasename':" ",
+    'releasename': " ",
     # Sonny, Lenny, Glenn, Conny, Rejne, Bjarne and Bjornstrup
     # 'fncychap': '\\usepackage[Lenny]{fncychap}',
     'fncychap': '\\usepackage{fncychap}',
     'fontpkg': '\\usepackage{amsmath,amsfonts,amssymb,amsthm}',
 
-    'figure_align':'htbp',
+    'figure_align': 'htbp',
     # The font size ('10pt', '11pt' or '12pt').
     #
     'pointsize': '10pt',
@@ -338,14 +338,14 @@ latex_elements = {
     #
     # 'figure_align': 'htbp',
     'sphinxsetup': \
-        'hmargin={0.7in,0.7in}, vmargin={1in,1in}, \
+    'hmargin={0.7in,0.7in}, vmargin={1in,1in}, \
         verbatimwithframe=true, \
         TitleColor={rgb}{0,0,0}, \
         HeaderFamily=\\rmfamily\\bfseries, \
         InnerLinkColor={rgb}{0,0,1}, \
         OuterLinkColor={rgb}{0,0,1}',
 
-        'tableofcontents':' ',
+    'tableofcontents': ' ',
 
 
 
@@ -354,8 +354,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'QuantLibPythonDocs.tex', u'QuantLib-Python Documentation',
-   u'David Duarte', 'manual'),
+    ('index', 'QuantLibPythonDocs.tex', u'QuantLib-Python Documentation',
+     u'David Duarte', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -398,9 +398,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'QuantLibPythonDocs', u'QuantLib-Python Documentation',
-   author, 'QuantLib-Python', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'QuantLibPythonDocs', u'QuantLib-Python Documentation',
+     author, 'QuantLib-Python', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
