@@ -4,3 +4,4 @@ nbsphinx
 jupyter_client
 QuantLib
 sphinx-copybutton
+Pygments==2.6.1
