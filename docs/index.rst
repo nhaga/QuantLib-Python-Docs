@@ -1,5 +1,5 @@
 QuantLib-Python Object Building Documentation
-============================================
+=============================================
 
 **Contents:**
 
