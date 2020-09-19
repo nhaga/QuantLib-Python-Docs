@@ -1,5 +1,7 @@
+sphinx==3.2.1
 ipykernel
 nbsphinx
 jupyter_client
 QuantLib
 sphinx-copybutton
+Pygments==2.6.1

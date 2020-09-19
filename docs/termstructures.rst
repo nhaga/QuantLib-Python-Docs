@@ -19,6 +19,11 @@ Term Structures
 
 -------------
 
+.. include:: termstructures/sabr.rst
+
+-------------
+
+
 .. include:: termstructures/credit.rst
 
 -------------
