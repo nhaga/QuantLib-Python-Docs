@@ -7,16 +7,41 @@ Bond
 
 Redemptions and maturity are calculated from the coupon data, if available. Therefore, redemptions must not be included in the passed cash flows.
 
-.. function:: ql.Bond(settlementDays, calendar, issueDate, coupons)
+.. py:class:: ql.Bond(settlementDays, calendar, issueDate, coupons)
 
-.. code-block:: python
+    .. code-block:: python
 
-    start = ql.Date(15,12,2019)
-    maturity = ql.Date(15,12,2020)
-    schedule = ql.MakeSchedule(start, maturity, ql.Period('6M'))
+        start = ql.Date(15,12,2019)
+        maturity = ql.Date(15,12,2020)
+        schedule = ql.MakeSchedule(start, maturity, ql.Period('6M'))
 
-    interest = ql.FixedRateLeg(schedule, ql.Actual360(), [100.], [0.05])
-    bond = ql.Bond(0, ql.TARGET(), start, interest)
+        interest = ql.FixedRateLeg(schedule, ql.Actual360(), [100.], [0.05])
+        bond = ql.Bond(0, ql.TARGET(), start, interest)
+
+
+    .. py:method:: .bondYield(dayCounter, compounding, frequency, accuracy=1.0e-8, maxEvaluations=100)
+
+    .. py:method:: .bondYield(cleanPrice, dayCounter, compounding, frequency, settlementDate=Date,  accuracy=1.0e-8, maxEvaluations=100)
+
+        .. code-block:: python
+        
+            bond.bondYield(100, ql.Actual360(), ql.Compounded, ql.Annual)
+
+    .. py:method:: .dirtyPrice()
+
+        .. code-block:: python
+
+            bond.dirtyPrice()
+
+    .. py:method:: .dirtyPrice(yield, dayCount, compounding, frequency)
+
+        .. code-block:: python
+
+            bond.dirtyPrice(0.05, ql.Actual360(), ql.Compounded, ql.Annual)
+
+
+
+
 
 
 ZeroCouponBond
