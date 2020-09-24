@@ -495,7 +495,7 @@ FixedRateBondHelper
 BondHelper
 **********
 
-.. function:: ql.BondHelper(cleanPrice, bond)
+.. function:: ql.BondHelper(cleanPrice, bond, useCleanPrice=True)
 
 .. code-block:: python
 
