@@ -114,10 +114,10 @@ from price, monthsToStart and index
   rate = 0.05
   monthsToStart = 1
   index = ql.Euribor6M()
-  h = ql.FraRateHelper(quote, monthsToStart, index)
-  ql.FraRateHelper(quote, monthsToStart, index, ql.Pillar.LastRelevantDate)
-  ql.FraRateHelper(quote, monthsToStart, index, ql.Pillar.LastRelevantDate, ql.Date())
-  ql.FraRateHelper(quote, monthsToStart, index, ql.Pillar.LastRelevantDate, ql.Date(), True)
+  h = ql.FraRateHelper(rate, monthsToStart, index)
+  ql.FraRateHelper(rate, monthsToStart, index, ql.Pillar.LastRelevantDate)
+  ql.FraRateHelper(rate, monthsToStart, index, ql.Pillar.LastRelevantDate, ql.Date())
+  ql.FraRateHelper(rate, monthsToStart, index, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
 
 from quote, immOffsets and index
