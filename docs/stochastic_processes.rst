@@ -214,10 +214,14 @@ HestonSLVProcess
     localVol.enableExtrapolation()
 
     # Calibrate Leverage Function to the Local Vol and Heston Model via Monte-Carlo
+    timeStepsPerYear = 365
+    nBins = 201
+    calibrationPaths = 2**15
+
     generatorFactory = ql.MTBrownianGeneratorFactory()
 
     hestonModel = ql.HestonModel(hestonProcess)
-    stochLocalMcModel = ql.HestonSLVMCModel(localVol, hestonModel, generatorFactory, endDate)
+    stochLocalMcModel = ql.HestonSLVMCModel(localVol, hestonModel, generatorFactory, endDate, timeStepsPerYear, nBins, calibrationPaths)
     leverageFct = stochLocalMcModel.leverageFunction()
 
     process = ql.HestonSLVProcess(hestonProcess, leverageFct)
