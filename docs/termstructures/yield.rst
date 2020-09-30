@@ -273,7 +273,7 @@ SpreadedLinearZeroInterpolatedTermStructure
 FittedBondCurve
 ***************
 
-.. function:: ql.FittedBondDiscountCurve(bondSettlementDate, helpers, dc, method)
+.. function:: ql.FittedBondDiscountCurve(bondSettlementDate, helpers, dc, method,  accuracy=1.0e-10, maxEvaluations=10000, guess=Array(), simplexLambda=1.0 )
 
 Methods:
 
