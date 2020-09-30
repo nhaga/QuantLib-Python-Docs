@@ -2,8 +2,11 @@
 Fixed Income
 ############
 
-.. include:: fixedincome/vanillaswap.rst
+.. toctree::
+   :maxdepth: 2
+   :glob:
 
+   fixedincome/*
 
 #########
 Inflation
