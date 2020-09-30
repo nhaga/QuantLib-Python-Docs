@@ -4,10 +4,18 @@ QuantLib-Python Object Building Documentation
 **Contents:**
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :glob:
+   :caption: Reference
 
    *
+
+.. toctree::
+   :maxdepth: 3
+   :glob:
+   :caption: Examples
+
+   examples/*
 
 
 Indices and tables
