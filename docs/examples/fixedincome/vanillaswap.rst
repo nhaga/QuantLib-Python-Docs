@@ -3,9 +3,13 @@ Vanilla Swap
 
 .. code-block:: python
 
-
-
   import QuantLib as ql
+
+
+Create a relinkable yield term structure handle and build a curve
+
+
+.. code-block:: python
 
   yts = ql.RelinkableYieldTermStructureHandle()
 
@@ -29,14 +33,29 @@ Vanilla Swap
           swapIndex = ql.EuriborSwapIsdaFixA(ql.Period(tenor))
           helpers.append( ql.SwapRateHelper(rate, swapIndex))
   curve = ql.PiecewiseLogCubicDiscount(2, ql.TARGET(), helpers, ql.ActualActual())
-  yts.linkTo(curve)
 
+
+Link the built curve to the relinkable yield term structure handle and build a swap pricing engine
+
+.. code-block:: python
+
+  yts.linkTo(curve)
   engine = ql.DiscountingSwapEngine(yts)
+
+
+Build a vanilla swap and provide a pricing engine
+
+.. code-block:: python
 
   tenor = ql.Period('2y')
   fixedRate = 0.05
   forwardStart = ql.Period("2D")
 
   swap = ql.MakeVanillaSwap(tenor, index, fixedRate, forwardStart, Nominal=100, pricingEngine=engine)
-  swap.fairRate()
-  swap.NPV()
+
+Get the fair rate and NPV
+
+.. code-block:: python
+
+  fairRate = swap.fairRate()
+  npv = swap.NPV()
