@@ -521,6 +521,8 @@ MCEuropeanHestonEngine
 FdHestonVanillaEngine
 ---------------------
 
+If a leverage function is passed in to this function, it prices using the Heston Stochastic Local Vol model
+
 .. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
 
 .. code-block:: python
