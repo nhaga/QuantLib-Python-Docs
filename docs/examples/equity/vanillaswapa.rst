@@ -1,5 +1,5 @@
-Vanilla Swap
-############
+Vanilla Swap1
+#############
 
 .. code-block:: python
 

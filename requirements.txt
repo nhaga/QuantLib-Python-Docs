@@ -5,3 +5,4 @@ jupyter_client
 QuantLib
 sphinx-copybutton
 Pygments==2.6.1
+pandas==1.1.2
