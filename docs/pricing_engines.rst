@@ -658,12 +658,120 @@ BinomialBarrierEngine
 
     today = ql.Date().todaysDate()
 
-    spot_handle = ql.QuoteHandle(ql.SimpleQuote(100))
-    flat_ts = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
-    flat_vol_ts = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
-    bsm = ql.BlackScholesProcess(spot_handle, flat_ts, flat_vol_ts)
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
 
-    engine = ql.BinomialBarrierEngine(bsm, 'crr', 200)
+    binomialBarrierEngine = ql.BinomialBarrierEngine(bsm, 'crr', 200)
+
+
+AnalyticBarrierEngine
+---------------------
+
+.. function:: ql.AnalyticBarrierEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    analyticBarrierEngine = ql.AnalyticBarrierEngine(bsm)
+
+
+AnalyticBinaryBarrierEngine
+---------------------------
+
+.. function:: ql.AnalyticBinaryBarrierEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    analyticBinaryBarrierEngine = ql.AnalyticBinaryBarrierEngine(bsm)
+
+
+FdHestonBarrierEngine
+---------------------
+
+.. function:: ql.FdHestonBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatDividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+
+    v0, kappa, theta, sigma, rho = 0.01, 2.0, 0.01, 0.01, 0.0
+    hestonProcess = ql.HestonProcess(flatRateTs, flatDividendTs, spotHandle, v0, kappa, theta, sigma, rho)
+    hestonModel = ql.HestonModel(hestonProcess)
+
+    hestonBarrierEngine = ql.FdHestonBarrierEngine(hestonModel)
+
+
+AnalyticDoubleBarrierEngine
+---------------------------
+
+.. function:: ql.AnalyticDoubleBarrierEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    analyticDoubleBarrierEngine = ql.AnalyticDoubleBarrierEngine(bsm)
+
+
+AnalyticDoubleBarrierBinaryEngine
+---------------------------------
+
+.. function:: ql.AnalyticDoubleBarrierBinaryEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    analyticDoubleBinaryBarrierEngine = ql.AnalyticDoubleBarrierBinaryEngine(bsm)
+
+
+FdHestonDoubleBarrierEngine
+---------------------------
+
+.. function:: ql.FdHestonDoubleBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatDividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+
+    v0, kappa, theta, sigma, rho = 0.01, 2.0, 0.01, 0.01, 0.0
+    hestonProcess = ql.HestonProcess(flatRateTs, flatDividendTs, spotHandle, v0, kappa, theta, sigma, rho)
+    hestonModel = ql.HestonModel(hestonProcess)
+
+    hestonDoubleBarrierEngine = ql.FdHestonDoubleBarrierEngine(hestonModel)
 
 
 Basket Options
