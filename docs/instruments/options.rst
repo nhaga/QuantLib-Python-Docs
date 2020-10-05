@@ -112,10 +112,10 @@ Barrier Types:
 
 Double Barrier Types:
 
-- `ql.DoubleBarrier::KnockIn`
-- `ql.DoubleBarrier::KnockOut`
-- `ql.DoubleBarrier::KIKO`
-- `ql.DoubleBarrier::KOKI`
+- `ql.DoubleBarrier.KnockIn`
+- `ql.DoubleBarrier.KnockOut`
+- `ql.DoubleBarrier.KIKO`
+- `ql.DoubleBarrier.KOKI`
 
 .. code-block:: python
 
