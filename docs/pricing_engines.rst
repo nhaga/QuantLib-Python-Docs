@@ -431,7 +431,7 @@ FdBlackScholesVanillaEngine
 
 Note that this engine is capable of pricing both European and American payoffs!
 
-.. function:: ql.FdBlackScholesVanillaEngine(GeneralizedBlackScholesProcess, tGrid, xGrid, dampingSteps=0, schemeDesc=FdmSchemeDesc::Douglas(), localVol=False, illegalLocalVolOverwrite=None)
+.. function:: ql.FdBlackScholesVanillaEngine(GeneralizedBlackScholesProcess, tGrid, xGrid, dampingSteps=0, schemeDesc=ql.FdmSchemeDesc.Douglas(), localVol=False, illegalLocalVolOverwrite=None)
 
 .. code-block:: python
 
@@ -523,7 +523,7 @@ FdHestonVanillaEngine
 
 If a leverage function is passed in to this function, it prices using the Heston Stochastic Local Vol model
 
-.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
 
 .. code-block:: python
 
@@ -703,7 +703,7 @@ AnalyticBinaryBarrierEngine
 FdHestonBarrierEngine
 ---------------------
 
-.. function:: ql.FdHestonBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+.. function:: ql.FdHestonBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
 
 .. code-block:: python
 
@@ -757,7 +757,7 @@ AnalyticDoubleBarrierBinaryEngine
 FdHestonDoubleBarrierEngine
 ---------------------------
 
-.. function:: ql.FdHestonDoubleBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc==FdmSchemeDesc::Hundsdorfer(), leverageFct=LocalVolTermStructure())
+.. function:: ql.FdHestonDoubleBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
 
 .. code-block:: python
 
