@@ -128,8 +128,37 @@ HestonBlackVolSurface
 LocalConstantVol
 ****************
 
+.. function:: ql.LocalConstantVol(date, volatility, dayCounter)
+
+.. code-block:: python
+
+  date = ql.Date().todaysDate()
+  volatility = 0.2
+  dayCounter = ql.Actual360()
+
+  ql.LocalConstantVol(date, volatility, dayCounter)
+
+
 LocalVolSurface
 ***************
+
+.. function:: ql.LocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot)
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  calendar = ql.NullCalendar()
+  dayCounter = ql.Actual365Fixed()
+  volatility = 0.2
+  r, q = 0.02, 0.05
+
+  blackVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, calendar, volatility, dayCounter))
+  ratesTs = ql.YieldTermStructureHandle(ql.FlatForward(today, r, dayCounter))
+  dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, q, dayCounter))
+  spot = 100
+
+  ql.LocalVolSurface(blackVolTs, ratesTs, dividendTs, spot)
+
 
 LocalVolTermStructureHandle
 ***************************
