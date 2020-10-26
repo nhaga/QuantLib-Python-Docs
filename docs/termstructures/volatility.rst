@@ -160,6 +160,30 @@ LocalVolSurface
   ql.LocalVolSurface(blackVolTs, ratesTs, dividendTs, spot)
 
 
+NoExceptLocalVolSurface
+***********************
+
+This powerful but dangerous surface will swallow any exceptions and return the specified override value when they occur. If your vol surface is well-calibrated, this protects you from crashes due to very far illiquid points on the local vol surface. But if your vol surface is not good, it could suppress genuine errors. Caution recommended.
+
+.. function:: ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot, illegalVolOverride)
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  calendar = ql.NullCalendar()
+  dayCounter = ql.Actual365Fixed()
+  r, q = 0.02, 0.05
+  volatility = 0.2
+  illegalVolOverride = 0.25
+
+  blackVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, calendar, volatility, dayCounter))
+  ratesTs = ql.YieldTermStructureHandle(ql.FlatForward(today, r, dayCounter))
+  dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, q, dayCounter))
+  spot = 100
+
+  ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendTs, spot, illegalVolOverride)
+
+
 LocalVolTermStructureHandle
 ***************************
 
