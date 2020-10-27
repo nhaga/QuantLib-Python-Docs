@@ -138,9 +138,9 @@ MCEuropeanHestonEngine
 FdHestonVanillaEngine
 ---------------------
 
-If a leverage function is passed in to this function, it prices using the Heston Stochastic Local Vol model
+If a leverage function (and optional mixing factor) is passed in to this function, it prices using the Heston Stochastic Local Vol model
 
-.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
+.. function:: ql.FdHestonVanillaEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure(), mixingFactor=1.0)
 
 .. code-block:: python
 
@@ -320,7 +320,9 @@ AnalyticBinaryBarrierEngine
 FdHestonBarrierEngine
 ---------------------
 
-.. function:: ql.FdHestonBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
+If a leverage function (and optional mixing factor) is passed in to this function, it prices using the Heston Stochastic Local Vol model
+
+.. function:: ql.FdHestonBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure(), mixingFactor=1.0)
 
 .. code-block:: python
 
@@ -374,7 +376,9 @@ AnalyticDoubleBarrierBinaryEngine
 FdHestonDoubleBarrierEngine
 ---------------------------
 
-.. function:: ql.FdHestonDoubleBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure())
+If a leverage function (and optional mixing factor) is passed in to this function, it prices using the Heston Stochastic Local Vol model
+
+.. function:: ql.FdHestonDoubleBarrierEngine(HestonModel, tGrid=100, xGrid=100, vGrid=50, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Hundsdorfer(), leverageFct=LocalVolTermStructure(), mixingFactor=1.0)
 
 .. code-block:: python
 

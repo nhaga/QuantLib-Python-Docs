@@ -217,14 +217,16 @@ HestonSLVProcess
     timeStepsPerYear = 365
     nBins = 201
     calibrationPaths = 2**15
+    mandatoryDates = []
+    mixingFactor = 0.9
 
     generatorFactory = ql.MTBrownianGeneratorFactory()
 
     hestonModel = ql.HestonModel(hestonProcess)
-    stochLocalMcModel = ql.HestonSLVMCModel(localVol, hestonModel, generatorFactory, endDate, timeStepsPerYear, nBins, calibrationPaths)
+    stochLocalMcModel = ql.HestonSLVMCModel(localVol, hestonModel, generatorFactory, endDate, timeStepsPerYear, nBins, calibrationPaths, mandatoryDates, mixingFactor)
     leverageFct = stochLocalMcModel.leverageFunction()
 
-    process = ql.HestonSLVProcess(hestonProcess, leverageFct)
+    process = ql.HestonSLVProcess(hestonProcess, leverageFct, mixingFactor)
 
 
 BatesProcess
