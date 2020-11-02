@@ -181,6 +181,27 @@ CompositeQuote
     c4 = ql.CompositeQuote(ql.QuoteHandle(c1),ql.QuoteHandle(c2), lambda x,y:x+y)
     c4.value()    
 
+
+DeltaVolQuote
+*************
+
+A class for FX-style quotes where delta-maturity pairs are quoted in implied vol
+
+.. function:: ql.DeltaVolQuote(delta, volQuoteHandle, maturity, deltaType)
+.. function:: ql.DeltaVolQuote(volQuoteHandle, deltaType, maturity, atmType)
+
+.. code-block:: python
+
+    deltaType = ql.DeltaVolQuote.Fwd    # Also supports: Spot, PaSpot, PaFwd
+    atmType = ql.DeltaVolQuote.AtmFwd   # Also supports: AtmSpot, AtmDeltaNeutral, AtmVegaMax, AtmGammaMax, AtmPutCall50
+
+    maturity = 1.0
+    volAtm, vol25DeltaCall, vol25DeltaPut = 0.08, 0.075, 0.095
+
+    atmDeltaQuote = ql.DeltaVolQuote(ql.QuoteHandle(ql.SimpleQuote(volAtm)), deltaType, maturity, atmType)
+    vol25DeltaPutQuote = ql.DeltaVolQuote(-0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaPut)), maturity, deltaType)
+    vol25DeltaCallQuote = ql.DeltaVolQuote(0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaCall)), maturity, deltaType)
+
 ----
 
 
