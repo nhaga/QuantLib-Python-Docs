@@ -72,7 +72,7 @@ SwaptionHelper
   fixedLegTenor = ql.Period('1Y')
   fixedLegDayCounter = ql.Thirty360()
   floatingLegDayCounter = ql.Actual360()
-  blackCalibrationHekper = ql.BlackCalibrationHelper.RelativePriceError
+  blackCalibrationHelper = ql.BlackCalibrationHelper.RelativePriceError
   strike = ql.nullDouble()
   nominal = 1.0
 
@@ -82,7 +82,7 @@ SwaptionHelper
   ql.SwaptionHelper(
     exerciseDate, endDate, volatility, index, fixedLegTenor,
     fixedLegDayCounter, floatingLegDayCounter, yts,
-    blackCalibrationHekper, strike, nominal
+    blackCalibrationHelper, strike, nominal
   )
 
 
