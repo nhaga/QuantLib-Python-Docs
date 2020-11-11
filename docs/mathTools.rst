@@ -324,4 +324,53 @@ Member functions of `SobolRsg`,
 Statistics
 ##########
 
+-------
 
+Convention Calculators
+######################
+
+BlackDeltaCalculator
+--------------------
+
+A calculator class to calculate the relevant strike for FX-style delta-maturity-vol quotes (see `Reiswich D., Wystup U., 2010. A Guide to FX Options Quoting Conventions <https://www.researchgate.net/publication/275905055_A_Guide_to_FX_Options_Quoting_Conventions>`_) 
+
+.. function:: ql.BlackDeltaCalculator(optionType, deltaType, spot, domesticDcf, foreignDcf, volRootT)
+
+.. code-block:: python
+
+    import numpy as np
+
+    today = ql.Date().todaysDate()
+    dayCounter = ql.Actual365Fixed()
+    spot = 100
+    rd, rf = 0.02, 0.05
+
+    ratesTs = ql.YieldTermStructureHandle(ql.FlatForward(today, rd, dayCounter))
+    dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, rf, dayCounter))
+
+    # Details about the delta quote
+    optionType = ql.Option.Put
+    vol = 0.07
+    maturity = 1.0
+    deltaType = ql.DeltaVolQuote.Fwd      # Also supports: Spot, PaSpot, PaFwd
+
+    # Set up the calculator
+    localDcf, foreignDcf = ratesTs.discount(maturity), dividendTs.discount(maturity)
+    stdDev = np.sqrt(maturity) * vol
+    calc = ql.BlackDeltaCalculator(optionType, deltaType, spot, localDcf, foreignDcf, stdDev)
+
+
+To calculate the strike for a given call/put delta (negative for put delta)
+
+.. code-block:: python
+
+    delta = -0.3
+    calc.strikeFromDelta(delta)
+
+
+Or if this is an ATM quote, specify the ATM convention
+
+.. code-block:: python
+
+    atmType = ql.DeltaVolQuote.AtmFwd     # Also supports: AtmSpot, AtmDeltaNeutral, AtmVegaMax, AtmGammaMax, AtmPutCall50
+    calc.atmStrike(atmType)
