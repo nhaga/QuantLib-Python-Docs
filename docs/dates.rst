@@ -448,3 +448,12 @@ TimeGrid
 
     t = ql.TimeGrid(10, 5)
     t.dt(4)
+
+
+If there are certain times that need to appear in the TimeGrid, pass them in as a list
+
+.. function:: ql.TimeGrid(requiredTimes, steps)
+
+.. code-block:: python
+
+    [t for t in ql.TimeGrid([1, 2.5, 4], 10)]
