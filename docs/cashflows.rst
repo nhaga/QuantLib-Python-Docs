@@ -104,7 +104,7 @@ Redemption
     redemption = ql.Redemption(amount, date)
 
 
-AmortizingPaymnent
+AmortizingPayment
 ******************
 
 .. function:: ql.AmortizingPayment(amount, date)
