@@ -85,6 +85,54 @@ There are two ways to call the solver's member function:
 Integration
 ###########
 
+Gaussian Quadrature
+-------------------
+
+Gaussian Quadrature evaluates an integral on a set interval. For example, Gauss-Legendre evaluates the definite integral on the inverval [-1,1]
+
+.. code-block:: python
+
+    import numpy as np
+    import QuantLib as ql
+
+    f = lambda x: x**2
+    g = lambda x: np.exp(x)
+
+    quad_ql_legendre = ql.GaussLegendreIntegration(128)
+    quad_ql_legendre(f), quad_ql_legendre(g)
+
+Scipy also has an implementation that we can compare:
+
+.. code-block:: python
+
+    from scipy.integrate import quad
+    quad(f, -1, 1)[0], quad(g, -1, 1)[0]
+
+Scipy requests an interval [a,b] to operate over. We can achieve the same thing with ql if we scale the input parameters using a wrapper function:
+
+.. code-block:: python
+
+    def quad_ql_ab(f, a, b, quad):
+        multiplier, ratio = (b+a) / 2, (b-a) / 2
+        y = lambda x: f(ratio*x + multiplier)
+        return quad(y) * ratio
+
+    quad_ql = ql.GaussLegendreIntegration(128)
+    quad_ql_ab(f, -2, 2, quad_ql), quad_ql_ab(g, -2, 2, quad_ql), quad(f, -2, 2)[0], quad(g, -2, 2)[0]
+
+Other supported quadratures are:
+
+- GaussLegendreIntegration,
+- GaussChebyshevIntegration,
+- GaussChebyshev2ndIntegration,
+- GaussLaguerreIntegration,
+- GaussHermiteIntegration,
+- GaussJacobiIntegration,
+- GaussHyperbolicIntegration,
+- GaussGegenbauerIntegration
+
+The intervals and additional parameters for each quadrature varies (see eg. https://mathworld.wolfram.com/GaussianQuadrature.html)
+
 -------
 
 Interpolation
