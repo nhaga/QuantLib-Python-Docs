@@ -300,6 +300,40 @@ AnalyticBarrierEngine
     analyticBarrierEngine = ql.AnalyticBarrierEngine(bsm)
 
 
+FdBlackScholesBarrierEngine
+---------------------------
+
+.. function:: ql.FdBlackScholesBarrierEngine(process, tGrid=100, xGrid=100, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Douglas(), localVol=False, illegalLocalVolOverwrite=None)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    fdBarrierEngine = ql.FdBlackScholesBarrierEngine(bsm)
+
+
+FdBlackScholesRebateEngine
+--------------------------
+
+.. function:: ql.FdBlackScholesRebateEngine(process, tGrid=100, xGrid=100, dampingSteps=0, FdmSchemeDesc=ql.FdmSchemeDesc.Douglas(), localVol=False, illegalLocalVolOverwrite=None)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+
+    spotHandle = ql.QuoteHandle(ql.SimpleQuote(100))
+    flatRateTs = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    flatVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.UnitedStates(), 0.2, ql.Actual365Fixed()))
+    bsm = ql.BlackScholesProcess(spotHandle, flatRateTs, flatVolTs)
+
+    fdRebateEngine = ql.FdBlackScholesRebateEngine(bsm)
+
+
 AnalyticBinaryBarrierEngine
 ---------------------------
 
