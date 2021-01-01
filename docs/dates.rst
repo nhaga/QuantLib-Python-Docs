@@ -1,6 +1,76 @@
-########
-Dates
-########
+#####################
+Dates and Conventions
+#####################
+
+
+Conventions
+###########
+
+Compounding
+-----------
+
+- `ql.Simple`
+- `ql.Compounded`
+- `ql.Continuous`
+- `ql.SimpleThenCompounded`
+- `ql.CompoundedThenSimple`
+
+
+Frequencies
+-----------
+
+- `ql.NoFrequency` : no interest;
+- `ql.Once` : pay interest once, common in zero-coupon bonds;
+- `ql.Annual` : paying interest once a year;
+- `ql.Semiannual` : Semiannual interest semi-annually;
+- `ql.EveryFourthMonth` : every 4 months;
+- `ql.Quarterly` : Quarterly quarterly;
+- `ql.Bimonthly` : paying interest every two months;
+- `ql.Monthly` : monthly interest payment;
+- `ql.EveryFourthWeek` : every 4 weeks;
+- `ql.Biweekly` : Biweekly interest every two weeks;
+- `ql.Weekly` : paying once a week;
+- `ql.Daily` : pay interest once a day.
+
+Weekday correction
+------------------
+
+
+- `ql.Following` : The date is corrected to the first working day that follows.
+- `ql.ModifiedFollowing` : The date is corrected to the first working day after that, unless this working day is in the next month; if the modified working day is in the next month, the date is corrected to the last working day that appears before, to ensure the original The date and the revised date are in the same month.
+- `ql.Preceding` : Correct the date to the last business day that Preceding before.
+- `ql.ModifiedPreceding` : modify the date to the last working day that appeared before, unless the working sunrise is now the previous month; if the modified working sunrise is now the previous month, the date is modified to the first working day after that The original date and the revised date are guaranteed to be in the same month.
+- `ql.Unadjusted` : No adjustment.
+
+DateGeneration
+--------------
+
+The valuation of many products relies on an analysis of future cash flows, so accurately generating a list of dates for future cash flows is crucial.
+After the start and end dates are given, the date list can be generated in the manner of "reverse method" or "forward method".
+
+Example:
+
+Monthly periods with start date is 07-05-2020 and the end date is 15-08-2020:
+
+.. code-block:: python
+
+    start = ql.Date(7,5,2020)
+    end = ql.Date(15,8,2020)
+
+    rules = {
+        'Backward': ql.DateGeneration.Backward,
+        'Forward': ql.DateGeneration.Forward,
+        'Zero': ql.DateGeneration.Zero,
+        'ThirdWednesDay': ql.DateGeneration.ThirdWednesday,
+        'Twentieth': ql.DateGeneration.Twentieth,
+        'TwentiethIMM': ql.DateGeneration.TwentiethIMM,
+        'CDS': ql.DateGeneration.CDS
+
+    }
+
+    for name, rule in rules.items():
+        schedule = ql.MakeSchedule(start, end, ql.Period('1m'), rule=rule)
+        print(name, [dt for dt in schedule])
 
 ------
 
@@ -235,16 +305,6 @@ Returns the holidays between two dates.
     ql.Calendar.holidayList(ql.TARGET(), ql.Date(1,12,2019), ql.Date(31,12,2019))
 
 
-**Weekday correction**
-
-Correcting a date to a working day is a necessary task, and the following working day conversion modes are supported in QuantLib:
-
-- **Following** : The date is corrected to the first working day that follows.
-- **ModifiedFollowing** : The date is corrected to the first working day after that, unless this working day is in the next month; if the modified working day is in the next month, the date is corrected to the last working day that appears before, to ensure the original The date and the revised date are in the same month.
-- **Preceding** : Correct the date to the last business day that Preceding before.
-- **ModifiedPreceding** : modify the date to the last working day that appeared before, unless the working sunrise is now the previous month; if the modified working sunrise is now the previous month, the date is modified to the first working day after that The original date and the revised date are guaranteed to be in the same month.
-- **Unadjusted** : No adjustment.
-
 Calendar object uses the following two functions to modify the date:
 
 - **adjust(d, convention)** : Date, modify d according to the convention conversion mode.
@@ -398,42 +458,6 @@ Optional params:
     terminationDate = ql.Date(15,6,2022)
     frequency = ql.Period('6M')
     schedule = ql.MakeSchedule(effectiveDate, terminationDate, frequency)
-
-
-----
-
-
-
-DateGeneration
-##############
-
-The valuation of many products relies on an analysis of future cash flows, so accurately generating a list of dates for future cash flows is crucial.
-After the start and end dates are given, the date list can be generated in the manner of "reverse method" or "forward method".
-
-Example:
-
-Monthly periods with start date is 07-05-2020 and the end date is 15-08-2020:
-
-.. code-block:: python
-
-    start = ql.Date(7,5,2020)
-    end = ql.Date(15,8,2020)
-
-    rules = {
-        'Backward': ql.DateGeneration.Backward,
-        'Forward': ql.DateGeneration.Forward,
-        'Zero': ql.DateGeneration.Zero,
-        'ThirdWednesDay': ql.DateGeneration.ThirdWednesday,
-        'Twentieth': ql.DateGeneration.Twentieth,
-        'TwentiethIMM': ql.DateGeneration.TwentiethIMM,
-        'CDS': ql.DateGeneration.CDS
-
-    }
-
-    for name, rule in rules.items():
-        schedule = ql.MakeSchedule(start, end, ql.Period('1m'), rule=rule)
-        print(name, [dt for dt in schedule])
-
 
 
 ----

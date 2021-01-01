@@ -17,27 +17,6 @@ Concrete interest rate class
     rate = ql.InterestRate(0.05, ql.Actual360(), ql.Compounded, ql.Annual)
 
 
-**Compounding**
-
-- Simple
-- Compounded
-- Continuous
-
-**Frequencies**
-
-- NoFrequency : no interest;
-- Once : pay interest once, common in zero-coupon bonds;
-- Annual : paying interest once a year;
-- Semiannual : Semiannual interest semi-annually;
-- EveryFourthMonth : every 4 months;
-- Quarterly : Quarterly quarterly;
-- Bimonthly : paying interest every two months;
-- Monthly : monthly interest payment;
-- EveryFourthWeek : every 4 weeks;
-- Biweekly : Biweekly interest every two weeks;
-- Weekly : paying once a week;
-- Daily : pay interest once a day.
-
 Here are some common member functions:
 
 - **rate()** : a floating point number that returns the value of the rate of return;
@@ -186,7 +165,7 @@ CappedFlooredIborCoupon
 CmsCoupon
 *********
 
-.. function:: ql.CmsCoupon(endDate, nominal, startDate, endDate, fixingDays, swapIndex)
+.. function:: ql.CmsCoupon(paymentDate, nominal, startDate, endDate, fixingDays, swapIndex)
 
 .. code-block:: python
 
@@ -203,15 +182,15 @@ CmsCoupon
 CappedFlooredCmsCoupon
 **********************
 
-.. function:: ql.CappedFlooredCmsCoupon(endDate, nominal, startDate, endDate, fixingDays, swapIndex, rate, spread)
+.. function:: ql.CappedFlooredCmsCoupon(paymentDate, nominal, startDate, endDate, fixingDays, swapIndex, rate, spread)
 
 
 CmsSpreadCoupon
 ***************
 
-.. function:: ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex)
+.. function:: ql.CmsSpreadCoupon(paymentDate, nominal, startDate, endDate, fixingDays, spreadIndex)
 
-.. function:: ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing=1, spread=0, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), isInArrears=False, exCouponDate=ql.Date())
+.. function:: ql.CmsSpreadCoupon(paymentDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing=1, spread=0, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), isInArrears=False, exCouponDate=ql.Date())
 
 .. code-block:: python
 
@@ -227,7 +206,7 @@ CmsSpreadCoupon
 CappedFlooredCmsSpreadCoupon
 ****************************
 
-.. function:: ql.CmsSpreadCoupon(endDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing=1, spread=0, cap=Null, floor=Null, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), isInArrears=False, exCouponDate=ql.Date())
+.. function:: ql.CmsSpreadCoupon(paymentDate, nominal, startDate, endDate, fixingDays, spreadIndex, gearing=1, spread=0, cap=Null, floor=Null, refPeriodStart=ql.Date(), refPeriodEnd=ql.Date(), dayCounter=ql.DayCounter(), isInArrears=False, exCouponDate=ql.Date())
 
 .. code-block:: python
 
