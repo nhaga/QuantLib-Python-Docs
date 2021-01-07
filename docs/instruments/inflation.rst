@@ -78,6 +78,21 @@ ZeroCouponInflationSwap
 
 .. function:: ql.ZeroCouponInflationSwap(swapType, notional, start, maturity, calendar, BusinessDayConvention, DayCounter, fixedRate, ZeroInflationIndex, observationLag)
 
+.. code-block:: python
+
+
+  swapType = ql.ZeroCouponInflationSwap.Payer
+  calendar = ql.TARGET()
+  nominal = 1e6
+  startDate = ql.Date(11,1,2022)
+  endDate = ql.Date(11,1,2023)
+  fixedRate = 0.1;
+  dc = ql.Actual365Fixed()
+  inflationIndex = ql.EUHICPXT(True)
+  contractObservationLag = ql.Period(3, ql.Months)
+  bdc = ql.ModifiedFollowing
+  swap = ql.ZeroCouponInflationSwap(swapType, nominal, startDate, endDate, calendar, bdc, dc, fixedRate, inflationIndex, contractObservationLag)
+
 
 YearOnYearInflationSwap
 ***********************
