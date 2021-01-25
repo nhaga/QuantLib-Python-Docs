@@ -272,7 +272,6 @@ AnalyticDiscreteGeometricAveragePriceAsianHestonEngine
     today = ql.Date().todaysDate()
     riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
 
     v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.1
@@ -291,7 +290,6 @@ AnalyticContinuousGeometricAveragePriceAsianHestonEngine
     today = ql.Date().todaysDate()
     riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
 
     v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.1
@@ -310,7 +308,6 @@ MCDiscreteGeometricAPHestonEngine
     today = ql.Date().todaysDate()
     riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
 
     v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.1
@@ -332,7 +329,6 @@ MCDiscreteArithmeticAPHestonEngine
     today = ql.Date().todaysDate()
     riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
     dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
-    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
     initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
 
     v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.1
@@ -555,7 +551,6 @@ Cliquet Options
 Forward Options
 ***************
 
-
 ForwardEuropeanEngine
 ---------------------
 
@@ -573,6 +568,66 @@ This engine in python implements the C++ engine QuantLib::ForwardVanillaEngine (
     process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
 
     engine = ql.ForwardEuropeanEngine(process)
+
+
+MCForwardEuropeanBSEngine
+-------------------------
+
+.. function:: ql.MCForwardEuropeanBSEngine(process, traits, timeSteps=None, timeStepsPerYear=None, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    rng = "pseudorandom" # could use "lowdiscrepancy"
+    numPaths = 100000
+
+    engine = ql.MCForwardEuropeanBSEngine(process, rng, timeStepsPerYear=12, requiredSamples=numPaths)
+
+
+AnalyticHestonForwardEuropeanEngine
+-----------------------------------
+
+.. function:: ql.AnalyticHestonForwardEuropeanEngine(process, integrationOrder=144)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+
+    v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.2
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+    engine = ql.AnalyticHestonForwardEuropeanEngine(hestonProcess)
+
+
+MCForwardEuropeanHestonEngine
+-----------------------------
+
+.. function:: ql.MCForwardEuropeanHestonEngine(hestonProcess, traits, timeSteps=None, timeStepsPerYear=None, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0, controlVariate=False)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+
+    v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, 0.2
+    hestonProcess = ql.HestonProcess(riskFreeTS, dividendTS, initialValue, v0, kappa, theta, sigma, rho)
+
+    rng = "pseudorandom" # could use "lowdiscrepancy"
+    numPaths = 100000
+
+    engine = ql.MCForwardEuropeanHestonEngine(hestonProcess, rng, timeStepsPerYear=12, requiredSamples=numPaths)
 
 
 Quanto Options
