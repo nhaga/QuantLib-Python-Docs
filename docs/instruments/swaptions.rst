@@ -7,20 +7,19 @@ Swaptions
 - `ql.AmericanExercise(earliestDate, latestDate)`
 - `ql.BermudanExercise(dates)`
 
-**Settlement**
+**Settlement Type/Method**
 
 - `ql.Settlement.Cash`
-- `ql.Settlement.CollateralizedCashPrice`
-- `ql.Settlement.ParYieldCurve`
+    - `ql.Settlement.CollateralizedCashPrice`
+    - `ql.Settlement.ParYieldCurve`
 - `ql.Settlement.Physical`
-- `ql.Settlement.PhysicalCleared`
-- `ql.Settlement.PhysicalOTC`
-
+    - `ql.Settlement.PhysicalCleared`
+    - `ql.Settlement.PhysicalOTC`
 
 Swaption
 --------
 
-.. function:: ql.Swaption(swap, exercise, settlement=PhysicalOTC)
+.. function:: ql.Swaption(swap, exercise, settlementType=ql.Settlement.Physical, settlementMethod=ql.Settlement.PhysicalOTC)
 
 .. code-block:: python
 
@@ -30,6 +29,10 @@ Swaption
   exercise = ql.EuropeanExercise(exerciseDate)
   swap = ql.MakeVanillaSwap(ql.Period('5y'), ql.Euribor6M(), 0.05, ql.Period('5y'))
   swaption = ql.Swaption(swap, exercise)
+
+  swaption = ql.Swaption(swap, exercise, ql.Settlement.Cash, ql.Settlement.ParYieldCurve)
+  swaption = ql.Swaption(swap, exercise, ql.Settlement.Physical, ql.Settlement.PhysicalCleared)
+
 
 
 Nonstandard Swaption
