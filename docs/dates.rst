@@ -385,7 +385,7 @@ The “Day Count Convention” is critical for the valuation of financial produc
         'Actual360': ql.Actual360(),
         'Actual365Fixed': ql.Actual365Fixed(),
         'Actual365Fixed(Canadian)': ql.Actual365Fixed(ql.Actual365Fixed.Canadian),
-        'Actual365NoLeap': ql.Actual365NoLeap(),
+        'Actual365FixedNoLeap': ql.Actual365Fixed(ql.Actual365Fixed.NoLeap),
         'ActualActual': ql.ActualActual(),
         'Business252': ql.Business252()    
     }
