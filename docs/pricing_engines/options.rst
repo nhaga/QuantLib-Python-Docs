@@ -84,6 +84,29 @@ MCAmericanEngine
     engine = ql.MCAmericanEngine(process, rng, steps, requiredSamples=numPaths)
 
 
+MCDigitalEngine
+---------------
+
+This engine prices american (ie. knock-in) cash-or-nothing payoffs only
+
+.. function:: ql.MCDigitalEngine(GeneralizedBlackScholesProcess, traits, timeSteps=None, timeStepsPerYear=None, brownianBridge=False, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    steps = 200
+    rng = "pseudorandom" # could use "lowdiscrepancy"
+    numPaths = 100000
+
+    engine = ql.MCDigitalEngine(process, rng, steps, requiredSamples=numPaths)
+
+
 AnalyticHestonEngine
 --------------------
 
