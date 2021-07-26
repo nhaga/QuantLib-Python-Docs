@@ -477,6 +477,36 @@ FxSwapRateHelper
   ql.FxSwapRateHelper(fwdPoints, spot, ql.Period('6M'), 2, ql.TARGET(), ql.Following, False, True, yts)
 
 
+
+CrossCurrencyBasisSwapRateHelper
+********************************
+
+.. function:: ql.CrossCurrencyBasisSwapRateHelper(basis, tenor, fixingDays, calendar, convention, endOfMonth, baseCurrencyIndex, quoteCurrencyIndex, collateralCurve, isFxBaseCurrencyCollateralCurrency, isBasisOnFxBaseCurrencyLeg)
+
+.. code-block:: python
+
+  eur_curve = ql.YieldTermStructureHandle(ql.FlatForward(2, ql.TARGET(), 0.01, ql.Actual360()))
+  usd_curve = ql.YieldTermStructureHandle(ql.FlatForward(2, ql.TARGET(), 0.02, ql.Actual360()))
+
+  basis = ql.QuoteHandle(ql.SimpleQuote(0.005))
+  tenor = ql.Period('1Y')
+  fixingDays = 2
+  calendar = ql.TARGET()
+  convention = ql.ModifiedFollowing
+  endOfMonth = True
+  baseCurrencyIndex = ql.USDLibor(ql.Period('3M'), usd_curve)
+  quoteCurrencyIndex = ql.Euribor3M(eur_curve)
+  collateralCurve = ql.YieldTermStructureHandle(ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360()))
+  isFxBaseCurrencyCollateralCurrency = False
+  isBasisOnFxBaseCurrencyLeg = False
+
+  helper = ql.CrossCurrencyBasisSwapRateHelper(
+      basis, tenor, fixingDays, calendar, convention, endOfMonth,
+      baseCurrencyIndex, quoteCurrencyIndex, collateralCurve,
+      isFxBaseCurrencyCollateralCurrency, isBasisOnFxBaseCurrencyLeg)
+
+
+
 FixedRateBondHelper
 *******************
 
