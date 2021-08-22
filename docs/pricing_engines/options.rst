@@ -188,6 +188,43 @@ If a leverage function (and optional mixing factor) is passed in to this functio
     engine = ql.FdHestonVanillaEngine(hestonModel, tGrid, xGrid, vGrid, dampingSteps, fdScheme)
 
 
+AnalyticPTDHestonEngine
+-----------------------
+
+.. function:: ql.AnalyticPTDHestonEngine(PiecewiseTimeDependentHestonModel)
+
+.. code-block:: python
+
+    today = ql.Date().todaysDate()
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+
+    initialValue = ql.QuoteHandle(ql.SimpleQuote(100))
+
+    times = [1.0, 2.0, 3.0]
+    grid = ql.TimeGrid(times)
+
+    v0 = 0.005
+    theta = [0.010, 0.015, 0.02]
+    kappa = [0.600, 0.500, 0.400]
+    sigma = [0.400, 0.350, 0.300]
+    rho = [-0.15, -0.10, -0.00]
+
+    kappaTS = ql.PiecewiseConstantParameter(times[:-1], ql.PositiveConstraint())
+    thetaTS = ql.PiecewiseConstantParameter(times[:-1], ql.PositiveConstraint())
+    rhoTS = ql.PiecewiseConstantParameter(times[:-1], ql.BoundaryConstraint(-1.0, 1.0))
+    sigmaTS = ql.PiecewiseConstantParameter(times[:-1], ql.PositiveConstraint())
+
+    for i, time in enumerate(times):
+        kappaTS.setParam(i, kappa[i])
+        thetaTS.setParam(i, theta[i])
+        rhoTS.setParam(i, rho[i])
+        sigmaTS.setParam(i, sigma[i])
+
+    hestonModelPTD = ql.PiecewiseTimeDependentHestonModel(riskFreeTS, dividendTS, initialValue, v0, thetaTS, kappaTS, sigmaTS, rhoTS, grid)
+    engine = ql.AnalyticPTDHestonEngine(hestonModelPTD)
+
+
 Asian Options
 *************
 
@@ -322,7 +359,7 @@ AnalyticContinuousGeometricAveragePriceAsianHestonEngine
 
 
 MCDiscreteGeometricAPHestonEngine
----------------------------
+---------------------------------
 
 .. function:: ql.MCDiscreteGeometricAPHestonEngine(HestonProcess, traits, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0, timeSteps=None, timeStepsPerYear=None)
 
@@ -343,7 +380,7 @@ MCDiscreteGeometricAPHestonEngine
 
 
 MCDiscreteArithmeticAPHestonEngine
-----------------------------
+----------------------------------
 
 .. function:: ql.MCDiscreteArithmeticAPHestonEngine(HestonProcess, traits, antitheticVariate=False, requiredSamples=None, requiredTolerance=None, maxSamples=None, seed=0, timeSteps=None, timeStepsPerYear=None, controlVariate=False)
 
