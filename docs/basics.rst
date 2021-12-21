@@ -1,19 +1,27 @@
 ******
 Basics
 ******
-Below are the commands to set up the Quant Lib with evaluation date. Everything starts with "evaluation date" which means the date you want to value a instrument. Consider you want to value a "Swap" as of 09/16/2020, you will first set the evaluationDate in QuantLib.
+
+Below are the commands to set up the Quant Lib with evaluation date. Everything starts with "evaluation date" which means the date you want to value a instrument. Consider you want to value a "Swap" as of 09/16/2020, you will first set the evaluationDate in QuantLib. Underhood C++ quant library is packaged using SWIg and python is more a API calling the C++ library.
+
 Settings
+
 ########
 
+
 .. code-block:: python
-    #immport the Qunat Lib
-    import QunatLib as ql
+
+    #import the Quant Lib
+    import QuantLib as ql
+    
     # Let the today date whenwe want to value a instrument be
     today = ql.Date(15,6,2020)
+    
     # we can set evaluationDate in QL as
     ql.Settings.instance().evaluationDate = today
     print(ql.Settings.instance().evaluationDate);
     # prints..June 15th, 2020
+    
     # or you can do
     today = ql.Date(15,12,2021);
     ql.Settings.instance().setEvaluationDate(today)
@@ -22,25 +30,107 @@ Settings
 
 
 Moves date of referenced curves:
+Following returns the term structure based on FlatForward
+
 
 .. code-block:: python
+    
+    settlementDays = 2
+    
+    # Holiday calendar of united states
+    calendar = ql.UnitedStates()
+    
+    forwardRate = 0.05
+    
+    """Day Counter provides methods for determining the length of a time period according to given market convention, 
+    both as a number of days and as a year fraction."""
+    dayCounter = ql.Actual360()
+    
+    # Construct flat forward rate term structure
+    flatForwardTermStructure = ql.FlatForward(settlementDays, calendar, forwardRate, dayCounter)
+    
+    flatForwardTermStructure.referenceDate()
+    
+    print("Max Date: ", flatForwardTermStructure.maxDate())
 
-    crv = ql.FlatForward(2, ql.TARGET(), 0.05, ql.Actual360())
-    crv.referenceDate()
 
-
-Changes evaluation date of calculation:
+Changes evaluation date of calculation: 
+Following shows the use of evaluation or Valuation date. Lets construct a schedule which will be used to create a leg and then we will calculate interest rate on the leg.
 
 .. code-block:: python
 
     today = ql.Date(15,6,2020)
     ql.Settings.instance().evaluationDate = today
-    schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('6M'))
-    leg = ql.FixedRateLeg(schedule, ql.Actual360(), [100.], [0.05])
-    rate = ql.InterestRate(.03, ql.Thirty360(), ql.Compounded, ql.Annual)
-    print( ql.CashFlows.npv(leg, rate, False) )
+    
+    effectiveDate = ql.Date(15, 6, 2020)
+    terminationDate = ql.Date(15, 6, 2022)
+    
+Create a schedule
+
+.. code-block:: python    
+
+    schedule = ql.MakeSchedule(effectiveDate, terminationDate, ql.Period('6M'))
+
+create a fixed rate leg using helper class building a sequence of fixed rate coupons
+
+.. code-block:: python
+
+    notional = [100.0]
+    rate = [0.05]
+    leg = ql.FixedRateLeg(schedule, dayCounter, notional, rate)      
+ 
+Interest rate class encapsulate the interest rate compounding algebra.
+It manages day-counting conventions, compounding conventions,
+conversion between different conventions, discount/compound factor
+calculations, and implied/equivalent rate calculations.
+
+.. code-block:: python
+    
+    dayCounter = ql.Thirty360()
+    rate = 0.03
+    
+    """
+    ql/Compounding.hpp
+        //! Interest rate compounding rule
+        enum Compounding { Simple = 0,          //!< \f$ 1+rt \f$
+                           Compounded = 1,      //!< \f$ (1+r)^t \f$
+                           Continuous = 2,      //!< \f$ e^{rt} \f$
+                           SimpleThenCompounded, //!< Simple up to the first period then Compounded
+                           CompoundedThenSimple //!< Compounded up to the first period then Simple
+        };
+    """
+    
+    compoundingType = ql.Compounded
+    
+    """
+    ql/time/frequency.hpp
+    enum Frequency { NoFrequency = -1,     //!< null frequency
+                         Once = 0,             //!< only once, e.g., a zero-coupon
+                         Annual = 1,           //!< once a year
+                         Semiannual = 2,       //!< twice a year
+                         EveryFourthMonth = 3, //!< every fourth month
+                         Quarterly = 4,        //!< every third month
+                         Bimonthly = 6,        //!< every second month
+                         Monthly = 12,         //!< once a month
+                         EveryFourthWeek = 13, //!< every fourth week
+                         Biweekly = 26,        //!< every second week
+                         Weekly = 52,          //!< once a week
+                         Daily = 365,          //!< once a day
+                         OtherFrequency = 999  //!< some other unknown frequency
+        };
+    """
+    
+    frequency = ql.Annual
+    interestRate = ql.InterestRate(rate, dayCounter, compoundingType, frequency)
 
 4.958531764309427
+
+
+ql/cashflows/Cashflows.hpp 
+The NPV is the sum of the cash flows, each discounted
+according to the given constant interest rate.  The result
+is affected by the choice of the interest-rate compounding
+and the relative frequency and day counter.
 
 .. code-block:: python
 
