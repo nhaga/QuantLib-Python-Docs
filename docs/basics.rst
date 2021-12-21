@@ -1,15 +1,24 @@
 ******
 Basics
 ******
-
+Below are the commands to set up the Quant Lib with evaluation date. Everything starts with "evaluation date" which means the date you want to value a instrument. Consider you want to value a "Swap" as of 09/16/2020, you will first set the evaluationDate in QuantLib.
 Settings
 ########
 
 .. code-block:: python
-
+    #immport the Qunat Lib
+    import QunatLib as ql
+    # Let the today date whenwe want to value a instrument be
     today = ql.Date(15,6,2020)
+    # we can set evaluationDate in QL as
     ql.Settings.instance().evaluationDate = today
+    print(ql.Settings.instance().evaluationDate);
+    # prints..June 15th, 2020
+    # or you can do
+    today = ql.Date(15,12,2021);
     ql.Settings.instance().setEvaluationDate(today)
+    print(ql.Settings.instance().evaluationDate)
+    # prints..December 15th, 2021
 
 
 Moves date of referenced curves:
