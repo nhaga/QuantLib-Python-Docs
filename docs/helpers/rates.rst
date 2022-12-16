@@ -60,10 +60,10 @@ from months with quote
   convention = ql.ModifiedFollowing
   endOfMonth = False
   dayCounter = ql.Actual360()
-  ql.FraRateHelper (quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter)
-  ql.FraRateHelper (quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate)
-  ql.FraRateHelper (quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date())
-  ql.FraRateHelper (quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date(), True)
+  ql.FraRateHelper(quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter)
+  ql.FraRateHelper(quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate)
+  ql.FraRateHelper(quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date())
+  ql.FraRateHelper(quote, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
 
 from months with rate
@@ -82,10 +82,10 @@ from months with rate
   convention = ql.ModifiedFollowing
   endOfMonth = False
   dayCounter = ql.Actual360()
-  ql.FraRateHelper (rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter)
-  ql.FraRateHelper (rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate)
-  ql.FraRateHelper (rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date())
-  ql.FraRateHelper (rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date(), True)
+  ql.FraRateHelper(rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter)
+  ql.FraRateHelper(rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate)
+  ql.FraRateHelper(rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date())
+  ql.FraRateHelper(rate, monthsToStart, monthsToEnd, fixingDays, calendar, convention, endOfMonth, dayCounter, ql.Pillar.LastRelevantDate, ql.Date(), True)
 
 
 
