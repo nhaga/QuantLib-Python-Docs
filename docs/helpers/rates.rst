@@ -519,7 +519,7 @@ FixedRateBondHelper
   faceAmount = 100
   schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2021), ql.Period('1y'))
   coupons = [0.0195]
-  dayCounter = ql.ActualActual()
+  dayCounter = ql.Actual360()
   helper = ql.FixedRateBondHelper(quote, settlementDays, faceAmount, schedule, coupons, dayCounter)
 
 BondHelper
@@ -531,7 +531,7 @@ BondHelper
 
   bond = ql.FixedRateBond(
       2, ql.TARGET(), 100.0, ql.Date(15,12,2019), ql.Date(15,12,2024),
-      ql.Period('1Y'), [0.05], ql.ActualActual())
+      ql.Period('1Y'), [0.05], ql.Actual360())
 
   cleanPrice = ql.QuoteHandle(ql.SimpleQuote(115))
   ql.BondHelper(cleanPrice, bond)
