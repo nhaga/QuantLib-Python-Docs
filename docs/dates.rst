@@ -360,7 +360,6 @@ https://www.isda.org/a/pIJEE/The-Actual-Actual-Day-Count-Fraction-1999.pdf
 The “Day Count Convention” is critical for the valuation of financial products, especially for fixed-income products. QuantLib provides the following common rules:
 
 - **Actual360** : Actual / 360
-
 - **Actual365Fixed** : Actual / 365(Fixed)
  - Standard
  - Canadian
@@ -375,6 +374,15 @@ The “Day Count Convention” is critical for the valuation of financial produc
  - Euro
 - **Business252** : Business / 252
 - **Thirty360** : 30 / 360
+ - USA
+ - BondBasis
+ - European
+ - EurobondBasis 
+ - Italian
+ - German
+ - ISMA
+ - ISDA 
+ - NASD
 - **SimpleDayCounter**
 
 .. code-block:: python
