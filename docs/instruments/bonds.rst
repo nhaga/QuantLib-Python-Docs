@@ -126,10 +126,10 @@ Callable Bond
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2022), ql.Period('1Y'))
     putCallSchedule = ql.CallabilitySchedule()
 
-    callability_price  = ql.CallabilityPrice(100, ql.CallabilityPrice.Clean)
+    my_price  = ql.BondPrice(100, ql.BondPrice.Clean)
 
     putCallSchedule.append(
-        ql.Callability(callability_price, ql.Callability.Call, ql.Date(15,6,2021))
+        ql.Callability(my_price, ql.Callability.Call, ql.Date(15,6,2021))
     )
 
     ql.CallableFixedRateBond(2, 100, schedule, [0.01], ql.Actual360(), ql.ModifiedFollowing, 100, ql.Date(15,6,2020), putCallSchedule)
