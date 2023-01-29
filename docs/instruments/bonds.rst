@@ -64,7 +64,7 @@ FixedRateBond
 
 .. code-block:: python
 
-    bond = ql.FixedRateBond(2, ql.TARGET(), 100.0, ql.Date(15,12,2019), ql.Date(15,12,2024), ql.Period('1Y'), [0.05], ql.ActualActual())
+    bond = ql.FixedRateBond(2, ql.TARGET(), 100.0, ql.Date(15,12,2019), ql.Date(15,12,2024), ql.Period('1Y'), [0.05], ql.ActualActual(ql.ActualActual.Bond))
 
 AmortizingFixedRateBond
 -----------------------
@@ -75,7 +75,7 @@ AmortizingFixedRateBond
 
     notionals = [100,100,100,50]
     schedule = ql.MakeSchedule(ql.Date(25,1,2018), ql.Date(25,1,2022), ql.Period('1y'))
-    bond = ql.AmortizingFixedRateBond(0, notionals, schedule, [0.03], ql.Thirty360())
+    bond = ql.AmortizingFixedRateBond(0, notionals, schedule, [0.03], ql.Thirty360(ql.Thirty360.USA))
     
 
 FloatingRateBond
@@ -100,7 +100,7 @@ AmortizingFloatingRateBond
     notional = [100, 50]
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2022), ql.Period('1Y'))
     index = ql.Euribor6M()
-    ql.AmortizingFloatingRateBond(2, notional, schedule, index, ql.ActualActual())
+    ql.AmortizingFloatingRateBond(2, notional, schedule, index, ql.ActualActual(ql.ActualActual.Bond))
 
 
 CMS Rate Bond
@@ -147,7 +147,7 @@ BondFunctions
     bond = ql.FixedRateBond(
         2, ql.TARGET(), 100.0,
         ql.Date(15,12,2019), ql.Date(15,12,2024), ql.Period('1Y'),
-        [0.05], ql.ActualActual())
+        [0.05], ql.ActualActual(ql.ActualActual.Bond))
 
 **Date Inspectors**
 
