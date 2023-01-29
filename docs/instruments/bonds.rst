@@ -87,7 +87,7 @@ FloatingRateBond
 
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2022), ql.Period('6m'))
     index = ql.Euribor6M()
-    ql.FloatingRateBond(2,100, schedule, index, ql.Actual360(), spreads=[0.01])
+    bond = ql.FloatingRateBond(2,100, schedule, index, ql.Actual360(), spreads=[0.01])
 
 
 AmortizingFloatingRateBond
@@ -100,7 +100,7 @@ AmortizingFloatingRateBond
     notional = [100, 50]
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2022), ql.Period('1Y'))
     index = ql.Euribor6M()
-    ql.AmortizingFloatingRateBond(2, notional, schedule, index, ql.ActualActual(ql.ActualActual.Bond))
+    bond = ql.AmortizingFloatingRateBond(2, notional, schedule, index, ql.ActualActual(ql.ActualActual.Bond))
 
 
 CMS Rate Bond
@@ -113,7 +113,7 @@ CMS Rate Bond
 
     schedule = ql.MakeSchedule(ql.Date(15,6,2020), ql.Date(15,6,2022), ql.Period('1Y'))
     index = ql.EuriborSwapIsdaFixA(ql.Period('10y'))
-    ql.CmsRateBond(2, 100, schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=2, gearings=[1], spreads=[0], caps=[], floors=[])
+    bond = ql.CmsRateBond(2, 100, schedule, index, ql.Actual360(), ql.ModifiedFollowing, fixingDays=2, gearings=[1], spreads=[0], caps=[], floors=[])
 
 
 Callable Bond
@@ -132,7 +132,7 @@ Callable Bond
         ql.Callability(my_price, ql.Callability.Call, ql.Date(15,6,2021))
     )
 
-    ql.CallableFixedRateBond(2, 100, schedule, [0.01], ql.Actual360(), ql.ModifiedFollowing, 100, ql.Date(15,6,2020), putCallSchedule)
+    bond = ql.CallableFixedRateBond(2, 100, schedule, [0.01], ql.Actual360(), ql.ModifiedFollowing, 100, ql.Date(15,6,2020), putCallSchedule)
 
 
 Convertible Bond
