@@ -3,15 +3,23 @@ QuantLib-Python Object Building Documentation
 
 **Contents:**
 
+
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
+   :glob:
+   :caption: Getting Started
+
+   getting_started/*
+
+.. toctree::
+   :maxdepth: 2
    :glob:
    :caption: Reference
 
    *
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 32
    :glob:
    :caption: Examples
 
