@@ -322,6 +322,68 @@ Other interpolations:
 	t = day_count.yearFraction(today, interpolation_date)
 	interpolated_zero_rate = spreaded_term_structure.zeroRate(t, compounding).rate()
 
+PiecewiseLinearForwardSpreadedTermStructure
+*******************************************
+
+Represents a yield term structure constructed by applying a piecewise-linear interpolation of **forward-rate** spreads to an existing base curve.
+The resulting forward rate at any date is the base curve's forward rate plus the interpolated spread at that date.
+
+This structure is useful when modeling market-implied forward curves that deviate from a base term structure by a known set of spreads at given dates.
+
+Other interpolations:
+
+* **PiecewiseForwardSpreadedTermStructure** (Backward-flat interpolated)
+
+.. function:: ql.PiecewiseLinearForwardSpreadedTermStructure(baseCurve: ql.YieldTermStructureHandle, spreads: List[ql.Handle], dates: List[ql.Date], dc: ql.DayCounter)
+
+	:param baseCurve: The base yield term structure to which forward-rate spreads are applied.
+	:type baseCurve: ql.YieldTermStructureHandle
+
+	:param spreads: A list of handles to quotes representing the forward-rate spreads.
+	:type spreads: List[ql.Handle]
+
+	:param dates: The dates corresponding to each spread value. Must be in strictly increasing order.
+	:type dates: List[ql.Date]
+
+	:param dc: The day count convention used for computing year fractions.
+	:type dc: ql.DayCounter, optional
+
+.. note::
+
+Unlike the zero-spreaded structure, this one applies spreads to **instantaneous forward rates**, not zero yields. Therefore, the impact on discount factors and derived instruments may differ.
+
+.. code-block:: python
+
+	today = ql.Date(10, ql.January, 2024)
+	ql.Settings.instance().evaluationDate = today
+
+	# Define forward curve dates and rates (annualized, continuous compounding)
+	dates = [
+		today,
+		today + ql.Period(3, ql.Months),
+		today + ql.Period(6, ql.Months),
+		today + ql.Period(1, ql.Years),
+		today + ql.Period(2, ql.Years),
+		today + ql.Period(3, ql.Years),
+		today + ql.Period(5, ql.Years),
+		today + ql.Period(10, ql.Years)
+	]
+	forwards = [0.02, 0.021, 0.022, 0.023, 0.025, 0.025, 0.023, 0.022]
+
+	# Build the forward curve
+	calendar = ql.TARGET()
+	day_count = ql.Actual365Fixed()
+	forward_curve = ql.ForwardCurve(dates, forwards, day_count, calendar)
+	fwd_crv_handle = ql.YieldTermStructureHandle(forward_curve)
+	
+	spreads = [ql.makeQuoteHandle(0.00), ql.makeQuoteHandle(0.005), ql.makeQuoteHandle(0.0025), ql.makeQuoteHandle(0.0)]
+	spread_dates = [ today,
+					calendar.advance(today, ql.Period(3, ql.Years)), 
+					calendar.advance(today, ql.Period(5, ql.Years)), 
+					calendar.advance(today, ql.Period(10, ql.Years))]
+					
+	spreaded_fwd_crv = ql.PiecewiseLinearForwardSpreadedTermStructure(fwd_crv_handle, spreads, spread_dates, day_count)
+
 
 FittedBondCurve
 ***************
