@@ -1,6 +1,103 @@
 Yield Term Structures
 #####################
 
+.. class:: YieldTermStructure
+
+    Abstract base class for interest-rate term structures.
+
+    This class defines the interface for all concrete interest rate term structures in QuantLib. It is not meant to be instantiated directly, but provides the common API for all yield curve objects such as `FlatForward`, `ZeroCurve`, `ForwardCurve`, etc.
+
+    Child classes inherit the following important methods:
+
+    **Discount Factors**
+
+    .. method:: discount(date: ql.Date, extrapolate=False)
+    .. method:: discount(time: float, extrapolate=False)
+
+        Returns the discount factor from the given date or time to the reference date.
+
+        :param date: The date for which the discount factor is requested.
+        :type date: ql.Date
+        :param time: The time (in years) from the reference date.
+        :type time: float
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The discount factor.
+        :rtype: float
+
+    **Zero-Yield Rates**
+
+    .. method:: zeroRate(date: ql.Date, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: zeroRate(time: float, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+
+        Returns the implied zero-coupon yield for the given date or time.
+
+        :param date: The date for which the zero rate is requested.
+        :type date: ql.Date
+        :param time: The time (in years) from the reference date.
+        :type time: float
+        :param dayCounter: The day count convention for the result.
+        :type dayCounter: ql.DayCounter
+        :param compounding: The compounding convention (e.g., Continuous, Compounded).
+        :type compounding: ql.Compounding
+        :param frequency: The compounding frequency (default: Annual).
+        :type frequency: ql.Frequency
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The zero rate as a ql.InterestRate object.
+        :rtype: ql.InterestRate
+
+    **Forward Rates**
+
+    .. method:: forwardRate(date1: ql.Date, date2: ql.Date, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: forwardRate(date: ql.Date, period: ql.Period, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: forwardRate(time1: float, time2: float, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+
+        Returns the forward rate between two dates or times.
+
+        :param date1: The start date.
+        :type date1: ql.Date
+        :param date2: The end date.
+        :type date2: ql.Date
+        :param period: The period from the start date.
+        :type period: ql.Period
+        :param time1: The start time (in years).
+        :type time1: float
+        :param time2: The end time (in years).
+        :type time2: float
+        :param dayCounter: The day count convention for the result.
+        :type dayCounter: ql.DayCounter
+        :param compounding: The compounding convention.
+        :type compounding: ql.Compounding
+        :param frequency: The compounding frequency (default: Annual).
+        :type frequency: ql.Frequency
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The forward rate as a ql.InterestRate object.
+        :rtype: ql.InterestRate
+
+    **Jump Inspectors**
+
+    .. method:: jumpDates()
+
+        Returns the list of dates at which jumps (discontinuities) in the curve occur.
+
+        :return: List of jump dates.
+        :rtype: list of ql.Date
+
+    .. method:: jumpTimes()
+
+        Returns the list of times (in years) at which jumps in the curve occur.
+
+        :return: List of jump times.
+        :rtype: list of float
+
+    **Notes**
+
+    - All concrete term structure classes (such as `FlatForward`, `ZeroCurve`, etc.) inherit these methods.
+    - The `discount`, `zeroRate`, and `forwardRate` methods are the primary interface for querying the curve.
+    - The `extrapolate` argument controls whether the curve can be queried outside its original range.
+
 FlatForward
 ***********
 Flat interest-rate curve.
