@@ -247,27 +247,80 @@ Term structure with an added spread on the zero yield rate
   spread = ql.QuoteHandle(ql.SimpleQuote(0.005))
   ql.ZeroSpreadedTermStructure(yts, spread)
 
-SpreadedLinearZeroInterpolatedTermStructure
-*******************************************
+PiecewiseZeroSpreadedTermStructure
+**********************************
 
-.. function:: ql.SpreadedLinearZeroInterpolatedTermStructure(YieldTermStructure, quotes, dates, compounding, frequency, dayCounter, linear)
+Represents a yield term structure constructed by applying a piecewise-linear interpolation of zero-rate spreads to an existing base curve. The resulting zero rate at any date is the base curve's zero rate plus the interpolated spread at that date.
+
+This structure is useful when modeling a market-implied yield curve that deviates from a base curve by a known set of spreads at given dates.
+
+Other interpolations:
+
+* **SpreadedLinearZeroInterpolatedTermStructure** (alias for PiecewiseZeroSpreadedTermStructure)
+* **SpreadedCubicZeroInterpolatedTermStructure**
+* **SpreadedKrugerZeroInterpolatedTermStructure**
+* **SpreadedSplineCubicZeroInterpolatedTermStructure**
+* **SpreadedParabolicCubicZeroInterpolatedTermStructure**
+* **SpreadedMonotonicParabolicCubicZeroInterpolatedTermStructure**
+
+
+.. function:: ql.PiecewiseZeroSpreadedTermStructure(baseCurve: ql.YieldTermStructureHandle, spreads: List[ql.Handle], dates: List[ql.Date], compounding: ql.Compounding = ql.Continuous, freq: ql.Frequency = ql.NoFrequency, dc: ql.DayCounter)
+	
+	:param baseCurve: The base yield term structure to which zero-rate spreads are applied.
+	:type baseCurve: ql.YieldTermStructureHandle
+
+	:param spreads: A list of handles to quotes representing the zero-rate spreads.
+	:type spreads: List[ql.Handle]
+
+	:param dates: The dates corresponding to each spread value. Must be in strictly increasing order.
+	:type dates: List[ql.Date]
+
+	:param compounding: The compounding method used for zero rates. Defaults to ql.Continuous.
+	:type compounding: ql.Compounding, optional
+
+	:param freq: The frequency of compounding. Only relevant if compounding is not continuous. Defaults to ql.NoFrequency.
+	:type freq: ql.Frequency, optional
+
+	:param dc: The day count convention used for year fractions.
+	:type dc: ql.DayCounter, optional
+   
 
 .. code-block:: python
 
-  crv = ql.FlatForward(settlement,0.04875825,ql.Actual365Fixed())
-  yts = ql.YieldTermStructureHandle(crv)
+	calendar = ql.TARGET()
+	today = ql.Date(9, 6, 2009)
+	ql.Settings.instance().evaluationDate = today
+	day_count = ql.Actual360()
+	compounding = ql.Continuous
 
-  calendar = ql.TARGET()
-  spread21 = ql.SimpleQuote(0.0050)
-  spread22 = ql.SimpleQuote(0.0050)
-  startDate = ql.Date().todaysDate()
-  endDate = calendar.advance(startDate, ql.Period(50, ql.Years))
+	# Build base term structure
+	settlement_days = 2
+	settlement_date = calendar.advance(today, ql.Period(settlement_days, ql.Days))
+	ts_days = [13, 41, 75, 165, 256, 345, 524, 703]
+	rates = [0.035, 0.033, 0.034, 0.034, 0.036, 0.037, 0.039, 0.040]
+	dates = [settlement_date] + [calendar.advance(today, n, ql.Days) for n in ts_days]
+	curve_rates = [0.035] + rates
+	term_structure = ql.ZeroCurve(dates, curve_rates, day_count)
 
-  tsSpread = ql.SpreadedLinearZeroInterpolatedTermStructure(
-      yts,
-      [ql.QuoteHandle(spread21), ql.QuoteHandle(spread22)],
-      [startDate, endDate]
-  )
+	# Spreads and spread dates
+	spread_1 = ql.makeQuoteHandle(0.02)
+	spread_2 = ql.makeQuoteHandle(0.03)
+	spreads = [spread_1, spread_2]
+
+	spread_dates = [
+		calendar.advance(today, 8, ql.Months),
+		calendar.advance(today, 15, ql.Months)
+	]
+
+	# PiecewiseZeroSpreadedTermStructure
+	spreaded_term_structure = ql.PiecewiseZeroSpreadedTermStructure(
+		ql.YieldTermStructureHandle(term_structure),
+		spreads, spread_dates
+	)
+
+	interpolation_date = calendar.advance(today, 6, ql.Months)
+	t = day_count.yearFraction(today, interpolation_date)
+	interpolated_zero_rate = spreaded_term_structure.zeroRate(t, compounding).rate()
 
 
 FittedBondCurve
