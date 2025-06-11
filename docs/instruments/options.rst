@@ -133,6 +133,34 @@ Double Barrier Types:
 
   doubleBarrierOption = ql.DoubleBarrierOption(barrierType, barrier_lo, barrier_hi, rebate, payoff, euExercise)
 
+.. function:: ql.PartialTimeBarrierOption(barrierType, barrieRange, barrier, rebate, coverEventDate, payoff, exercise)
+
+Partial Barrier Ranges Types:
+
+- `ql.PartialBarrier.Start`: Monitor the barrier from the start of the option lifetime until the so-called cover event.
+- `ql.PartialBarrier.EndB1`: Monitor the barrier from the cover event to the exercise date; trigger a knock-out only if the barrier is hit or crossed from either side, regardless of the underlying value when monitoring starts.
+- `ql.PartialBarrier.EndB2`: Monitor the barrier from the cover event to the exercise date; immediately trigger a knock-out if the underlying value is on the wrong side of the barrier when monitoring starts.
+
+.. code-block:: python
+
+  today = ql.Date().todaysDate()
+  maturity = calendar.advance(today, ql.Period(360, ql.Days))
+  K = 110.
+  barrier = 125.
+  rebate = 0.
+  barrier_type = ql.Barrier.UpOut
+  cover_event_date = calendar.advance(today, ql.Period(180, ql.Days))
+
+  payoff = ql.PlainVanillaPayoff(ql.Option.Call, K)
+  exercise = ql.EuropeanExercise(maturity)
+
+  partial_time_barrier_opt = ql.PartialTimeBarrierOption(
+        barrier_type,
+        ql.PartialBarrier.EndB1, # time range for partial-time barrier option
+        barrier, rebate,
+        cover_event_date,
+        payoff, exercise
+    )
 
 Basket Options
 **************

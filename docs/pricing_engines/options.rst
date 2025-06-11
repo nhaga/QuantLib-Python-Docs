@@ -583,6 +583,25 @@ If a leverage function (and optional mixing factor) is passed in to this functio
     hestonDoubleBarrierEngine = ql.FdHestonDoubleBarrierEngine(hestonModel)
 
 
+AnalyticPartialTimeBarrierOptionEngine
+----------------------
+
+.. function:: ql.AnalyticPartialTimeBarrierOptionEngine(process)
+
+.. code-block:: python
+
+    today = ql.Date.todaysDate()
+	ql.Settings.instance().evaluationDate = today
+
+    riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.05, ql.Actual365Fixed()))
+    dividendTS = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, ql.Actual365Fixed()))
+    volatility = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, ql.NullCalendar(), 0.1, ql.Actual365Fixed()))
+    initialValue = ql.makeQuoteHandle(100)
+    process = ql.BlackScholesMertonProcess(initialValue, dividendTS, riskFreeTS, volatility)
+
+    engine = ql.AnalyticPartialTimeBarrierOptionEngine(process)
+
+
 Basket Options
 **************
 
