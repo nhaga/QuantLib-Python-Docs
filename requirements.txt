@@ -2,7 +2,7 @@ sphinx==7.2.6
 ipykernel
 nbsphinx==0.9.3
 jupyter_client
-QuantLib==1.32
+QuantLib==1.38
 sphinx-copybutton==0.5.2
 Pygments==2.16.1
 pandas==2.1.2
