@@ -738,14 +738,14 @@ BlackDeltaCalculator
 
 A calculator class to calculate the relevant strike for FX-style delta-maturity-vol quotes (see `Reiswich D., Wystup U., 2010. A Guide to FX Options Quoting Conventions <https://www.researchgate.net/publication/275905055_A_Guide_to_FX_Options_Quoting_Conventions>`_) 
 
-.. class:: BlackDeltaCalculator(optionType, deltaType, spot, dDiscount, fDiscount, stdDev)
+.. class:: BlackDeltaCalculator(optionType: ql.Option, deltaType: ql.DeltaVolQuote, spot: float, dDiscount: float, fDiscount: float, stdDev: float)
 
 	BlackDeltaCalculator class constructor
 
 	:param optionType: Option type (call or put)
-	:type optionType: ql.Option.Type
+	:type optionType: ql.Option
 	:param deltaType: Delta type (spot, forward, premium-adjusted, etc.)
-	:type deltaType: DeltaVolQuote.DeltaType
+	:type deltaType: ql.DeltaVolQuote
 	:param spot: Spot FX rate
 	:type spot: float
 	:param dDiscount: Domestic discount factor
@@ -759,7 +759,7 @@ A calculator class to calculate the relevant strike for FX-style delta-maturity-
 		Instead of volatility, this parameter uses standard deviation, i.e. volatility * sqrt(timeToMaturity).
 		
 
-.. method:: deltaFromStrike(strike)
+.. method:: deltaFromStrike(strike: float)
 
     Computes the option delta for a given strike using the Black-Scholes formula and the delta convention specified at construction (spot, forward, premium-adjusted, etc.).
 
@@ -768,7 +768,7 @@ A calculator class to calculate the relevant strike for FX-style delta-maturity-
     :return: The option delta under the chosen convention.
     :rtype: float
 
-.. method:: strikeFromDelta(delta)
+.. method:: strikeFromDelta(delta: float)
 
     Computes the strike corresponding to a given delta by inverting the Black-Scholes formula, according to the delta convention set at construction. Useful for constructing volatility smiles and quoting FX options by delta.
 
@@ -777,12 +777,12 @@ A calculator class to calculate the relevant strike for FX-style delta-maturity-
     :return: The strike price corresponding to the given delta.
     :rtype: float
 
-.. method:: atmStrike(atmType)
+.. method:: atmStrike(atmType: ql.DeltaVolQuote)
 
     Calculates the at-the-money (ATM) strike for the given ATM convention. Determines the strike price that corresponds to "at-the-money" under different conventions commonly used in FX markets.
 
     :param atmType: The ATM convention to use.
-    :type atmType: DeltaVolQuote.AtmType
+    :type atmType: ql.DeltaVolQuote
     :return: The ATM strike price according to the specified convention.
     :rtype: float
 
@@ -799,19 +799,19 @@ Possible values of `DeltaVolQuote.AtmType`:
 * ``AtmGammaMax``: ATM strike that maximizes gamma
 * ``AtmPutCall25``: ATM strike where 25-delta call and put have equal volatility
 
-.. method:: setDeltaType(deltaType)
+.. method:: setDeltaType(deltaType: ql.DeltaVolQuote)
 
     Sets the delta calculation convention.
 
     :param deltaType: The new delta type convention.
-    :type deltaType: DeltaVolQuote.DeltaType
+    :type deltaType: ql.DeltaVolQuote
 
-.. method:: setOptionType(optionType)
+.. method:: setOptionType(optionType: ql.Option)
 
     Sets the option type (call or put).
 
     :param optionType: The option type.
-    :type optionType: ql.Option.Type
+    :type optionType: ql.Option
 	
 **Examples:**
 
