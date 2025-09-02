@@ -729,7 +729,7 @@ MCForwardEuropeanHestonEngine
 Quanto Options
 **************
 
-FX Options Calculator
+FX Options related calculators
 *********************
 
 
@@ -781,20 +781,23 @@ A calculator class to calculate the relevant strike for FX-style delta-maturity-
 
     Calculates the at-the-money (ATM) strike for the given ATM convention. Determines the strike price that corresponds to "at-the-money" under different conventions commonly used in FX markets.
 
-    :param atmType: The ATM convention to use. Possible values:
-        - AtmNull: No ATM convention (returns null)
-        - AtmSpot: ATM strike equals the current spot rate
-        - AtmForward: ATM strike equals the forward rate
-        - AtmDeltaNeutral: ATM strike where call and put deltas sum to zero
-        - AtmVegaMax: ATM strike that maximizes vega (typically close to forward)
-        - AtmGammaMax: ATM strike that maximizes gamma
-        - AtmPutCall25: ATM strike where 25-delta call and put have equal volatility
+    :param atmType: The ATM convention to use.
     :type atmType: DeltaVolQuote.AtmType
     :return: The ATM strike price according to the specified convention.
     :rtype: float
 
     .. note::
         This calculation is independent of the strike and uses the forward rate, volatility, and time to expiration set at construction.
+
+Possible values of `DeltaVolQuote.AtmType`:
+
+* ``AtmNull``: No ATM convention (returns null)
+* ``AtmSpot``: ATM strike equals the current spot rate
+* ``AtmForward``: ATM strike equals the forward rate
+* ``AtmDeltaNeutral``: ATM strike where call and put deltas sum to zero
+* ``AtmVegaMax``: ATM strike that maximizes vega (typically close to forward)
+* ``AtmGammaMax``: ATM strike that maximizes gamma
+* ``AtmPutCall25``: ATM strike where 25-delta call and put have equal volatility
 
 .. method:: setDeltaType(deltaType)
 
