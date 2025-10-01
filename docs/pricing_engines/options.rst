@@ -728,3 +728,128 @@ MCForwardEuropeanHestonEngine
 
 Quanto Options
 **************
+
+FX Options related calculators
+*********************
+
+
+BlackDeltaCalculator
+--------------------
+
+A calculator class to calculate the relevant strike for FX-style delta-maturity-vol quotes (see `Reiswich D., Wystup U., 2010. A Guide to FX Options Quoting Conventions <https://www.researchgate.net/publication/275905055_A_Guide_to_FX_Options_Quoting_Conventions>`_) 
+
+.. class:: BlackDeltaCalculator(optionType: ql.Option, deltaType: ql.DeltaVolQuote, spot: float, dDiscount: float, fDiscount: float, stdDev: float)
+
+	BlackDeltaCalculator class constructor
+
+	:param optionType: Option type (call or put)
+	:type optionType: ql.Option
+	:param deltaType: Delta type (spot, forward, premium-adjusted, etc.)
+	:type deltaType: ql.DeltaVolQuote
+	:param spot: Spot FX rate
+	:type spot: float
+	:param dDiscount: Domestic discount factor
+	:type dDiscount: float
+	:param fDiscount: Foreign discount factor
+	:type fDiscount: float
+	:param stdDev: Standard deviation of the underlying (volatility * sqrt(timeToMaturity))
+	:type stdDev: float
+
+	.. warning::
+		Instead of volatility, this parameter uses standard deviation, i.e. volatility * sqrt(timeToMaturity).
+		
+
+.. method:: deltaFromStrike(strike: float)
+
+    Computes the option delta for a given strike using the Black-Scholes formula and the delta convention specified at construction (spot, forward, premium-adjusted, etc.).
+
+    :param strike: The option strike price.
+    :type strike: float
+    :return: The option delta under the chosen convention.
+    :rtype: float
+
+.. method:: strikeFromDelta(delta: float)
+
+    Computes the strike corresponding to a given delta by inverting the Black-Scholes formula, according to the delta convention set at construction. Useful for constructing volatility smiles and quoting FX options by delta.
+
+    :param delta: The target option delta (under the chosen convention).
+    :type delta: float
+    :return: The strike price corresponding to the given delta.
+    :rtype: float
+
+.. method:: atmStrike(atmType: ql.DeltaVolQuote)
+
+    Calculates the at-the-money (ATM) strike for the given ATM convention. Determines the strike price that corresponds to "at-the-money" under different conventions commonly used in FX markets.
+
+    :param atmType: The ATM convention to use.
+    :type atmType: ql.DeltaVolQuote
+    :return: The ATM strike price according to the specified convention.
+    :rtype: float
+
+    .. note::
+        This calculation is independent of the strike and uses the forward rate, volatility, and time to expiration set at construction.
+
+Possible values of `DeltaVolQuote.AtmType`:
+
+* ``AtmNull``: No ATM convention (returns null)
+* ``AtmSpot``: ATM strike equals the current spot rate
+* ``AtmForward``: ATM strike equals the forward rate
+* ``AtmDeltaNeutral``: ATM strike where call and put deltas sum to zero
+* ``AtmVegaMax``: ATM strike that maximizes vega (typically close to forward)
+* ``AtmGammaMax``: ATM strike that maximizes gamma
+* ``AtmPutCall25``: ATM strike where 25-delta call and put have equal volatility
+
+.. method:: setDeltaType(deltaType: ql.DeltaVolQuote)
+
+    Sets the delta calculation convention.
+
+    :param deltaType: The new delta type convention.
+    :type deltaType: ql.DeltaVolQuote
+
+.. method:: setOptionType(optionType: ql.Option)
+
+    Sets the option type (call or put).
+
+    :param optionType: The option type.
+    :type optionType: ql.Option
+	
+**Examples:**
+
+.. code-block:: python
+
+    import numpy as np
+
+    today = ql.Date().todaysDate()
+    dayCounter = ql.Actual365Fixed()
+    spot = 100
+    rd, rf = 0.02, 0.05
+
+    ratesTs = ql.YieldTermStructureHandle(ql.FlatForward(today, rd, dayCounter))
+    dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, rf, dayCounter))
+
+    # Details about the delta quote
+    optionType = ql.Option.Put
+    vol = 0.07
+    maturity = 1.0
+    deltaType = ql.DeltaVolQuote.Fwd      # Also supports: Spot, PaSpot, PaFwd
+
+    # Set up the calculator
+    localDcf, foreignDcf = ratesTs.discount(maturity), dividendTs.discount(maturity)
+    stdDev = np.sqrt(maturity) * vol
+    calc = ql.BlackDeltaCalculator(optionType, deltaType, spot, localDcf, foreignDcf, stdDev)
+
+
+To calculate the strike for a given call/put delta (negative for put delta)
+
+.. code-block:: python
+
+    delta = -0.3
+    calc.strikeFromDelta(delta)
+
+
+Or if this is an ATM quote, specify the ATM convention
+
+.. code-block:: python
+
+    atmType = ql.DeltaVolQuote.AtmFwd     # Also supports: AtmSpot, AtmDeltaNeutral, AtmVegaMax, AtmGammaMax, AtmPutCall50
+    calc.atmStrike(atmType)
