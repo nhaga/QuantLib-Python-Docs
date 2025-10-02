@@ -1,6 +1,103 @@
 Yield Term Structures
 #####################
 
+.. class:: YieldTermStructure
+
+    Abstract base class for interest-rate term structures.
+
+    This class defines the interface for all concrete interest rate term structures in QuantLib. It is not meant to be instantiated directly, but provides the common API for all yield curve objects such as `FlatForward`, `ZeroCurve`, `ForwardCurve`, etc.
+
+    Child classes inherit the following important methods:
+
+    **Discount Factors**
+
+    .. method:: discount(date: ql.Date, extrapolate=False)
+    .. method:: discount(time: float, extrapolate=False)
+
+        Returns the discount factor from the given date or time to the reference date.
+
+        :param date: The date for which the discount factor is requested.
+        :type date: ql.Date
+        :param time: The time (in years) from the reference date.
+        :type time: float
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The discount factor.
+        :rtype: float
+
+    **Zero-Yield Rates**
+
+    .. method:: zeroRate(date: ql.Date, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: zeroRate(time: float, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+
+        Returns the implied zero-coupon yield for the given date or time.
+
+        :param date: The date for which the zero rate is requested.
+        :type date: ql.Date
+        :param time: The time (in years) from the reference date.
+        :type time: float
+        :param dayCounter: The day count convention for the result.
+        :type dayCounter: ql.DayCounter
+        :param compounding: The compounding convention (e.g., Continuous, Compounded).
+        :type compounding: ql.Compounding
+        :param frequency: The compounding frequency (default: Annual).
+        :type frequency: ql.Frequency
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The zero rate as a ql.InterestRate object.
+        :rtype: ql.InterestRate
+
+    **Forward Rates**
+
+    .. method:: forwardRate(date1: ql.Date, date2: ql.Date, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: forwardRate(date: ql.Date, period: ql.Period, dayCounter: ql.DayCounter, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+    .. method:: forwardRate(time1: float, time2: float, compounding: ql.Compounding, frequency=Annual, extrapolate=False)
+
+        Returns the forward rate between two dates or times.
+
+        :param date1: The start date.
+        :type date1: ql.Date
+        :param date2: The end date.
+        :type date2: ql.Date
+        :param period: The period from the start date.
+        :type period: ql.Period
+        :param time1: The start time (in years).
+        :type time1: float
+        :param time2: The end time (in years).
+        :type time2: float
+        :param dayCounter: The day count convention for the result.
+        :type dayCounter: ql.DayCounter
+        :param compounding: The compounding convention.
+        :type compounding: ql.Compounding
+        :param frequency: The compounding frequency (default: Annual).
+        :type frequency: ql.Frequency
+        :param extrapolate: Whether to allow extrapolation beyond the curve's range.
+        :type extrapolate: bool
+        :return: The forward rate as a ql.InterestRate object.
+        :rtype: ql.InterestRate
+
+    **Jump Inspectors**
+
+    .. method:: jumpDates()
+
+        Returns the list of dates at which jumps (discontinuities) in the curve occur.
+
+        :return: List of jump dates.
+        :rtype: list of ql.Date
+
+    .. method:: jumpTimes()
+
+        Returns the list of times (in years) at which jumps in the curve occur.
+
+        :return: List of jump times.
+        :rtype: list of float
+
+    **Notes**
+
+    - All concrete term structure classes (such as `FlatForward`, `ZeroCurve`, etc.) inherit these methods.
+    - The `discount`, `zeroRate`, and `forwardRate` methods are the primary interface for querying the curve.
+    - The `extrapolate` argument controls whether the curve can be queried outside its original range.
+
 FlatForward
 ***********
 Flat interest-rate curve.
@@ -247,27 +344,142 @@ Term structure with an added spread on the zero yield rate
   spread = ql.QuoteHandle(ql.SimpleQuote(0.005))
   ql.ZeroSpreadedTermStructure(yts, spread)
 
-SpreadedLinearZeroInterpolatedTermStructure
-*******************************************
+PiecewiseZeroSpreadedTermStructure
+**********************************
 
-.. function:: ql.SpreadedLinearZeroInterpolatedTermStructure(YieldTermStructure, quotes, dates, compounding, frequency, dayCounter, linear)
+Represents a yield term structure constructed by applying a piecewise-linear interpolation of zero-rate spreads to an existing base curve. The resulting zero rate at any date is the base curve's zero rate plus the interpolated spread at that date.
+
+This structure is useful when modeling a market-implied yield curve that deviates from a base curve by a known set of spreads at given dates.
+
+Other interpolations:
+
+* **SpreadedLinearZeroInterpolatedTermStructure** (alias for PiecewiseZeroSpreadedTermStructure)
+* **SpreadedCubicZeroInterpolatedTermStructure**
+* **SpreadedKrugerZeroInterpolatedTermStructure**
+* **SpreadedSplineCubicZeroInterpolatedTermStructure**
+* **SpreadedParabolicCubicZeroInterpolatedTermStructure**
+* **SpreadedMonotonicParabolicCubicZeroInterpolatedTermStructure**
+
+
+.. function:: ql.PiecewiseZeroSpreadedTermStructure(baseCurve: ql.YieldTermStructureHandle, spreads: List[ql.Handle], dates: List[ql.Date], compounding: ql.Compounding = ql.Continuous, freq: ql.Frequency = ql.NoFrequency, dc: ql.DayCounter)
+	
+	:param baseCurve: The base yield term structure to which zero-rate spreads are applied.
+	:type baseCurve: ql.YieldTermStructureHandle
+
+	:param spreads: A list of handles to quotes representing the zero-rate spreads.
+	:type spreads: List[ql.Handle]
+
+	:param dates: The dates corresponding to each spread value. Must be in strictly increasing order.
+	:type dates: List[ql.Date]
+
+	:param compounding: The compounding method used for zero rates. Defaults to ql.Continuous.
+	:type compounding: ql.Compounding, optional
+
+	:param freq: The frequency of compounding. Only relevant if compounding is not continuous. Defaults to ql.NoFrequency.
+	:type freq: ql.Frequency, optional
+
+	:param dc: The day count convention used for year fractions.
+	:type dc: ql.DayCounter, optional
+   
 
 .. code-block:: python
 
-  crv = ql.FlatForward(settlement,0.04875825,ql.Actual365Fixed())
-  yts = ql.YieldTermStructureHandle(crv)
+	calendar = ql.TARGET()
+	today = ql.Date(9, 6, 2009)
+	ql.Settings.instance().evaluationDate = today
+	day_count = ql.Actual360()
+	compounding = ql.Continuous
 
-  calendar = ql.TARGET()
-  spread21 = ql.SimpleQuote(0.0050)
-  spread22 = ql.SimpleQuote(0.0050)
-  startDate = ql.Date().todaysDate()
-  endDate = calendar.advance(startDate, ql.Period(50, ql.Years))
+	# Build base term structure
+	settlement_days = 2
+	settlement_date = calendar.advance(today, ql.Period(settlement_days, ql.Days))
+	ts_days = [13, 41, 75, 165, 256, 345, 524, 703]
+	rates = [0.035, 0.033, 0.034, 0.034, 0.036, 0.037, 0.039, 0.040]
+	dates = [settlement_date] + [calendar.advance(today, n, ql.Days) for n in ts_days]
+	curve_rates = [0.035] + rates
+	term_structure = ql.ZeroCurve(dates, curve_rates, day_count)
 
-  tsSpread = ql.SpreadedLinearZeroInterpolatedTermStructure(
-      yts,
-      [ql.QuoteHandle(spread21), ql.QuoteHandle(spread22)],
-      [startDate, endDate]
-  )
+	# Spreads and spread dates
+	spread_1 = ql.makeQuoteHandle(0.02)
+	spread_2 = ql.makeQuoteHandle(0.03)
+	spreads = [spread_1, spread_2]
+
+	spread_dates = [
+		calendar.advance(today, 8, ql.Months),
+		calendar.advance(today, 15, ql.Months)
+	]
+
+	# PiecewiseZeroSpreadedTermStructure
+	spreaded_term_structure = ql.PiecewiseZeroSpreadedTermStructure(
+		ql.YieldTermStructureHandle(term_structure),
+		spreads, spread_dates
+	)
+
+	interpolation_date = calendar.advance(today, 6, ql.Months)
+	t = day_count.yearFraction(today, interpolation_date)
+	interpolated_zero_rate = spreaded_term_structure.zeroRate(t, compounding).rate()
+
+PiecewiseLinearForwardSpreadedTermStructure
+*******************************************
+
+Represents a yield term structure constructed by applying a piecewise-linear interpolation of **forward-rate** spreads to an existing base curve.
+The resulting forward rate at any date is the base curve's forward rate plus the interpolated spread at that date.
+
+This structure is useful when modeling market-implied forward curves that deviate from a base term structure by a known set of spreads at given dates.
+
+Other interpolations:
+
+* **PiecewiseForwardSpreadedTermStructure** (Backward-flat interpolated)
+
+.. function:: ql.PiecewiseLinearForwardSpreadedTermStructure(baseCurve: ql.YieldTermStructureHandle, spreads: List[ql.Handle], dates: List[ql.Date], dc: ql.DayCounter)
+
+	:param baseCurve: The base yield term structure to which forward-rate spreads are applied.
+	:type baseCurve: ql.YieldTermStructureHandle
+
+	:param spreads: A list of handles to quotes representing the forward-rate spreads.
+	:type spreads: List[ql.Handle]
+
+	:param dates: The dates corresponding to each spread value. Must be in strictly increasing order.
+	:type dates: List[ql.Date]
+
+	:param dc: The day count convention used for computing year fractions.
+	:type dc: ql.DayCounter, optional
+
+.. note::
+
+Unlike the zero-spreaded structure, this one applies spreads to **instantaneous forward rates**, not zero yields. Therefore, the impact on discount factors and derived instruments may differ.
+
+.. code-block:: python
+
+	today = ql.Date(10, ql.January, 2024)
+	ql.Settings.instance().evaluationDate = today
+
+	# Define forward curve dates and rates (annualized, continuous compounding)
+	dates = [
+		today,
+		today + ql.Period(3, ql.Months),
+		today + ql.Period(6, ql.Months),
+		today + ql.Period(1, ql.Years),
+		today + ql.Period(2, ql.Years),
+		today + ql.Period(3, ql.Years),
+		today + ql.Period(5, ql.Years),
+		today + ql.Period(10, ql.Years)
+	]
+	forwards = [0.02, 0.021, 0.022, 0.023, 0.025, 0.025, 0.023, 0.022]
+
+	# Build the forward curve
+	calendar = ql.TARGET()
+	day_count = ql.Actual365Fixed()
+	forward_curve = ql.ForwardCurve(dates, forwards, day_count, calendar)
+	fwd_crv_handle = ql.YieldTermStructureHandle(forward_curve)
+	
+	spreads = [ql.makeQuoteHandle(0.00), ql.makeQuoteHandle(0.005), ql.makeQuoteHandle(0.0025), ql.makeQuoteHandle(0.0)]
+	spread_dates = [ today,
+					calendar.advance(today, ql.Period(3, ql.Years)), 
+					calendar.advance(today, ql.Period(5, ql.Years)), 
+					calendar.advance(today, ql.Period(10, ql.Years))]
+					
+	spreaded_fwd_crv = ql.PiecewiseLinearForwardSpreadedTermStructure(fwd_crv_handle, spreads, spread_dates, day_count)
 
 
 FittedBondCurve
