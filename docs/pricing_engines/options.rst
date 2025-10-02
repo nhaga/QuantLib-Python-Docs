@@ -471,6 +471,70 @@ FdBlackScholesBarrierEngine
     fdBarrierEngine = ql.FdBlackScholesBarrierEngine(bsm)
 
 
+VannaVolgaBarrierEngine
+---------------------------
+
+The Vanna–Volga Barrier Engine is a pricing engine for FX exotics options that adjusts the standard Black–Scholes price to account for volatility smiles.
+
+This method uses the Vanna–Volga correction technique, which re-prices barrier options by combining the prices of three liquid market instruments — typically an ATM option, a 25Δ call, and a 25Δ put. These instruments define a volatility smile used to derive a more realistic implied volatility for exotic payoffs.
+
+The engine is specifically made FX options, where implied volatility varies significantly across strikes (the “smile”). By applying smile-adjusted volatilities, the engine provides more market-consistent valuations than flat-volatility models.
+
+For more info see `Castagna A., Mercurio F., 2007. The Vanna-Volga method for implied volatilities <https://www.deriscope.com/docs/The_Vanna_Volga_method_for_implied_volatilities_Castagna_Mercurio_2007.pdf>`_ .
+
+.. class:: ql.VannaVolgaBarrierEngine(atmVol: ql.DeltaVolQuoteHandle, vol25Put: ql.DeltaVolQuoteHandle, vol25Call: ql.DeltaVolQuoteHandle, spotFX: ql.QuoteHandle, domesticTS: ql.YieldTermStructureHandle, foreignTS: ql.YieldTermStructureHandle,
+	adaptVanDelta: bool, bsPriceWithSmile: float)
+
+	VannaVolgaBarrierEngine class constructor
+
+	:param atmVol: The at-the-money volatility quote used as the reference point in the smile construction.  
+	:type atmVol: ql.DeltaVolQuoteHandle  
+
+	:param vol25Put: The 25-delta put volatility quote, representing the lower wing of the smile.  
+	:type vol25Put: ql.DeltaVolQuoteHandle  
+
+	:param vol25Call: The 25-delta call volatility quote, representing the upper wing of the smile.  
+	:type vol25Call: ql.DeltaVolQuoteHandle  
+
+	:param spotFX: The current FX spot rate.  
+	:type spotFX: ql.QuoteHandle  
+
+	:param domesticTS: The domestic yield term structure used for discounting domestic currency cash flows.  
+	:type domesticTS: ql.YieldTermStructureHandle  
+
+	:param foreignTS: The foreign yield term structure used for discounting foreign currency cash flows.  
+	:type foreignTS: ql.YieldTermStructureHandle  
+
+	:param adaptVanDelta: Flag to adjust the Vanna term dynamically to maintain delta neutrality. Defaults to ``False``.  
+	:type adaptVanDelta: bool, optional  
+
+	:param bsPriceWithSmile: Scaling factor applied to the Vanna–Volga correction. Default is ``1.0`` (full correction).  
+	:type bsPriceWithSmile: float, optional  
+
+
+.. code-block:: python
+	
+	spot_quote = ql.SimpleQuote(EUR_USD)
+	spot_handle = ql.QuoteHandle(spot_quote)
+
+	# Setting up the DeltaVolQuote Handles
+    atm_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(ql.QuoteHandle(atm_vol_quote), delta_type, maturity_time, atm_type))
+	delta25_c_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(0.25, ql.QuoteHandle(delta25_call_vol_quote), maturity_time, delta_type))
+	delta25_p_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(-0.25, ql.QuoteHandle(delta25_put_vol_quote), maturity_time, delta_type))
+	
+	# Setting up the discount curves
+	eur_curve = ql.DiscountCurve(eur_dates, eur_dfs, dc)
+	usd_curve = ql.DiscountCurve(usd_dates, usd_dfs, dc)
+
+    vanna_volga_ engine = ql.VannaVolgaBarrierEngine(
+		atm_dvol_handle, 
+		delta25_p_dvol_handle, 
+		delta25_c_dvol_handle, 
+		spot_handle,
+		usd_disc_ts,
+		eur_disc_ts
+	)
+
 FdBlackScholesRebateEngine
 --------------------------
 
