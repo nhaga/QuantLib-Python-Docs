@@ -2,7 +2,7 @@
 Basics
 ******
 
-Below are the commands to set up the Quant Lib with evaluation date. Everything starts with "evaluation date" which means the date you want to value a instrument. Consider you want to value a "Swap" as of 09/16/2020, you will first set the evaluationDate in QuantLib. Underhood C++ quant library is packaged using SWIg and python is more a API calling the C++ library.
+Below are the commands to set up the QuantLib with evaluation date. Everything starts with "evaluation date" which means the date you want to value a instrument (for more info see `The global evaluation Date <https://implementingquantlib.substack.com/p/the-global-evaluation-date>`_). Consider you want to value a "Swap" as of 09/16/2020, you will first set the evaluationDate in QuantLib. Underhood C++ quant library is packaged using SWIG and python is more a API calling the C++ library.
 
 Settings
 
@@ -264,7 +264,7 @@ DerivedQuote
 CompositeQuote
 **************
 
-.. function:: ql.CompositeQuote(quoteHandle, quoteHandle, function)
+.. function:: ql.CompositeQuote(element1: ql.QuoteHandle, element2: ql.QuoteHandle, f)
 
 .. code-block:: python
 
@@ -286,8 +286,9 @@ DeltaVolQuote
 
 A class for FX-style quotes where delta-maturity pairs are quoted in implied vol
 
-.. function:: ql.DeltaVolQuote(delta, volQuoteHandle, maturity, deltaType)
-.. function:: ql.DeltaVolQuote(volQuoteHandle, deltaType, maturity, atmType)
+.. class:: ql.DeltaVolQuote(delta, volQuoteHandle, maturity, deltaType)
+.. class:: ql.DeltaVolQuote(volQuoteHandle, deltaType, maturity, atmType)
+   :no-index-entry:
 
 .. code-block:: python
 
@@ -300,7 +301,3 @@ A class for FX-style quotes where delta-maturity pairs are quoted in implied vol
     atmDeltaQuote = ql.DeltaVolQuote(ql.QuoteHandle(ql.SimpleQuote(volAtm)), deltaType, maturity, atmType)
     vol25DeltaPutQuote = ql.DeltaVolQuote(-0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaPut)), maturity, deltaType)
     vol25DeltaCallQuote = ql.DeltaVolQuote(0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaCall)), maturity, deltaType)
-
-----
-
-

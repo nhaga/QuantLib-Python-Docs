@@ -482,8 +482,7 @@ The engine is specifically made FX options, where implied volatility varies sign
 
 For more info see `Castagna A., Mercurio F., 2007. The Vanna-Volga method for implied volatilities <https://www.deriscope.com/docs/The_Vanna_Volga_method_for_implied_volatilities_Castagna_Mercurio_2007.pdf>`_ .
 
-.. class:: ql.VannaVolgaBarrierEngine(atmVol: ql.DeltaVolQuoteHandle, vol25Put: ql.DeltaVolQuoteHandle, vol25Call: ql.DeltaVolQuoteHandle, spotFX: ql.QuoteHandle, domesticTS: ql.YieldTermStructureHandle, foreignTS: ql.YieldTermStructureHandle,
-	adaptVanDelta: bool, bsPriceWithSmile: float)
+.. class:: ql.VannaVolgaBarrierEngine(atmVol: ql.DeltaVolQuoteHandle, vol25Put: ql.DeltaVolQuoteHandle, vol25Call: ql.DeltaVolQuoteHandle, spotFX: ql.QuoteHandle, domesticTS: ql.YieldTermStructureHandle, foreignTS: ql.YieldTermStructureHandle, adaptVanDelta: bool, bsPriceWithSmile: float)
 
 	VannaVolgaBarrierEngine class constructor
 
@@ -513,19 +512,19 @@ For more info see `Castagna A., Mercurio F., 2007. The Vanna-Volga method for im
 
 
 .. code-block:: python
-	
-	spot_quote = ql.SimpleQuote(EUR_USD)
-	spot_handle = ql.QuoteHandle(spot_quote)
-
-	# Setting up the DeltaVolQuote Handles
+    
+    spot_quote = ql.SimpleQuote(EUR_USD)
+    spot_handle = ql.QuoteHandle(spot_quote)
+    
+    # Setting up the DeltaVolQuote Handles
     atm_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(ql.QuoteHandle(atm_vol_quote), delta_type, maturity_time, atm_type))
-	delta25_c_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(0.25, ql.QuoteHandle(delta25_call_vol_quote), maturity_time, delta_type))
-	delta25_p_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(-0.25, ql.QuoteHandle(delta25_put_vol_quote), maturity_time, delta_type))
+    delta25_c_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(0.25, ql.QuoteHandle(delta25_call_vol_quote), maturity_time, delta_type))
+    delta25_p_dvol_handle = ql.DeltaVolQuoteHandle(ql.DeltaVolQuote(-0.25, ql.QuoteHandle(delta25_put_vol_quote), maturity_time, delta_type))
 	
-	# Setting up the discount curves
-	eur_curve = ql.DiscountCurve(eur_dates, eur_dfs, dc)
-	usd_curve = ql.DiscountCurve(usd_dates, usd_dfs, dc)
-
+    # Setting up the discount curves
+    eur_curve = ql.DiscountCurve(eur_dates, eur_dfs, dc)
+    usd_curve = ql.DiscountCurve(usd_dates, usd_dfs, dc)
+    
     vanna_volga_ engine = ql.VannaVolgaBarrierEngine(
 		atm_dvol_handle, 
 		delta25_p_dvol_handle, 
@@ -809,7 +808,7 @@ A calculator class to calculate the relevant strike for FX-style delta-maturity-
 	:param optionType: Option type (call or put)
 	:type optionType: ql.Option
 	:param deltaType: Delta type (spot, forward, premium-adjusted, etc.)
-	:type deltaType: ql.DeltaVolQuote
+	:type deltaType: :py:class:`ql.DeltaVolQuote`
 	:param spot: Spot FX rate
 	:type spot: float
 	:param dDiscount: Domestic discount factor

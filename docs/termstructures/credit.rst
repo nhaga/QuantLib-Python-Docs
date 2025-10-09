@@ -1,3 +1,5 @@
+.. _termstructures-credit:
+
 Credit Term Structures
 ######################
 

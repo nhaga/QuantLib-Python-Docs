@@ -1,3 +1,5 @@
+.. _termstructures-yield:
+
 Yield Term Structures
 #####################
 

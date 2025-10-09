@@ -1,3 +1,5 @@
+.. _termstructures-inflation:
+
 Inflation Term Structures
 #########################
 

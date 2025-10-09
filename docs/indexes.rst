@@ -19,6 +19,9 @@ The available classes under the **Inflation Indexes** are:
 
 The class that defines that main interface for all the following classes is the purely abstract ``Index`` class 
 
+Index
+*****
+
 .. class:: Index
 
     The Index class defines the following methods that every subclass inherits:
@@ -114,7 +117,7 @@ The class that defines that main interface for all the following classes is the 
         Clears all stored historical fixings for the index.
 
 IndexManager
-############
+************
 
 To avoid discrepancies between the indexes themselves QuantLib employes a unique global repository for the various registered indexes under the ``IndexManager`` class.
 ``IndexManager`` basically stores for each index added a timeseries of the past fixings.
@@ -143,7 +146,7 @@ The ``IndexManager`` instance can be accessed thought:
 
 
 Interest Rate
-#############
+*************
 
 In the following block there are going to be listed all the classes that are subclasses of the ``InterestRateIndex`` class.
 ``InterestRateIndex`` class itself if a child class of the ``Index`` class and serves as the abstract base for all interest rate indexes in QuantLib, including IBOR and overnight indexes. 
@@ -228,7 +231,7 @@ In the following block there are going to be listed all the classes that are sub
         :rtype: float
 
 IborIndex
-*********
+---------
 
 .. class:: IborIndex(familyName: str, tenor: ql.Period, settlementDays: int, currency: ql.Currency, fixingCalendar: ql.Calendar, convention: ql.Convention, endOfMonth: bool, dayCounter: ql.DayCounter, h: ql.YieldTermStructureHandle = ql.YieldTermStructureHandle())
 
@@ -344,7 +347,7 @@ From QuantLib 1.39 the class ``CustomIborIndex`` will be available, which lets y
         :rtype: ql.Date
 
 OvernightIndex
-**************
+--------------
 
 .. class:: OvernightIndex(familyName: str, settlementDays: int, currency: ql,Currency, fixingCalendar: ql.Calendar, dayCounter: ql.DayCounter, h:Optional[ql.YieldTermStructureHandle])
 
@@ -390,7 +393,7 @@ The ``OvernightIndex`` other subclasses can be found under `ql/indexes/ibor` (in
 
 
 SwapIndex
-*********
+---------
 
 .. class:: SwapIndex(familyName: str, tenor: ql.Period, settlementDays: int, currency: ql.Currency, fixingCalendar: ql.Calendar, fixedLegTenor: ql.Period, fixedLegConvention: ql.BusinessDayConvention, fixedLegDayCounter: ql.DayCounter, index: ql.IborIndex)
 
@@ -478,7 +481,7 @@ Constructors for derived classes:
 
 
 SwapSpreadIndex
-***************
+---------------
 
 .. class:: SwapSpreadIndex(familyName: str, swapIndex1: ql.SwapIndex, swapIndex2: ql.SwapIndex, gearing1: float = 1.0, gearing2: float = -1.0)
 
@@ -506,7 +509,7 @@ SwapSpreadIndex
     cms10y.addFixing(refDate, 0.05)
 
 Inflation
-#########
+*********
 
 .. class:: InflationIndex(familyName: str, region: ql.Region, revised: bool, frequency: ql.Frequency, availabilityLag: ql.Period, currency: ql.Currency)
 
@@ -526,7 +529,7 @@ Inflation
     :type currency: ql.Currency
 
 Zero Inflation
-**************
+--------------
 
 .. class:: ZeroInflationIndex(familyName: str, region: ql.Region, revised: bool, frequency: ql.Frequency, availabilityLag: ql.Period, currency: ql.Currency, h: Optional[ql.ZeroInflationTermStructureHandle])
 
@@ -558,7 +561,7 @@ The ``ZeroInflationIndex`` other subclasses can be found under `ql/indexes/infla
 
 
 YoY inflation
-*************
+-------------
 
 .. class:: YoYInflationIndex(familyName: str, region: ql.Region, revised: bool, frequency: ql.Frequency, availabilityLag: ql.Period, currency: ql.Currency, h: Optional[ql.ZeroInflationTermStructureHandle])
 
