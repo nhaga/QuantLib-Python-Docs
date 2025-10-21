@@ -1,9 +1,9 @@
-Black & Bachielier Engines
+Black & Bachelier Engines
 ##########################
 
 The price engine module provides with a set of functions from the two cornerstones models in mathematical finance: the **Black** and **Bachelier** option pricing formulas, also exposing their implied volatility inverses, and related probabilities such as *in-the-money (ITM) probabilities*.
 
-These functions are commonly used for pricing, calibration, and risk analysis in derivatives models based on lognormal (Black) or normal (Bachelier) assumptions.
+These functions are commonly used for pricing and risk analysis in derivatives models based on lognormal (Black) or normal (Bachelier) assumptions.
 
 Black Related functions
 ***********************
@@ -192,7 +192,7 @@ BlackCalculator
     payoff = ql.PlainVanillaPayoff(ql.Option.Call, 100)
     calc = ql.BlackCalculator(payoff, forward=105, stdDev=0.2, discount=0.99)
     price = calc.value()
-    delta = calc.delta(spot=102)
+    delta = calc.delta(102)
 
 
 Bachelier Related functions
