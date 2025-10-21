@@ -301,3 +301,18 @@ A class for FX-style quotes where delta-maturity pairs are quoted in implied vol
     atmDeltaQuote = ql.DeltaVolQuote(ql.QuoteHandle(ql.SimpleQuote(volAtm)), deltaType, maturity, atmType)
     vol25DeltaPutQuote = ql.DeltaVolQuote(-0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaPut)), maturity, deltaType)
     vol25DeltaCallQuote = ql.DeltaVolQuote(0.25, ql.QuoteHandle(ql.SimpleQuote(vol25DeltaCall)), maturity, deltaType)
+
+Handles
+######
+
+The ``Handle`` class is a key component of the C++ `QuantLib` library. Conceptually, a `Handle` behaves like a **double pointer** — it essentially wraps a ``shared_ptr`` (for more details, see the `Handling dependencies <https://www.quantlibguide.com/Handling%20dependencies.html#fnref1>`_ section).
+
+Since `Handle` is a **templated class**, it is not directly accessible from QuantLib’s Python bindings. Instead, specific handle classes are provided for each QuantLib object type that needs to be wrapped. In practice, these are usually **term structures** or **quote** objects.
+
+In Python, the naming convention for these handle classes follows the pattern ``<ClassName>Handle`` — for example, ``YieldTermStructureHandle``.
+
+We have two types of handles: Handle and RelinkableHandle. The first can be think as a **const** Handle while the second as a non-**const** Handle that can be relinked, for example to another termstructure. 
+
+Handles are especially useful when the underlying object may change dynamically. For instance, if the base term structure changes and we need to reprice a bond, we can use a ``RelinkableHandle`` to easily update the reference. By calling the ``linkTo`` method, the handle can be relinked to a new term structure, after which we can simply request the bond's ``NPV()`` again.
+
+This approach eliminates the need for manual setters and helps avoid confusion and potential errors when managing multiple objects that depend on different term structures.

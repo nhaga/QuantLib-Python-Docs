@@ -2,6 +2,8 @@
 Pricing Engines
 ###############
 
+.. include:: pricing_engines/black_bachelier.rst
+
 -----
 
 .. include:: pricing_engines/bonds.rst
