@@ -160,6 +160,9 @@ The base class the represent a smile section in QuantLib is the ``SmileSection``
       :return: Probability density value.
       :rtype: float
 
+InterpolatedSmileSection
+------------------------
+
 The concrete SmileSection classes exported in QuantLib Python are the following:
 
 * ``LinearInterpolatedSmileSection``
@@ -170,16 +173,802 @@ The concrete SmileSection classes exported in QuantLib Python are the following:
 Those classes can be instantiated using one of the following constructors (example for the base class `InterpolatedSmileSection`, the constructor has the same signature also for the other classes):
 
 
-.. class:: InterpolatedSmileSection(expiryTime: float, strikes: list[float], stdDevHandles: list[QuoteHandle], atmLevel: QuoteHandle, interpolator: Interpolator = Interpolator(), dc: ql.DayCounter = ql.Actual365Fixed(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
+.. class:: InterpolatedSmileSection(expiryTime: float, strikes: List[float], stdDevHandles: List[QuoteHandle], atmLevel: QuoteHandle, interpolator: Interpolator = Interpolator(), dc: ql.DayCounter = ql.Actual365Fixed(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
 
-.. class:: InterpolatedSmileSection(expiryTime: float, strikes: list[float], stdDevHandles: list[float], atmLevel: float, interpolator: Interpolator = Interpolator(), dc: ql.DayCounter = ql.Actual365Fixed(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
+.. class:: InterpolatedSmileSection(expiryTime: float, strikes: List[float], stdDevHandles: List[float], atmLevel: float, interpolator: Interpolator = Interpolator(), dc: ql.DayCounter = ql.Actual365Fixed(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
   :no-index-entry:
 
-.. class:: InterpolatedSmileSection(date: ql.Date, strikes: list[float], stdDevHandles: list[QuoteHandle], atmLevel: QuoteHandle, dc: ql.DayCounter = ql.Actual365Fixed(), interpolator: Interpolator = Interpolator(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
+.. class:: InterpolatedSmileSection(date: ql.Date, strikes: List[float], stdDevHandles: List[QuoteHandle], atmLevel: QuoteHandle, dc: ql.DayCounter = ql.Actual365Fixed(), interpolator: Interpolator = Interpolator(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
   :no-index-entry:
 
-.. class:: InterpolatedSmileSection(date: ql:Date, strikes: list[float], stdDevHandles: list[float], atmLevel: float, dc : ql.DayCounter = ql.Actual365Fixed(), interpolator: Interpolator = Interpolator(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
+.. class:: InterpolatedSmileSection(date: ql:Date, strikes: List[float], stdDevHandles: List[float], atmLevel: float, dc : ql.DayCounter = ql.Actual365Fixed(), interpolator: Interpolator = Interpolator(), type: ql.VolatilityType = ql.ShiftedLognormal, shift: float = 0.0)
   :no-index-entry:
+
+  .. warning::
+		Instead of the volatilities, the `stdDevHandles` parameter must be a list (or QuoteHandle list) of standard deviations, i.e. volatility * sqrt(timeToMaturity).
+
+Example — LinearInterpolatedSmileSection list-of-vol constructor:
+
+  .. code-block:: python
+
+    import math
+    import QuantLib as ql
+
+    # setup
+    ql.Settings.instance().evaluationDate = ql.Date(15, 12, 2025)
+    time_to_expiry = 0.5  # half year
+    strikes = [90.0, 95.0, 100.0, 105.0, 110.0]
+    vols = [0.25, 0.22, 0.20, 0.22, 0.25]          # quoted implied volatilities
+    std_devs = [v * math.sqrt(time_to_expiry) for v in vols]  # total std-deviations
+    atm_level = 100.0
+
+    # construct a linear interpolated smile section (time-based constructor)
+    smile = ql.LinearInterpolatedSmileSection(
+        time_to_expiry,
+        strikes,
+        std_devs,
+        atm_level
+    )
+
+    # query volatility and variance
+    vol_at_atm = smile.volatility(atm_level)        # implied volatility at ATM
+    var_at_atm = smile.variance(atm_level)          # total variance at ATM
+
+    print(f"ATM vol: {vol_at_atm:.4f}, ATM total variance: {var_at_atm:.6f}")
+
+Example — SplineCubicInterpolatedSmileSection list-of-handlequotes constructor:
+
+  .. code-block:: python
+
+    # setup
+    today = ql.Date(15, 12, 2025)
+    calendar = ql.NullCalendar()
+    dc = ql.Actual365Fixed()
+    ql.Settings.instance().evaluationDate = today
+    maturity_date = calendar.advance(today, ql.Period(6, ql.Months))
+    t_quote = ql.SimpleQuote(dc.yearFraction(today, maturity_date))
+    t_handle = ql.QuoteHandle(t_quote)
+    sqrt_t_handle = ql.QuoteHandle(ql.DerivedQuote(t_handle, function=lambda x: np.sqrt(x)))
+    strikes = [90.0, 100.0, 110.0]
+    v_90 = ql.SimpleQuote(0.25)
+    v_100 = ql.SimpleQuote(0.20)
+    v_110 = ql.SimpleQuote(0.23)
+    # quoted implied volatilities
+    vols = [ql.QuoteHandle(v_90), ql.QuoteHandle(v_100), ql.QuoteHandle(v_110)]
+    std_devs = [
+        ql.QuoteHandle(ql.CompositeQuote(v, sqrt_t_handle, lambda x, y: x * y)) 
+        for v in vols]  # total std-deviations
+    atm_level = 100.0
+
+    # construct a linear interpolated smile section (time-based constructor)
+    smile = ql.SplineCubicInterpolatedSmileSection(
+        maturity_date,
+        strikes,
+        std_devs,
+        ql.makeQuoteHandle(atm_level)
+    )
+    strike_95 = 95.0
+
+    # query volatility and variance
+    vol_at_otm = smile.volatility(strike_95)        # implied volatility at 95
+    var_at_otm = smile.variance(strike_95)          # total variance at 95
+
+    print(f"ATM vol: {vol_at_otm:.4f}, ATM total variance: {vol_at_otm:.6f}")
+
+    # Let's say that the ATM goes up by 1 point after 1 Month
+    today = calendar.advance(today, ql.Period(1, ql.Months))
+    t_quote.setValue(dc.yearFraction(today, maturity_date))
+    ql.Settings.instance().evaluationDate = today
+
+    v_100.setValue(0.21)
+
+    # query new volatility and variance for the strike 95
+    vol_at_otm = smile.volatility(strike_95)
+    var_at_otm = smile.variance(strike_95)
+
+    print(f"ATM vol: {vol_at_otm:.4f}, ATM total variance: {vol_at_otm:.6f}")
+
+FlatSmileSection
+----------------
+
+A simple SmileSection representing a flat (strike-independent) implied volatility.
+
+.. class:: ql.FlatSmileSection(date: ql.Date, vol: float, dc: ql.DayCounter, referenceDate: ql.Date = ql.Date(), atmLevel: float = None, type: ql.VolatilityType = ql.VolatilityType.ShiftedLognormal, shift: float = 0.0)
+
+.. class:: ql.FlatSmileSection(time: float, vol: float, dc: ql.DayCounter, atmLevel: float = None, type: ql.VolatilityType = ql.VolatilityType.ShiftedLognormal, shift: float = 0.0)
+  :no-index-entry:
+
+  Constructs a smile section whose volatility is constant for all strikes.
+
+  :param date: Expiry date (use the date-based constructor).
+  :type date: ql.Date
+
+  :param time: Time to expiry in year fractions (use the time-based constructor).
+  :type time: float
+
+  :param vol: Constant implied volatility (annualized).
+  :type vol: float
+
+  :param dc: Day-count convention used to compute exerciseTime (when using time constructor).
+  :type dc: ql.DayCounter
+
+  :param referenceDate: Reference/valuation date used with the date constructor.
+  :type referenceDate: ql.Date
+
+  :param atmLevel: Optional ATM level / forward used for moneyness calculations.
+  :type atmLevel: float or Null
+
+  :param type: Volatility type (e.g. ShiftedLognormal or Normal).
+  :type type: ql.VolatilityType
+
+  :param shift: Shift/displacement used for shifted-lognormal volatilities.
+  :type shift: float
+
+Example usage:
+
+.. code-block:: python
+
+  today = ql.Date(15, 12, 2025)
+  ql.Settings.instance().evaluationDate = today
+  vol = 0.20
+  dc = ql.Actual365Fixed()
+  atm_level = 100.0
+
+  # date-based
+  flat_by_date_sm = ql.FlatSmileSection(ql.Date(15, 6, 2026), vol, dc, today, atm_level)
+
+  # time-based
+  flat_by_time_sm = ql.FlatSmileSection(0.5, vol, dc, atm_level)
+
+
+SabrSmileSection
+----------------
+
+A smile section that uses the SABR (Stochastic Alpha Beta Rho) model to parameterize the 
+volatility smile. The SABR model is a popular stochastic volatility model that captures 
+the volatility smile and term structure observed in interest rate and FX markets.
+
+.. class:: ql.SabrSmileSection(date: ql.Date, fwd: float, sabr_params: List[float], dayCounter: ql.DayCounter, shift: float = 0.0, volatilityType = ql.VolatilityType.ShiftedLognormal)
+
+  Constructs a SABR smile section using an expiry date.
+
+  :param date: The expiry date for this smile section.
+  :type date: ql.Date
+  
+  :param fwd: The forward rate or spot price at the expiry date.
+  :type fwd: float
+  
+  :param sabr_params: A list of SABR model parameters ``[alpha, beta, nu, rho]``:
+      
+      - **alpha** (float): The initial volatility parameter. Represents the ATM volatility.
+      - **beta** (float): The CEV (constant elasticity of variance) exponent, typically in [0, 1]. Controls the backbone of the smile.
+      - **nu** (float): The volatility of volatility. Controls the convexity of the smile.
+      - **rho** (float): The correlation between spot and volatility. Controls the skew direction and magnitude.
+  
+  :type sabr_params: List[float]
+  
+  :param dayCounter: The day-count convention used to compute the time to expiry.
+  :type dayCounter: ql.DayCounter
+  
+  :param shift: Optional shift parameter for shifted-lognormal SABR (default is 0.0, representing lognormal SABR).
+  :type shift: float
+
+  :param volatilityType: Optional volatility type parameter can be (ShiftedLognormal, Normal) by default is ql.VolatilityType.ShiftedLognormal
+  :type volatilityType: ql.VolatilityType
+
+  :return: A SmileSection object parameterized by the SABR model.
+  :rtype: ql.SabrSmileSection
+
+.. class:: ql.SabrSmileSection(time: float, fwd: float, sabr_params: List[float], dayCounter: ql.DayCounter, shift: float = 0.0, volatilityType = ql.VolatilityType.ShiftedLognormal)
+  :no-index-entry:
+
+  Constructs a SABR smile section using an expiry time (in year fractions).
+
+  :param time: The time to expiry in year fractions (computed using the day-count convention).
+  :type time: float
+  
+  :param fwd: The forward rate or spot price at expiry.
+  :type fwd: float
+  
+  :param sabr_params: A list of SABR model parameters ``[alpha, beta, nu, rho]`` (see constructor above for details).
+  :type sabr_params: List[float]
+  
+  :param dayCounter: The day-count convention (used for reference only; time is already in year fractions).
+  :type dayCounter: ql.DayCounter
+  
+  :param shift: Optional shift parameter for shifted-lognormal SABR (default is 0.0).
+  :type shift: float
+
+  :param volatilityType: Optional volatility type parameter can be (ShiftedLognormal, Normal) by default is ql.VolatilityType.ShiftedLognormal
+  :type volatilityType: ql.VolatilityType
+  
+  :return: A SmileSection object parameterized by the SABR model.
+  :rtype: ql.SabrSmileSection
+
+Example usage:
+
+.. code-block:: python
+
+  # SABR parameters
+  alpha = 1.63  # Initial volatility
+  beta = 0.6    # CEV exponent
+  nu = 3.3      # Volatility of volatility
+  rho = 0.00002 # Spot-vol correlation
+
+  # Using expiry time (in years)
+  today = ql.Date(15, 12, 2025)
+  time_to_expiry = 17 / 365  # 17 days in years
+  forward_rate = 120
+  dayCounter = ql.Actual365Fixed()
+
+  smile = ql.SabrSmileSection(time_to_expiry, forward_rate, [alpha, beta, nu, rho])
+
+  # Using expiry date
+  expiry_date = ql.Date(15, 1, 2026)  # 15 January 2026
+  calendar = ql.TARGET()
+
+  smile_by_date = ql.SabrSmileSection(expiry_date, forward_rate, [alpha, beta, nu, rho], today, dayCounter)
+
+  # Query volatility at different strikes
+  atm_vol = smile.volatility(forward_rate)
+  otm_call_vol = smile.volatility(forward_rate * 1.05)
+  otm_put_vol = smile.volatility(forward_rate * 0.95)
+
+
+NoArbSabrSmileSection
+---------------------
+
+A no-arbitrage SABR smile section that uses the SABR (Stochastic Alpha Beta Rho) model 
+to parameterize the volatility smile while ensuring the absence of arbitrage opportunities. 
+Unlike the standard SABR model, this implementation removes calendar arbitrage 
+and other inconsistencies that can arise from unconstrained SABR parameterization.
+
+The constructor parameters are identical to :class:`ql.SabrSmileSection`, but the 
+resulting smile section is guaranteed to be free of arbitrage.
+
+
+SVISmileSection
+---------------
+
+The SVI (Stochastic Volatility Inspired) Smile section is a popular parametric formula used to fit the implied volatility smile of options.
+It was introduced by Jim Gatheral in 2004 while he was at Merrill Lynch.
+
+The SVI model parameterizes the variance (not volatility) as a function of log-moneyness and is widely used for smile interpolation 
+in equity and FX markets due to its flexibility and ability to fit complex smile shapes with few parameters.
+
+.. class:: ql.SviSmileSection(timeToExpiry: float, forward: float, sviParameters: List[float])
+
+  Constructs an SVI smile section using an expiry time (in year fractions).
+
+  :param timeToExpiry: The time to expiry in year fractions.
+  :type timeToExpiry: float
+  
+  :param forward: The forward rate or spot price at expiry.
+  :type forward: float
+  
+  :param sviParameters: A list of SVI model parameters ``[a, b, sigma, rho, m]``:
+      
+      - **a** (float): The minimum variance level. Controls the overall volatility floor.
+      - **b** (float): The smile amplitude parameter. Controls the overall curvature and depth of the smile.
+      - **m** (float): The smile location (moneyness shift). Controls the skew position.
+      - **rho** (float): The skew parameter in the range [-1, 1]. Controls the direction and asymmetry of the smile.
+      - **sigma** (float): The volatility of volatility parameter. Controls the convexity of the smile.
+  
+  :type sviParameters: List[float]
+
+.. class:: ql.SviSmileSection(date: ql.Date, forward: float, sviParameters: List[float], dc: ql.DayCounter = ql.Actual365Fixed())
+  :no-index-entry:
+
+  Constructs an SVI smile section using an expiry date.
+
+  :param date: The expiry date for this smile section.
+  :type date: ql.Date
+  
+  :param forward: The forward rate or spot price at the expiry date.
+  :type forward: float
+  
+  :param sviParameters: A list of SVI model parameters ``[a, b, sigma, rho, m]`` (see constructor above for details).
+  :type sviParameters: List[float]
+  
+  :param dc: The day-count convention used to compute the time to expiry (default is Actual365Fixed).
+  :type dc: ql.DayCounter
+
+
+Example usage:
+
+.. code-block:: python
+
+ # SVI parameters
+  a = -0.0666
+  b = 0.229
+  m = 0.193
+  rho = 0.439
+  sigma = 0.337
+
+  # Using expiry time (in years)
+  time_to_expiry = 0.25  # 3 months
+  forward_rate = 100
+
+  smile = ql.SviSmileSection(time_to_expiry, forward_rate, [a, b, sigma, rho, m])
+
+  # Using expiry date
+  expiry_date = ql.Date(15, 3, 2026)  # 15 March 2026
+  dayCounter = ql.Actual365Fixed()
+
+  smile_by_date = ql.SviSmileSection(expiry_date, forward_rate, [a, b, sigma, rho, m], dayCounter)
+
+  # Query volatility at different strikes
+  atm_vol = smile.volatility(forward_rate)
+  otm_call_vol = smile.volatility(forward_rate * 1.10)
+  otm_put_vol = smile.volatility(forward_rate * 0.90)
+
+SviInterpolatedSmileSection
+---------------------------
+
+An interpolated smile section that uses the SVI (Stochastic Volatility Inspired) model 
+to fit and calibrate the volatility smile from a set of market option quotes. 
+Unlike the parametric :class:`ql.SviSmileSection`, this class calibrates the SVI parameters 
+to match observed market volatilities at specific strikes, making it more flexible for 
+real-world market data fitting.
+
+The SVI model is calibrated by minimizing the difference between the model-implied 
+volatilities and the market-observed volatilities at the given strikes.
+
+.. class:: ql.SviInterpolatedSmileSection(optionDate: ql.Date, forward: QuoteHandle, strikes: List[float], hasFloatingStrikes: bool, atmVolatility: QuoteHandle, volHandles: List[QuoteHandle], a: float, b: float, sigma: float, rho: float, m: float, aIsFixed: bool, bIsFixed: bool, sigmaIsFixed: bool, rhoIsFixed: bool, mIsFixed: bool, vegaWeighted: bool = True, endCriteria: ql.EndCriteria = None, method: ql.OptimizationMethod = None, dc: ql.DayCounter = ql.Actual365Fixed())
+
+  Constructs an SVI interpolated smile section using floating market data (Quotes).
+  
+  This constructor is useful when market data is dynamic and needs to be updated in real-time.
+
+  :param optionDate: The expiry date for this smile section.
+  :type optionDate: ql.Date
+  
+  :param forward: Handle to a quote representing the forward rate or spot price at expiry.
+  :type forward: ql.QuoteHandle
+  
+  :param strikes: A list of strike rates at which market volatilities are observed.
+  :type strikes: List[float]
+  
+  :param hasFloatingStrikes: Boolean flag indicating whether strikes are floating (Quote handles) 
+                              or fixed. Set to ``True`` for floating strikes, ``False`` for fixed.
+  :type hasFloatingStrikes: bool
+  
+  :param atmVolatility: Handle to a quote representing the at-the-money (ATM) volatility.
+  :type atmVolatility: ql.QuoteHandle
+  
+  :param volHandles: A list of QuoteHandle objects representing the market volatilities 
+                      at each corresponding strike.
+  :type volHandles: List[ql.QuoteHandle]
+  
+  :param a: Initial guess for the SVI parameter ``a`` (minimum variance level).
+  :type a: float
+  
+  :param b: Initial guess for the SVI parameter ``b`` (smile amplitude).
+  :type b: float
+  
+  :param sigma: Initial guess for the SVI parameter ``sigma`` (volatility of volatility).
+  :type sigma: float
+  
+  :param rho: Initial guess for the SVI parameter ``rho`` (skew/correlation parameter, typically in [-1, 1]).
+  :type rho: float
+  
+  :param m: Initial guess for the SVI parameter ``m`` (smile location/moneyness shift).
+  :type m: float
+  
+  :param aIsFixed: If ``True``, the parameter ``a`` is held fixed during calibration; 
+                    if ``False``, it is optimized.
+  :type aIsFixed: bool
+  
+  :param bIsFixed: If ``True``, the parameter ``b`` is held fixed; if ``False``, it is optimized.
+  :type bIsFixed: bool
+  
+  :param sigmaIsFixed: If ``True``, the parameter ``sigma`` is held fixed; if ``False``, it is optimized.
+  :type sigmaIsFixed: bool
+  
+  :param rhoIsFixed: If ``True``, the parameter ``rho`` is held fixed; if ``False``, it is optimized.
+  :type rhoIsFixed: bool
+  
+  :param mIsFixed: If ``True``, the parameter ``m`` is held fixed; if ``False``, it is optimized.
+  :type mIsFixed: bool
+  
+  :param vegaWeighted: If ``True``, the calibration uses vega-weighted least squares, 
+                        giving more weight to options near the ATM. Default is ``True``.
+  :type vegaWeighted: bool
+  
+  :param endCriteria: Optional :class:`ql.EndCriteria` object specifying stopping conditions 
+                       for the optimization (e.g., tolerance, max iterations). If ``None``, 
+                       default criteria are used.
+  :type endCriteria: ql.EndCriteria or None
+  
+  :param method: Optional :class:`ql.OptimizationMethod` object specifying the numerical 
+                  optimization algorithm (e.g., Levenberg-Marquardt, Simplex). If ``None``, 
+                  a default method is used.
+  :type method: ql.OptimizationMethod or None
+  
+  :param dc: Day-count convention used to compute the time to expiry. Default is Actual365Fixed.
+  :type dc: ql.DayCounter
+
+
+.. class:: ql.SviInterpolatedSmileSection(optionDate: ql.Date, forward: float, strikes: List[float], hasFloatingStrikes: bool, atmVolatility: float, vols: List[float], a: float, b: float, sigma: float, rho: float, m: float, aIsFixed: bool, bIsFixed: bool, sigmaIsFixed: bool, rhoIsFixed: bool, mIsFixed: bool, vegaWeighted: bool = True, endCriteria: ql.EndCriteria = None, method: ql.OptimizationMethod = None, dc: ql.DayCounter = ql.Actual365Fixed())
+  :no-index-entry:
+
+  Constructs an SVI interpolated smile section using fixed market data (scalar values).
+  
+  This constructor is useful when working with static market snapshots or historical data.
+
+  :param optionDate: The expiry date for this smile section.
+  :type optionDate: ql.Date
+  
+  :param forward: The forward rate or spot price at expiry.
+  :type forward: float
+  
+  :param strikes: A list of strike rates at which market volatilities are observed.
+  :type strikes: List[float]
+  
+  :param hasFloatingStrikes: Boolean flag indicating whether strikes are floating or fixed. 
+                              Set to ``False`` when strikes are fixed scalars.
+  :type hasFloatingStrikes: bool
+  
+  :param atmVolatility: The at-the-money (ATM) volatility value.
+  :type atmVolatility: float
+  
+  :param vols: A list of market volatilities corresponding to each strike.
+  :type vols: List[float]
+  
+  :param a: Initial guess for the SVI parameter ``a`` (minimum variance level).
+  :type a: float
+  
+  :param b: Initial guess for the SVI parameter ``b`` (smile amplitude).
+  :type b: float
+  
+  :param sigma: Initial guess for the SVI parameter ``sigma`` (volatility of volatility).
+  :type sigma: float
+  
+  :param rho: Initial guess for the SVI parameter ``rho`` (skew/correlation parameter).
+  :type rho: float
+  
+  :param m: Initial guess for the SVI parameter ``m`` (smile location).
+  :type m: float
+  
+  :param aIsFixed: If ``True``, parameter ``a`` is fixed; if ``False``, it is optimized.
+  :type aIsFixed: bool
+  
+  :param bIsFixed: If ``True``, parameter ``b`` is fixed; if ``False``, it is optimized.
+  :type bIsFixed: bool
+  
+  :param sigmaIsFixed: If ``True``, parameter ``sigma`` is fixed; if ``False``, it is optimized.
+  :type sigmaIsFixed: bool
+  
+  :param rhoIsFixed: If ``True``, parameter ``rho`` is fixed; if ``False``, it is optimized.
+  :type rhoIsFixed: bool
+  
+  :param mIsFixed: If ``True``, parameter ``m`` is fixed; if ``False``, it is optimized.
+  :type mIsFixed: bool
+  
+  :param vegaWeighted: If ``True``, uses vega-weighted least squares. Default is ``True``.
+  :type vegaWeighted: bool
+  
+  :param endCriteria: Optional optimization end criteria. Default is ``None``.
+  :type endCriteria: ql.EndCriteria or None
+  
+  :param method: Optional optimization method. Default is ``None``.
+  :type method: ql.OptimizationMethod or None
+  
+  :param dc: Day-count convention. Default is Actual365Fixed.
+  :type dc: ql.DayCounter
+
+
+Methods
+~~~~~~~
+
+.. method:: a()
+
+  Returns the calibrated SVI parameter ``a`` (minimum variance level).
+
+  :return: The ``a`` parameter value.
+  :rtype: float
+
+.. method:: b()
+
+  Returns the calibrated SVI parameter ``b`` (smile amplitude).
+
+  :return: The ``b`` parameter value.
+  :rtype: float
+
+.. method:: sigma()
+
+  Returns the calibrated SVI parameter ``sigma`` (volatility of volatility).
+
+  :return: The ``sigma`` parameter value.
+  :rtype: float
+
+.. method:: rho()
+
+  Returns the calibrated SVI parameter ``rho`` (skew/correlation).
+
+  :return: The ``rho`` parameter value.
+  :rtype: float
+
+.. method:: m()
+
+  Returns the calibrated SVI parameter ``m`` (smile location).
+
+  :return: The ``m`` parameter value.
+  :rtype: float
+
+.. method:: rmsError()
+
+  Returns the root-mean-square (RMS) error of the fit, 
+  indicating the average deviation between model and market volatilities.
+
+  :return: The RMS error of the calibration.
+  :rtype: float
+
+.. method:: maxError()
+
+  Returns the maximum absolute error across all strikes, 
+  indicating the worst-fit point.
+
+  :return: The maximum error of the calibration.
+  :rtype: float
+
+.. method:: endCriteria()
+
+  Returns the end criteria type that was met during the optimization 
+  (e.g., convergence, max iterations reached).
+
+  :return: The end criteria type.
+  :rtype: ql.EndCriteria.Type
+
+Example usage:
+
+.. code-block:: python
+
+  today = ql.Date(15, 12, 2025)
+  ql.Settings.instance().evaluationDate = today
+  expiry_date = ql.Date(15, 3, 2026)  # 3 months
+  dayCounter = ql.Actual365Fixed()
+
+  # Market data
+  forward = 100.0
+  atm_vol = 0.20
+  strikes = [90.0, 95.0, 100.0, 105.0, 110.0]
+  market_vols = [0.25, 0.22, 0.20, 0.22, 0.25]  # Volatility smile
+
+  # SVI initial parameter guesses
+  a_init = 0.05
+  b_init = 0.3
+  sigma_init = 0.5
+  rho_init = -0.2
+  m_init = 0.0
+
+  # Calibrate SVI smile section (optimize all parameters)
+  smile = ql.SviInterpolatedSmileSection(
+      expiry_date,
+      forward,
+      strikes,
+      False,  # hasFloatingStrikes = False (fixed market data)
+      atm_vol,
+      market_vols,
+      a_init, b_init, sigma_init, rho_init, m_init,
+      False, False, False, False, False,  # All parameters free to optimize
+      True # Vega weighted
+  )
+
+  # Access calibrated parameters
+  print(f"Calibrated a: {smile.a()}")
+  print(f"Calibrated b: {smile.b()}")
+  print(f"Calibrated sigma: {smile.sigma()}")
+  print(f"Calibrated rho: {smile.rho()}")
+  print(f"Calibrated m: {smile.m()}")
+  print(f"RMS Error: {smile.rmsError()}")
+  print(f"Max Error: {smile.maxError()}")
+
+  # Query implied volatility at any strike
+  implied_vol_105 = smile.volatility(105.0)
+  print(f"Implied vol at 105: {implied_vol_105}")
+
+  # Example with some parameters fixed
+  smile_partial = ql.SviInterpolatedSmileSection(
+      expiry_date,
+      forward,
+      strikes,
+      False,
+      atm_vol,
+      market_vols,
+      a_init, b_init, sigma_init, rho_init, m_init,
+      True,   # Fix a
+      False,  # Optimize b
+      False,  # Optimize sigma
+      False,  # Optimize rho
+      True,   # Fix m
+      True # Vega weighted
+  )
+
+.. note::
+    **Calibration Tips:**
+
+    - Start with reasonable initial guesses for SVI parameters to aid convergence.
+    - Use ``vegaWeighted=True`` to give more importance to near-the-money options, 
+      which are typically more liquid.
+    - Check ``rmsError()`` and ``maxError()`` to assess fit quality.
+    - Fix parameters (e.g., ``mIsFixed=True``) if you have external constraints 
+      or want to stabilize the calibration.
+    - For custom optimization, pass custom :class:`ql.EndCriteria` and :class:`ql.OptimizationMethod` objects.
+
+KahaleSmileSection
+-------------------
+
+A smile section that applies the `Kahale arbitrage-removal algorithm <http://www.risk.net/data/Pay_per_view/risk/technical/2004/0504_tech_option2.pdf>`_ to an existing 
+:class:`ql.SmileSection`. The Kahale method is a sophisticated technique that removes 
+calendar and butterfly arbitrage from volatility smiles while preserving the original 
+smile shape as much as possible. It's particularly useful for regularizing market-implied 
+volatility smiles that may contain arbitrage opportunities due to market frictions or 
+data quality issues.
+
+The algorithm constructs a C1-continuous (smooth, differentiable) curve that is 
+arbitrage-free and stays as close as possible to the input smile section.
+
+.. class:: ql.KahaleSmileSection(source: ql.SmileSection, atm: float = None, interpolate: bool = False, exponentialExtrapolation: bool = False, deleteArbitragePoints: bool = False, moneynessGrid: list[float] = None, gap: float = 1.0e-5, forcedLeftIndex: int = -1, forcedRightIndex: int = 2147483647)
+
+  Constructs a Kahale-regularized smile section from an input smile section.
+
+  :param source: The input smile section to be regularized. Must be a valid 
+                  :class:`ql.SmileSection` object.
+  :type source: ql.SmileSection
+  
+  :param atm: Optional override for the at-the-money (ATM) level. If not provided 
+               (``None``), the ATM level from the source smile section is used.
+               This is useful when you want to shift the reference point for moneyness.
+  :type atm: float or None
+  
+  :param interpolate: If ``True``, the algorithm will interpolate the smile between 
+                      the discrete moneyness grid points. If ``False`` (default), 
+                      only the grid points are used. Set to ``True`` for smoother 
+                      extrapolation behavior.
+  :type interpolate: bool
+  
+  :param exponentialExtrapolation: If ``True``, the smile is extrapolated using 
+                                    an exponential model for strikes far from the ATM. 
+                                    If ``False`` (default), a linear or flatter extrapolation 
+                                    is used. Exponential extrapolation is more realistic 
+                                    for extreme moneyness but can be less stable.
+  :type exponentialExtrapolation: bool
+  
+  :param deleteArbitragePoints: If ``True``, the algorithm will remove (skip) grid 
+                                 points that contain arbitrage violations. This can 
+                                 reduce the number of calibration points. If ``False`` 
+                                 (default), all points are preserved and adjusted.
+  :type deleteArbitragePoints: bool
+  
+  :param moneynessGrid: Optional custom list of moneyness points (strike / ATM) at 
+                        which the smile is evaluated. If not provided (empty or ``None``), 
+                        a default grid is constructed from the source smile section. 
+                        Providing a custom grid allows fine-tuning the regularization.
+  :type moneynessGrid: list[float] or None
+  
+  :param gap: Finite-difference gap size (in absolute terms, not moneyness) used to 
+              compute numerical derivatives when checking for arbitrage. Smaller gaps 
+              give more precise arbitrage detection but can be numerically sensitive. 
+              Default is ``1.0e-5``.
+  :type gap: float
+  
+  :param forcedLeftIndex: Index of a specific point to be forced as a left boundary 
+                          in the regularization. Set to ``-1`` (default) to auto-select. 
+                          Use this to pin the left wing of the smile at a specific 
+                          moneyness point.
+  :type forcedLeftIndex: int
+  
+  :param forcedRightIndex: Index of a specific point to be forced as a right boundary 
+                           in the regularization. Set to ``2147483647`` (default QL_MAX_INTEGER) 
+                           to auto-select. Use this to pin the right wing of the smile 
+                           at a specific moneyness point.
+  :type forcedRightIndex: int
+
+
+Example usage — Basic arbitrage removal:
+
+.. code-block:: python
+
+  import QuantLib as ql
+  import numpy as np
+
+  # Setup
+  today = ql.Date(15, 12, 2025)
+  ql.Settings.instance().evaluationDate = today
+  expiry_date = ql.Date(15, 3, 2026)  # 3 months
+  dayCounter = ql.Actual365Fixed()
+
+  # Create an input smile section with potential arbitrage
+  # (e.g., from market data or interpolation)
+  forward = 100.0
+  atm_vol = 0.20
+  strikes = [80.0, 90.0, 100.0, 110.0, 120.0]
+  market_vols = [0.30, 0.22, 0.20, 0.22, 0.30]
+
+  # Build the input smile using spline interpolation
+  smile_input = ql.SplineCubicInterpolatedSmileSection(
+      expiry_date,
+      strikes,
+      [v * np.sqrt(0.25) for v in market_vols],  # Convert to std-dev
+      100.0,
+      dayCounter
+  )
+
+  # Apply Kahale regularization to remove arbitrage
+  smile_kahale = ql.KahaleSmileSection(
+      smile_input,
+      forward,
+      True,
+      False,
+      False
+  )
+
+  # Query volatility from the arbitrage-free smile
+  vol_atm = smile_kahale.volatility(forward)
+  vol_otm_call = smile_kahale.volatility(110.0)
+  vol_otm_put = smile_kahale.volatility(90.0)
+
+  print(f"ATM vol (regularized): {vol_atm:.4f}")
+  print(f"OTM call vol: {vol_otm_call:.4f}")
+  print(f"OTM put vol: {vol_otm_put:.4f}")
+
+Example usage — Custom moneyness grid with exponential extrapolation:
+
+.. code-block:: python
+
+  # Custom moneyness grid (fine-grained near ATM, coarser in wings)
+  custom_moneyness = [0.70, 0.80, 0.90, 0.95, 1.00, 1.05, 1.10, 1.20, 1.30]
+
+  # Apply Kahale with custom grid and exponential extrapolation
+  smile_kahale_custom = ql.KahaleSmileSection(
+      smile_input,
+      forward,
+      True,
+      True,  # Use exponential tails
+      False,
+      ustom_moneyness
+  )
+
+  # Evaluate smile at various strikes
+  test_strikes = [70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0]
+  for strike in test_strikes:
+      vol = smile_kahale_custom.volatility(strike)
+      print(f"Strike {strike}: vol = {vol:.4f}")
+
+Example usage — Aggressive arbitrage removal with point deletion:
+
+.. code-block:: python
+
+  # More aggressive: remove points that violate arbitrage constraints
+  smile_kahale_aggressive = ql.KahaleSmileSection(
+      smile_input,
+      forward,
+      True,
+      True,
+      True,  # Remove problematic points
+      [],
+      1.0e-4  # Slightly larger finite-difference step
+  )
+
+  print(f"Regularized ATM vol: {smile_kahale_aggressive.volatility(forward):.4f}")
+
+.. note::
+    **When to use KahaleSmileSection:**
+
+    - **Market-implied smiles** may contain micro-structure noise or arbitrage due to bid-ask spreads.
+    - **Interpolated smiles** (e.g., cubic spline) can exhibit arbitrage between input points.
+    - **Risk management**: Arbitrage-free surfaces are essential for consistent pricing across strikes.
+    - **Model calibration**: Use before calibrating stochastic volatility models to ensure consistency.
+
+.. warning::
+    - The Kahale algorithm is computationally intensive; use only when arbitrage-free 
+      properties are critical.
+    - The regularized smile may deviate noticeably from the input smile if the input 
+      contains substantial arbitrage.
+    - For very sparse or low-quality input data, consider increasing ``gap`` or enabling 
+      ``deleteArbitragePoints`` for more stable results.
+
 
 EquityFX
 ********
@@ -773,22 +1562,6 @@ RelinkableSwaptionVolatilityStructureHandle
 
 SABR
 ****
-
-SabrSmileSection
-----------------
-
-.. function:: ql.SabrSmileSection(date, fwd, [alpha, beta, nu, rho], dayCounter, Real)
-
-.. function:: ql.SabrSmileSection(time, fwd, [alpha, beta, nu, rho], dayCounter, Real)
-
-.. code-block:: python
-
-  alpha = 1.63
-  beta = 0.6
-  nu = 3.3
-  rho = 0.00002
-
-  ql.SabrSmileSection(17/365, 120, [alpha, beta, nu, rho])
 
 
 sabrVolatility

@@ -134,8 +134,9 @@ html_theme_options = {
 #html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-#html_logo = None
+# of the sidebar (or used by the theme as the project logo). Place the file
+# inside `docs/_static` and reference it below.
+# html_logo = '_static/15903619.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
