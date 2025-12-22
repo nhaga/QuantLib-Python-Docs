@@ -1976,7 +1976,7 @@ Example usage — Switching interpolation methods:
 HestonBlackVolSurface
 ---------------------
 
-.. function:: ql.HestonBlackVolSurface(hestonModelHandle)
+.. class:: ql.HestonBlackVolSurface(hestonModelHandle)
 
 .. code-block:: python
 
@@ -2004,7 +2004,7 @@ AndreasenHugeVolatilityAdapter
 
 An implementation of the arb-free Andreasen-Huge vol interpolation described in "Andreasen J., Huge B., 2010. Volatility Interpolation" (https://ssrn.com/abstract=1694972). An advantage of this method is that it can take a non-rectangular grid of option quotes.
 
-.. function:: ql.AndreasenHugeVolatilityAdapter(AndreasenHugeVolatilityInterpl)
+.. class:: ql.AndreasenHugeVolatilityAdapter(AndreasenHugeVolatilityInterpl)
 
 .. code-block:: python
 
@@ -2086,11 +2086,94 @@ volatility term structure at runtime.
   blackTSHandle = ql.RelinkableBlackVolTermStructureHandle()
   blackTSHandle.linkTo(volatilitySurface)
 
+LocalVolTermStructure
+---------------------
+
+The **local volatility model** was introduced independently by `Bruno Dupire (1994) <https://www.scribd.com/document/101527176/Dupire-Pricing-With-a-Smile-1994>`_ and `Emanuel Derman & Iraj Kani (1994) <https://www.researchgate.net/profile/Emanuel-Derman/publication/239059413_Riding_on_a_Smile/links/558950e408ae6d4f27ea5ab4/Riding-on-a-Smile.pdf>`_.
+Its core idea is to extend the classical **Black-Scholes framework** by allowing the volatility to be a **deterministic function of both time and the underlying level**, rather than a constant.
+
+In this framework, the underlying asset price evolves according to the stochastic differential equation
+
+.. math::
+
+dS_t = \mu S_t , dt + \sigma_{\text{LV}}(S_t, t), S_t , dW_t
+
+where:
+
+* ( \mu ) is the drift (typically determined by no-arbitrage conditions),
+* ( \sigma_{\text{LV}}(S,t) ) is the **local volatility function**, depending explicitly on the spot level ( S ) and time ( t ),
+* ( W_t ) is a standard Brownian motion.
+
+The local volatility function is **not a free parameter**: it is uniquely determined (under mild regularity conditions) by the observed **implied volatility surface** via the **Dupire formula**. As a consequence, the local volatility model is capable of **exactly reproducing market prices of European options for all strikes and maturities**.
+
+This makes the model particularly attractive for pricing **path-dependent derivatives** (such as barrier options), while remaining consistent with the entire implied volatility surface.
+
+However, since volatility is deterministic in this framework, the model cannot reproduce certain dynamic features observed in markets, such as stochastic volatility effects or volatility clustering.
+
+The base abstract class of all local volatility term structures is the `LocalVolTermStructure` 
+which represents the local volatility surface as a function of expiry date and underlying price level. 
+Local volatility is a key concept in financial mathematics used to model the instantaneous 
+volatility of the underlying asset as a function of time and the asset's current price or level.
+
+The ``LocalVolTermStructure`` is an abstract class and cannot be instantiated directly. 
+Instead, use concrete implementations such as :class:`ql.LocalConstantVol`, 
+:class:`ql.LocalVolSurface`, :class:`ql.NoExceptLocalVolSurface`, 
+or :class:`ql.AndreasenHugeLocalVolAdapter`.
+
+Methods
+~~~~~~~
+
+.. method:: localVol(expiryDate: ql.Date, underlyingLevel: float, extrapolate: bool = False)
+
+  Returns the local volatility at a given expiry date and underlying level.
+  
+  This method queries the local volatility surface at the specified date and underlying price level. 
+  The result is used in local volatility models for option pricing and risk calculations.
+
+  :param expiryDate: The expiry (exercise) date for which local volatility is requested.
+  :type expiryDate: ql.Date
+  
+  :param underlyingLevel: The underlying spot price (or asset level) at which local volatility 
+                          is requested. This is typically the forward price or spot price 
+                          at the evaluation date.
+  :type underlyingLevel: float
+  
+  :param extrapolate: If ``False`` (default), an exception is raised if the query point 
+                      (date, underlying level) is outside the range of the available data. 
+                      If ``True``, the surface is extrapolated beyond its boundaries.
+  :type extrapolate: bool
+  
+  :return: The local volatility (annualized, as a decimal) at the given expiry date and underlying level.
+  :rtype: float
+  
+  :raises: Raises an exception if the query point is out of range and ``extrapolate=False``.
+
+
+.. method:: localVol(expiryTime: float, underlyingLevel: float, extrapolate: bool = False)
+  :no-index-entry:
+
+  Returns the local volatility at a given expiry time (in year fractions) and underlying level.
+  
+  This is an alternative method signature that takes time (instead of a date) as input, 
+  useful when working with time-based calculations.
+
+  :param expiryTime: The time to expiry in year fractions (computed using the day-count convention).
+  :type expiryTime: float
+  
+  :param underlyingLevel: The underlying spot price (or asset level) at which local volatility 
+                          is requested.
+  :type underlyingLevel: float
+  
+  :param extrapolate: Whether to extrapolate beyond the data range (default is ``False``).
+  :type extrapolate: bool
+  
+  :return: The local volatility at the given expiry time and underlying level.
+  :rtype: float
 
 LocalConstantVol
 ----------------
 
-.. function:: ql.LocalConstantVol(date, volatility, dayCounter)
+.. class:: ql.LocalConstantVol(date, volatility, dayCounter)
 
 .. code-block:: python
 
@@ -2104,22 +2187,44 @@ LocalConstantVol
 LocalVolSurface
 ---------------
 
-.. function:: ql.LocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot)
+.. class:: ql.LocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot)
+
+Example usage — Querying local volatility from a LocalVolSurface:
 
 .. code-block:: python
 
-  today = ql.Date().todaysDate()
-  calendar = ql.NullCalendar()
+  import QuantLib as ql
+
+  # Setup
+  today = ql.Date(15, 12, 2025)
+  ql.Settings.instance().evaluationDate = today
+  calendar = ql.TARGET()
   dayCounter = ql.Actual365Fixed()
-  volatility = 0.2
-  r, q = 0.02, 0.05
-
-  blackVolTs = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(today, calendar, volatility, dayCounter))
-  ratesTs = ql.YieldTermStructureHandle(ql.FlatForward(today, r, dayCounter))
-  dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, q, dayCounter))
-  spot = 100
-
-  ql.LocalVolSurface(blackVolTs, ratesTs, dividendTs, spot)
+  
+  # Create a Black volatility surface (input for local vol surface)
+  volatilitySurface = ql.BlackConstantVol(today, calendar, 0.20, dayCounter)
+  
+  # Create yield and dividend term structures
+  ratesTs = ql.YieldTermStructureHandle(
+      ql.FlatForward(today, 0.05, dayCounter)
+  )
+  dividendTs = ql.YieldTermStructureHandle(
+      ql.FlatForward(today, 0.02, dayCounter)
+  )
+  
+  # Create Black vol term structure handle
+  blackVolHandle = ql.BlackVolTermStructureHandle(volatilitySurface)
+  
+  # Create local volatility surface from Black vol surface
+  spot = 100.0
+  localVolSurface = ql.LocalVolSurface(blackVolHandle, ratesTs, dividendTs, spot)
+  
+  # Query local volatility at specific expiry and underlying level
+  expiryDate = ql.Date(15, 3, 2026)  # 3 months
+  underlyingLevel = 105.0
+  
+  locVol = localVolSurface.localVol(expiryDate, underlyingLevel)
+  print(f"Local vol at expiry {expiryDate}, level {underlyingLevel}: {locVol:.4f}")
 
 
 NoExceptLocalVolSurface
@@ -2127,7 +2232,7 @@ NoExceptLocalVolSurface
 
 This powerful but dangerous surface will swallow any exceptions and return the specified override value when they occur. If your vol surface is well-calibrated, this protects you from crashes due to very far illiquid points on the local vol surface. But if your vol surface is not good, it could suppress genuine errors. Caution recommended.
 
-.. function:: ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot, illegalVolOverride)
+.. class:: ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendsTs, spot, illegalVolOverride)
 
 .. code-block:: python
 
@@ -2149,7 +2254,7 @@ This powerful but dangerous surface will swallow any exceptions and return the s
 AndreasenHugeLocalVolAdapter
 ----------------------------
 
-.. function:: ql.AndreasenHugeLocalVolAdapter(AndreasenHugeVolatilityInterpl)
+.. class:: ql.AndreasenHugeLocalVolAdapter(AndreasenHugeVolatilityInterpl)
 
 .. code-block:: python
 
@@ -2179,6 +2284,53 @@ AndreasenHugeLocalVolAdapter
   ahInterpolation = ql.AndreasenHugeVolatilityInterpl(calibrationSet, spotQuote, ratesTs, dividendTs)
   ahLocalSurface = ql.AndreasenHugeLocalVolAdapter(ahInterpolation)
 
+LocalVolTermStructureHandle
+---------------------------
+
+Handle wrapper for :class:`ql.LocalVolTermStructure` objects, analogous for the :class:`ql.LocalVolTermStructure`. This handle provides a uniform 
+interface for passing a local volatility term structures
+
+.. class:: ql.LocalVolTermStructureHandle(localVolTermStructure: ql.LocalVolTermStructure)
+
+  Constructs a handle that wraps a Local volatility term structure.
+
+  :param localVolTermStructure: A concrete implementation of :class:`ql.LocalVolTermStructure` 
+                                 (e.g., :class:`ql.LocalConstantVol`, :class:`ql.LocalVolSurface`, 
+                                 or :class:`ql.AndreasenHugeLocalVolAdapter`).
+  :type localVolTermStructure: ql.LocalVolTermStructure
+
+.. code-block:: python
+
+  const_local_vol_handle = ql.BlackVolTermStructureHandle(constantLocalVol)
+  local_vol_surf_handle = ql.BlackVolTermStructureHandle(LocalVolSurface)
+  Ah_vol_surf_handle = ql.BlackVolTermStructureHandle(ahLocalSurface)
+
+RelinkableLocalVolTermStructureHandle
+-------------------------------------
+
+A relinkable handle wrapper for :class:`ql.LocalVolTermStructure` objects which allows you to change (relink) the underlying 
+local volatility term structure at runtime. 
+
+.. class:: ql.RelinkableLocalVolTermStructureHandle()
+
+  Constructs an empty relinkable handle. You must call :meth:`linkTo` to link it to a 
+  concrete volatility term structure before use.
+
+.. class:: ql.RelinkableLocalVolTermStructureHandle(localVolTermStructure: ql.LocalVolTermStructure)
+
+  Constructs a relinkable handle initialized with a local volatility term structure.
+
+  :param localVolTermStructure: A concrete implementation of :class:`ql.LocalVolTermStructure`.
+  :type localVolTermStructure: ql.LocalVolTermStructure
+
+.. code-block:: python
+
+  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle(localVolatilitySurface)
+
+  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle()
+  blackTSHandle.linkTo(ahLocalSurface)
+
+
 Cap Volatility
 **************
 
@@ -2188,19 +2340,19 @@ ConstantOptionletVolatility
 
 floating reference date, floating market data
 
-.. function:: ql.ConstantOptionletVolatility(settlementDays, cal, bdc, volatility (Quote), dc, type=ShiftedLognormal, displacement=0.0)
+.. class:: ql.ConstantOptionletVolatility(settlementDays, cal, bdc, volatility (Quote), dc, type=ShiftedLognormal, displacement=0.0)
 
 fixed reference date, floating market data
 
-.. function:: ql.ConstantOptionletVolatility(settlementDate, cal, bdc, volatility (Quote), dc, type=ShiftedLognormal, displacement=0.0)
+.. class:: ql.ConstantOptionletVolatility(settlementDate, cal, bdc, volatility (Quote), dc, type=ShiftedLognormal, displacement=0.0)
 
 floating reference date, fixed market data
 
-.. function:: ql.ConstantOptionletVolatility(settlementDays, cal, bdc, volatility (value), dc, type=ShiftedLognormal, displacement=0.0)
+.. class:: ql.ConstantOptionletVolatility(settlementDays, cal, bdc, volatility (value), dc, type=ShiftedLognormal, displacement=0.0)
 
 fixed reference date, fixed market data
 
-.. function:: ql.ConstantOptionletVolatility(settlementDate, cal, bdc, volatility (value), dc, type=ShiftedLognormal, displacement=0.0)
+.. class:: ql.ConstantOptionletVolatility(settlementDate, cal, bdc, volatility (value), dc, type=ShiftedLognormal, displacement=0.0)
 
 
 .. code-block:: python
@@ -2235,19 +2387,19 @@ Cap/floor at-the-money term-volatility vector.
 
 **floating reference date, floating market data**
 
-.. function:: ql.CapFloorTermVolCurve(settlementDays, calendar, bdc, optionTenors, vols (Quotes), dc=Actual365Fixed)
+.. class:: ql.CapFloorTermVolCurve(settlementDays, calendar, bdc, optionTenors, vols (Quotes), dc=Actual365Fixed)
 
 **fixed reference date, floating market data**
 
-.. function:: ql.CapFloorTermVolCurve(settlementDate, calendar, bdc, optionTenors, vols (Quotes), dc=Actual365Fixed)
+.. class:: ql.CapFloorTermVolCurve(settlementDate, calendar, bdc, optionTenors, vols (Quotes), dc=Actual365Fixed)
 
 **fixed reference date, fixed market data**
 
-.. function:: ql.CapFloorTermVolCurve(settlementDate, calendar, bdc, optionTenors, vols (vector), dc=Actual365Fixed)
+.. class:: ql.CapFloorTermVolCurve(settlementDate, calendar, bdc, optionTenors, vols (vector), dc=Actual365Fixed)
 
 **floating reference date, fixed market data**
 
-.. function:: ql.CapFloorTermVolCurve(settlementDays, calendar, bdc, optionTenors, vols (vector), dc=Actual365Fixed)
+.. class:: ql.CapFloorTermVolCurve(settlementDays, calendar, bdc, optionTenors, vols (vector), dc=Actual365Fixed)
 
 
 .. code-block:: python
@@ -2272,19 +2424,19 @@ CapFloorTermVolSurface
 
 **floating reference date, floating market data**
 
-.. function:: ql.CapFloorTermVolSurface(settlementDays, calendar, bdc, expiries, strikes, vol_data (Handle), daycount=ql.Actual365Fixed)
+.. class:: ql.CapFloorTermVolSurface(settlementDays, calendar, bdc, expiries, strikes, vol_data (Handle), daycount=ql.Actual365Fixed)
 
 **fixed reference date, floating market data**
 
-.. function:: ql.CapFloorTermVolSurface(settlementDate, calendar, bdc, expiries, strikes, vol_data (Handle), daycount=ql.Actual365Fixed)
+.. class:: ql.CapFloorTermVolSurface(settlementDate, calendar, bdc, expiries, strikes, vol_data (Handle), daycount=ql.Actual365Fixed)
 
 **fixed reference date, fixed market data**
 
-.. function:: ql.CapFloorTermVolSurface(settlementDate, calendar, bdc, expiries, strikes, vol_data (Matrix), daycount=ql.Actual365Fixed)
+.. class:: ql.CapFloorTermVolSurface(settlementDate, calendar, bdc, expiries, strikes, vol_data (Matrix), daycount=ql.Actual365Fixed)
 
 **floating reference date, fixed market data**
 
-.. function:: ql.CapFloorTermVolSurface(settlementDays, calendar, bdc, expiries, strikes, vol_data (Matrix), daycount=ql.Actual365Fixed)
+.. class:: ql.CapFloorTermVolSurface(settlementDays, calendar, bdc, expiries, strikes, vol_data (Matrix), daycount=ql.Actual365Fixed)
 
 
 .. code-block:: python
@@ -2312,7 +2464,7 @@ CapFloorTermVolSurface
 OptionletStripper1
 ------------------
 
-.. function:: ql.OptionletStripper1(CapFloorTermVolSurface, index, switchStrikes=Null, accuracy=1.0e-6, maxIter=100, discount=YieldTermStructure, type=ShiftedLognormal, displacement=0.0, dontThrow=false)
+.. class:: ql.OptionletStripper1(CapFloorTermVolSurface, index, switchStrikes=Null, accuracy=1.0e-6, maxIter=100, discount=YieldTermStructure, type=ShiftedLognormal, displacement=0.0, dontThrow=false)
 
 .. code-block:: python
 
@@ -2323,12 +2475,12 @@ OptionletStripper1
 StrippedOptionletAdapter
 ------------------------
 
-.. function:: ql.StrippedOptionletAdapter(StrippedOptionletBase)
+.. class:: ql.StrippedOptionletAdapter(StrippedOptionletBase)
 
 OptionletVolatilityStructureHandle
 ----------------------------------
 
-.. function:: ql.OptionletVolatilityStructureHandle(OptionletVolatilityStructure)
+.. class:: ql.OptionletVolatilityStructureHandle(OptionletVolatilityStructure)
 
 .. code-block:: python
 
@@ -2340,7 +2492,7 @@ OptionletVolatilityStructureHandle
 RelinkableOptionletVolatilityStructureHandle
 --------------------------------------------
 
-.. function:: ql.RelinkableOptionletVolatilityStructureHandle()
+.. class:: ql.RelinkableOptionletVolatilityStructureHandle()
 
 .. code-block:: python
 
@@ -2358,19 +2510,19 @@ Constant swaption volatility, no time-strike dependence.
 
 **floating reference date, floating market data**
 
-.. function:: ql.ConstantSwaptionVolatility(settlementDays, cal, bdc, volatility, dc, type=ql.ShiftedLognormal, shift=0.0)
+.. class:: ql.ConstantSwaptionVolatility(settlementDays, cal, bdc, volatility, dc, type=ql.ShiftedLognormal, shift=0.0)
 
 **fixed reference date, floating market data**
 
-.. function:: ql.ConstantSwaptionVolatility(settlementDate, cal, bdc, volatility, dc, type=ql.ShiftedLognormal, shift=0.0)
+.. class:: ql.ConstantSwaptionVolatility(settlementDate, cal, bdc, volatility, dc, type=ql.ShiftedLognormal, shift=0.0)
 
 **floating reference date, fixed market data**
 
-.. function:: ql.ConstantSwaptionVolatility(settlementDays, cal, bdc, volatilityQuote, dc, type=ql.ShiftedLognormal, shift=0.0)
+.. class:: ql.ConstantSwaptionVolatility(settlementDays, cal, bdc, volatilityQuote, dc, type=ql.ShiftedLognormal, shift=0.0)
 
 **fixed reference date, fixed market data**
 
-.. function:: ql.ConstantSwaptionVolatility(settlementDate, cal, bdc, volatilityQuote, dc, type=ql.ShiftedLognormal, shift=0.0)
+.. class:: ql.ConstantSwaptionVolatility(settlementDate, cal, bdc, volatilityQuote, dc, type=ql.ShiftedLognormal, shift=0.0)
 
 .. code-block:: python
 
@@ -2383,23 +2535,23 @@ At-the-money swaption-volatility matrix.
 
 **floating reference date, floating market data**
 
-.. function:: ql.SwaptionVolatilityMatrix(calendar, bdc, optionTenors, swapTenors, vols (Handles), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (vector))
+.. class:: ql.SwaptionVolatilityMatrix(calendar, bdc, optionTenors, swapTenors, vols (Handles), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (vector))
 
 fixed reference date, floating market data
 
-.. function:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionTenors, swapTenors, vols (Handles), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (vector))
+.. class:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionTenors, swapTenors, vols (Handles), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (vector))
 
 floating reference date, fixed market data
 
-.. function:: ql.SwaptionVolatilityMatrix(calendar, bdc, optionTenors, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
+.. class:: ql.SwaptionVolatilityMatrix(calendar, bdc, optionTenors, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
 
 fixed reference date, fixed market data
 
-.. function:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionTenors, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
+.. class:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionTenors, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
 
 fixed reference date and fixed market data, option dates
 
-.. function:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionDates, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
+.. class:: ql.SwaptionVolatilityMatrix(referenceDate, calendar, bdc, optionDates, swapTenors, vols (matrix), dayCounter, flatExtrapolation=false, type=ShiftedLognormal, shifts (matrix))
 
 
 .. code-block:: python
@@ -2454,7 +2606,7 @@ SwaptionVolCube1
 SwaptionVolCube2
 ----------------
 
-.. function:: ql.SwaptionVolCube2(atmVolStructure, optionTenors, swapTenors, strikeSpreads, volSpreads, swapIndex, shortSwapIndex, vegaWeightedSmileFit)
+.. class:: ql.SwaptionVolCube2(atmVolStructure, optionTenors, swapTenors, strikeSpreads, volSpreads, swapIndex, shortSwapIndex, vegaWeightedSmileFit)
 
 .. code-block:: python
 
@@ -2495,7 +2647,7 @@ SwaptionVolCube2
 SwaptionVolatilityStructureHandle
 ---------------------------------
 
-.. function:: ql.SwaptionVolatilityStructureHandle(swaptionVolStructure)
+.. class:: ql.SwaptionVolatilityStructureHandle(swaptionVolStructure)
 
 .. code-block:: python
 
@@ -2505,7 +2657,7 @@ SwaptionVolatilityStructureHandle
 RelinkableSwaptionVolatilityStructureHandle
 -------------------------------------------
 
-.. function:: ql.RelinkableSwaptionVolatilityStructureHandle()
+.. class:: ql.RelinkableSwaptionVolatilityStructureHandle()
 
 .. code-block:: python
 
