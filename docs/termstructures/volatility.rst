@@ -9,8 +9,8 @@ SmileSections
 *************
 
 A SmileSection in QuantLib is, as the word is saying, a class representing the portion of a volatility surface for a specific tenor.
-As we know, the volatility in real life is not flat across different tenors and different strikes, thus a vol surface can be described by a bidimensional function :math:`\sigma: (K, \tau)` that maps a strike and a tenor to a specific volatility.
-A smile section, indeed is a function that maps a specific strike to a volatility value :math:`\sigma: K \rightarrow \sigma(K)`, think a partial application of the vol-surface function where the tenor is fixed.
+As we know, the volatility in real life is not flat across different tenors and different strikes, thus a vol surface can be described by a bidimensional function :math:`\sigma: (k, \tau)` that maps a strike and a tenor to a specific volatility.
+A smile section, indeed is a function that maps a specific strike to a volatility value :math:`\sigma: k \rightarrow \sigma(k)`, think a partial application of the vol-surface function where the tenor is fixed.
 
 The base class the represent a smile section in QuantLib is the ``SmileSection`` class
 
@@ -765,13 +765,13 @@ is given by the following:
 
   w(k, \chi_R) = a + b\{ \rho (k - m) + \sqrt{(k - m)^2 + \sigma^2} \}
 
-where :math:`k = \log(K)` is the log-strike, and :math:`\chi_R = \{a,b, \rho,m, sigma\}` is the SVI parameter set where:
+where :math:`k = \log(K)` is the log-strike, and :math:`\chi_R = \{a, b, \rho, m, \sigma \}` is the SVI parameter set where:
 
 * :math:`a` controls the level of the variance
 * :math:`b` controls the wings of both the put and call wings
 * Increasing :math:`\rho` decreases(increases) the slope of the left(right) wing
 * Increasing :math:`m` translates the smile to the right
-* Increasing :math:`sigma` reduces the at the money (ATM) curvature of the smile
+* Increasing :math:`\sigma` reduces the at the money (ATM) curvature of the smile
 
 
 .. class:: ql.SviSmileSection(timeToExpiry: float, forward: float, sviParameters: List[float])
@@ -1528,7 +1528,7 @@ Methods
 BlackConstantVol
 ----------------
 
-A constant Black (lognormal) volatility structure :math:`\sigma: (t, T, K) \rightarrow \sigma \in \mathbb{R}`. 
+A constant Black (lognormal) volatility structure :math:`\sigma: (k, t) \rightarrow \sigma \in \mathbb{R}`. 
 This is the simplest volatility model where the volatility is flat across all expiry dates, strikes, 
 and the evaluation date. It is commonly used as a baseline model for option pricing and risk management 
 when more sophisticated volatility surfaces are not available or necessary.
@@ -1732,7 +1732,7 @@ Example usage — Floating reference date with dynamic volatility:
 BlackVarianceCurve
 ------------------
 
-A volatility curve :math:`\sigma: T \rightarrow \sigma(T) \in \mathbb{R}` representing the Black (lognormal) volatility 
+A volatility curve :math:`\sigma: t \rightarrow \sigma(t) \in \mathbb{R}` representing the Black (lognormal) volatility 
 as a function of expiry date only. This curve provides volatility values at arbitrary expiry dates 
 within the range of the input data through interpolation.
 
@@ -1808,7 +1808,7 @@ Example usage — Basic construction with monotone variance enforcement:
 BlackVarianceSurface
 --------------------
 
-A volatility surface :math:`\sigma: (t, T) \rightarrow sigma(t, T) \in \mathbb{R}` representing the Black (lognormal) volatility as a function of both 
+A volatility surface :math:`\sigma: (k, t) \rightarrow \sigma(k, t) \in \mathbb{R}` representing the Black (lognormal) volatility as a function of both 
 expiry date and strike. This surface uses 2D interpolation to provide volatility values 
 at arbitrary combinations of expiry and strike that are within the range of the input data.
 
@@ -2079,12 +2079,46 @@ volatility term structure at runtime.
   :param blackVolTermStructure: A concrete implementation of :class:`ql.BlackVolTermStructure`.
   :type blackVolTermStructure: ql.BlackVolTermStructure
 
+Example usage — Relinking handle updates dependent objects:
+
 .. code-block:: python
+  import QuantLib as ql
 
-  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle(volatilitySurface)
+  today = ql.Date.todaysDate()
+  ql.Settings.instance().evaluationDate = today
 
-  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle()
-  blackTSHandle.linkTo(volatilitySurface)
+  calendar = ql.NullCalendar()
+  dc = ql.Actual365Fixed()
+
+  # Two simple flat Black vol term structures
+  vol1 = ql.BlackConstantVol(today, calendar, 0.20, dc)
+  vol2 = ql.BlackConstantVol(today, calendar, 0.225, dc)
+
+  # Create a relinkable handle and link it to the first surface
+  vol_handle = ql.RelinkableBlackVolTermStructureHandle(vol1)
+
+  # Build a minimal Black-Scholes-Merton setup that uses the relinkable handle
+  spot = ql.QuoteHandle(ql.SimpleQuote(100.0))
+  rf_ts = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.01, dc))
+  div_ts = ql.YieldTermStructureHandle(ql.FlatForward(today, 0.00, dc))
+  process = ql.BlackScholesMertonProcess(spot, div_ts, rf_ts, vol_handle)
+
+  # Price a European call using the process
+  payoff = ql.PlainVanillaPayoff(ql.Option.Call, 100.0)
+  exercise = ql.EuropeanExercise(today + ql.Period(6, ql.Months))
+  option = ql.VanillaOption(payoff, exercise)
+  option.setPricingEngine(ql.AnalyticEuropeanEngine(process))
+
+  npv_before = option.NPV()
+
+  # Relink the handle to a different volatility term structure
+  vol_handle.linkTo(vol2)
+
+  # The option's NPV reflects the new volatility automatically
+  npv_after = option.NPV()
+
+  print('NPV before relink:', npv_before)
+  print('NPV after relink: ', npv_after)
 
 LocalVolTermStructure
 ---------------------
@@ -2096,7 +2130,7 @@ In this framework, the underlying asset price evolves according to the stochasti
 
 .. math::
 
-dS_t = \mu S_t , dt + \sigma_{\text{LV}}(S_t, t), S_t , dW_t
+  dS_t = \mu S_t , dt + \sigma_{\text{LV}}(S_t, t), S_t , dW_t
 
 where:
 
@@ -2181,7 +2215,7 @@ LocalConstantVol
   volatility = 0.2
   dayCounter = ql.Actual360()
 
-  ql.LocalConstantVol(date, volatility, dayCounter)
+  const_local_vol = ql.LocalConstantVol(date, volatility, dayCounter)
 
 
 LocalVolSurface
@@ -2248,7 +2282,7 @@ This powerful but dangerous surface will swallow any exceptions and return the s
   dividendTs = ql.YieldTermStructureHandle(ql.FlatForward(today, q, dayCounter))
   spot = 100
 
-  ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendTs, spot, illegalVolOverride)
+  local_vol_surf = ql.NoExceptLocalVolSurface(blackVolTs, ratesTs, dividendTs, spot, illegalVolOverride)
 
 
 AndreasenHugeLocalVolAdapter
@@ -2325,10 +2359,9 @@ local volatility term structure at runtime.
 
 .. code-block:: python
 
-  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle(localVolatilitySurface)
-
-  blackTSHandle = ql.RelinkableBlackVolTermStructureHandle()
-  blackTSHandle.linkTo(ahLocalSurface)
+  localVolTSHandle = ql.RelinkableBlackVolTermStructureHandle(localVolatilitySurface)
+  # Linking handle to another local vol surface
+  localVolTSHandle.linkTo(ahLocalSurface)
 
 
 Cap Volatility
